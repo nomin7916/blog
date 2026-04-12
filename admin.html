@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — My Insight Blog</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #131316;
+      --card: #1a1a1e;
+      --border: #252529;
+      --border2: #2e2e34;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --text: #e5e7eb;
+      --muted: #6b7280;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 헤더 */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(13,13,15,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .logo-icon {
+      width: 26px; height: 26px;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #fff;
+    }
+    .logo-text { font-size: .9rem; font-weight: 700; color: #fff; }
+    .header-right { display: flex; align-items: center; gap: .75rem; }
+    .badge {
+      font-size: .7rem; font-weight: 600; padding: .25rem .65rem;
+      border-radius: 9999px; background: rgba(99,102,241,.15);
+      color: var(--accent-light); border: 1px solid rgba(99,102,241,.3);
+    }
+    .btn-back {
+      font-size: .8rem; color: var(--muted); text-decoration: none;
+      border: 1px solid var(--border); border-radius: 9999px;
+      padding: .3rem .8rem; transition: all .15s;
+    }
+    .btn-back:hover { color: var(--text); border-color: var(--border2); }
+
+    /* 레이아웃 */
+    .layout {
+      max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 360px; gap: 2rem;
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* 섹션 제목 */
+    .section-title {
+      font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--muted); text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    /* 패널 */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    /* 드래그 앤 드롭 영역 */
+    #drop-zone {
+      border: 2px dashed var(--border2);
+      border-radius: 14px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--surface);
+    }
+    #drop-zone:hover, #drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(99,102,241,.06);
+    }
+    #drop-zone.has-file {
+      border-color: var(--success);
+      background: rgba(16,185,129,.05);
+    }
+    .drop-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .drop-title { font-size: .95rem; font-weight: 600; color: var(--text); margin-bottom: .4rem; }
+    .drop-sub { font-size: .8rem; color: var(--muted); }
+    .drop-file-name { font-size: .85rem; font-weight: 600; color: var(--success); margin-top: .5rem; }
+
+    /* 폼 */
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: .45rem; letter-spacing: .03em; }
+    input[type="text"], input[type="date"], textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .65rem .9rem;
+      font-size: .875rem;
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color .15s;
+      outline: none;
+    }
+    input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .4; }
+
+    /* 태그 입력 */
+    .tags-container {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .5rem .75rem;
+      min-height: 44px;
+      cursor: text;
+      transition: border-color .15s;
+    }
+    .tags-container:focus-within { border-color: var(--accent); }
+    .tag-chip {
+      display: inline-flex; align-items: center; gap: .3rem;
+      background: rgba(99,102,241,.18); color: var(--accent-light);
+      border: 1px solid rgba(99,102,241,.3);
+      border-radius: 9999px; padding: .2rem .65rem;
+      font-size: .75rem; font-weight: 500;
+    }
+    .tag-chip button {
+      background: none; border: none; cursor: pointer;
+      color: var(--accent-light); font-size: .85rem; line-height: 1;
+      padding: 0; opacity: .7; transition: opacity .15s;
+    }
+    .tag-chip button:hover { opacity: 1; }
+    #tag-input {
+      border: none; background: none; outline: none;
+      font-size: .8rem; color: var(--text); font-family: inherit;
+      min-width: 80px; flex: 1; padding: .15rem 0;
+    }
+    .tag-hint { font-size: .72rem; color: var(--muted); margin-top: .35rem; }
+
+    /* 버튼 */
+    .btn-primary {
+      width: 100%; padding: .8rem;
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      color: #fff; border: none; border-radius: 12px;
+      font-size: .9rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: opacity .15s, transform .1s;
+    }
+    .btn-primary:hover { opacity: .9; }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-secondary {
+      width: 100%; padding: .7rem;
+      background: var(--surface);
+      color: var(--muted); border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: .85rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all .15s; margin-top: .6rem;
+    }
+    .btn-secondary:hover { color: var(--text); border-color: var(--border2); }
+
+    /* 알림 */
+    .alert {
+      border-radius: 10px; padding: .8rem 1rem;
+      font-size: .82rem; margin-bottom: 1rem; display: none;
+    }
+    .alert.show { display: flex; align-items: flex-start; gap: .5rem; }
+    .alert-success { background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.3); color: #6ee7b7; }
+    .alert-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
+    .alert-info { background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25); color: var(--accent-light); }
+
+    /* 오른쪽 패널 — 글 목록 */
+    .right-panel { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* 폴더 선택 */
+    .folder-status {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .8rem; color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .65rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .folder-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+    .folder-dot.ok { background: var(--success); }
+    .folder-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .btn-folder {
+      width: 100%; padding: .65rem;
+      background: var(--surface);
+      color: var(--text); border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: .82rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all .15s; margin-bottom: .6rem;
+    }
+    .btn-folder:hover { border-color: var(--accent); color: var(--accent-light); }
+
+    /* 등록된 글 목록 */
+    .post-item {
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: .85rem; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      margin-bottom: .5rem; transition: border-color .15s;
+    }
+    .post-item:hover { border-color: var(--border2); }
+    .post-num {
+      width: 22px; height: 22px; flex-shrink: 0;
+      border-radius: 6px; background: var(--card);
+      font-size: .7rem; font-weight: 700; color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .post-info { flex: 1; min-width: 0; }
+    .post-title-sm { font-size: .82rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: .2rem; }
+    .post-date-sm { font-size: .7rem; color: var(--muted); font-family: monospace; }
+    .post-tag-sm {
+      font-size: .65rem; padding: .1rem .45rem; border-radius: 9999px;
+      background: rgba(99,102,241,.12); color: var(--accent-light);
+      border: 1px solid rgba(99,102,241,.22);
+    }
+    .empty-state { text-align: center; padding: 2rem; color: var(--muted); font-size: .85rem; }
+
+    /* 미리보기 카드 */
+    #preview-card {
+      background: #1a1a1e;
+      border: 1px solid rgba(99,102,241,.4);
+      border-radius: 14px; padding: 1.25rem;
+      display: none;
+    }
+    #preview-card.show { display: block; }
+    .preview-label { font-size: .65rem; font-weight: 700; letter-spacing: .08em; color: var(--accent-light); text-transform: uppercase; margin-bottom: .75rem; }
+
+    /* 성공 화면 */
+    #success-overlay {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(13,13,15,.92); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+    }
+    #success-overlay.show { display: flex; }
+    .success-box {
+      background: var(--card); border: 1px solid rgba(16,185,129,.3);
+      border-radius: 20px; padding: 2.5rem; text-align: center;
+      max-width: 400px; width: 90%;
+    }
+    .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .success-title { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: .5rem; }
+    .success-sub { font-size: .875rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.75rem; }
+    .success-step {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: .75rem 1rem;
+      font-size: .8rem; color: var(--muted); text-align: left;
+      margin-bottom: .5rem; display: flex; align-items: center; gap: .6rem;
+    }
+    .step-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: .7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    code {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 5px; padding: .1em .4em;
+      font-size: .8em; color: var(--accent-light); font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header>
+    <a href="Index.html" class="logo">
+      <div class="logo-icon">M</div>
+      <span class="logo-text">My Insight Blog</span>
+    </a>
+    <div class="header-right">
+      <span class="badge">Admin</span>
+      <a href="Index.html" class="btn-back">← 블로그</a>
+    </div>
+  </header>
+
+  <!-- 성공 오버레이 -->
+  <div id="success-overlay">
+    <div class="success-box">
+      <div class="success-icon">✅</div>
+      <div class="success-title">등록 완료!</div>
+      <div class="success-sub" id="success-msg">글이 성공적으로 등록되었습니다.<br/>이제 Git push 후 Vercel에서 배포됩니다.</div>
+      <div class="success-step"><span class="step-num">1</span> 파일이 <code>posts/</code>에 복사되었습니다</div>
+      <div class="success-step"><span class="step-num">2</span> <code>posts.json</code>이 업데이트되었습니다</div>
+      <div class="success-step"><span class="step-num">3</span> <code>git add . && git commit && git push</code> 실행하면 배포 완료</div>
+      <button class="btn-primary" style="margin-top:1.25rem;" onclick="closeSuccess()">계속 등록하기</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- 왼쪽: 업로드 폼 -->
+    <div>
+      <p class="section-title">새 글 등록</p>
+
+      <div class="panel">
+        <!-- 폴더 연결 -->
+        <div style="margin-bottom:1.5rem;">
+          <label>블로그 폴더 연결 <span style="color:var(--error);">*</span></label>
+          <div class="folder-status">
+            <span class="folder-dot" id="folder-dot"></span>
+            <span class="folder-name" id="folder-name">폴더가 선택되지 않았습니다</span>
+          </div>
+          <button class="btn-folder" onclick="selectFolder()">📂 블로그 폴더 열기</button>
+          <div id="alert-folder" class="alert alert-info show">
+            <span>ℹ️</span>
+            <span><strong>처음 사용 시:</strong> "블로그 폴더 열기"를 눌러 <code>blog/</code> 폴더를 선택해주세요. 브라우저가 파일 읽기/쓰기 권한을 요청합니다.</span>
+          </div>
+        </div>
+
+        <!-- HTML 파일 드롭 -->
+        <div class="form-group">
+          <label>보고서 HTML 파일</label>
+          <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <div class="drop-icon" id="drop-icon">📄</div>
+            <div class="drop-title" id="drop-title">HTML 파일을 드래그하거나 클릭해서 선택</div>
+            <div class="drop-sub" id="drop-sub">보고서 .html 파일 (파일명: YYYY-MM-DD-제목.html 권장)</div>
+            <div class="drop-file-name" id="drop-file-name"></div>
+          </div>
+          <input type="file" id="file-input" accept=".html" style="display:none;" onchange="handleFileSelect(this.files[0])" />
+        </div>
+
+        <!-- 메타데이터 폼 -->
+        <div class="form-group">
+          <label>날짜 <span style="color:var(--error);">*</span></label>
+          <input type="date" id="post-date" />
+        </div>
+
+        <div class="form-group">
+          <label>제목 <span style="color:var(--error);">*</span></label>
+          <input type="text" id="post-title" placeholder="예: 삼성전자 2025 Q2 실적 분석" />
+        </div>
+
+        <div class="form-group">
+          <label>설명 (한 줄 요약)</label>
+          <textarea id="post-desc" placeholder="글 목록에 표시될 간략한 설명을 입력하세요."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>태그</label>
+          <div class="tags-container" id="tags-container" onclick="document.getElementById('tag-input').focus()">
+            <input type="text" id="tag-input" placeholder="태그 입력 후 Enter" />
+          </div>
+          <p class="tag-hint">Enter 또는 쉼표로 태그 추가 · 추천: 주식분석, 시장리포트, 투자전략, 투자전략</p>
+        </div>
+
+        <!-- 미리보기 -->
+        <div id="preview-card" style="margin-bottom:1.25rem;">
+          <div class="preview-label">카드 미리보기</div>
+          <div style="border:1px solid var(--border); border-radius:10px; padding:1rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.5rem; flex-wrap:wrap; gap:.4rem;">
+              <span id="pv-date" style="font-size:.72rem; color:var(--muted); font-family:monospace;"></span>
+              <span id="pv-tags" style="display:flex; gap:.3rem; flex-wrap:wrap;"></span>
+            </div>
+            <div id="pv-title" style="font-size:.95rem; font-weight:700; color:#f3f4f6; margin-bottom:.4rem;"></div>
+            <div id="pv-desc" style="font-size:.8rem; color:var(--muted); line-height:1.6;"></div>
+          </div>
+        </div>
+
+        <!-- 알림 -->
+        <div id="alert-success" class="alert alert-success"><span>✅</span><span id="alert-success-msg"></span></div>
+        <div id="alert-error" class="alert alert-error"><span>⚠️</span><span id="alert-error-msg"></span></div>
+
+        <button class="btn-primary" id="submit-btn" onclick="submitPost()" disabled>글 등록하기</button>
+        <button class="btn-secondary" onclick="resetForm()">초기화</button>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 등록된 글 목록 -->
+    <div class="right-panel">
+      <div>
+        <p class="section-title">등록된 글 목록</p>
+        <div class="panel">
+          <div id="posts-list">
+            <div class="empty-state">폴더를 연결하면<br/>등록된 글 목록이 표시됩니다.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 사용 안내 -->
+      <div>
+        <p class="section-title">사용 방법</p>
+        <div class="panel" style="font-size:.8rem; line-height:1.8; color:var(--muted);">
+          <div style="display:flex; flex-direction:column; gap:.75rem;">
+            <div style="display:flex; gap:.6rem;">
+              <span style="color:var(--accent); font-weight:700; flex-shrink:0;">①</span>
+              <span><strong style="color:var(--text);">폴더 열기</strong> — <code>blog/</code> 폴더를 선택해 파일 접근 권한 부여</span>
+            </div>
+            <div style="display:flex; gap:.6rem;">
+              <span style="color:var(--accent); font-weight:700; flex-shrink:0;">②</span>
+              <span><strong style="color:var(--text);">HTML 파일 드롭</strong> — 작성한 보고서 HTML 파일을 업로드</span>
+            </div>
+            <div style="display:flex; gap:.6rem;">
+              <span style="color:var(--accent); font-weight:700; flex-shrink:0;">③</span>
+              <span><strong style="color:var(--text);">메타데이터 입력</strong> — 제목, 날짜, 설명, 태그 입력</span>
+            </div>
+            <div style="display:flex; gap:.6rem;">
+              <span style="color:var(--accent); font-weight:700; flex-shrink:0;">④</span>
+              <span><strong style="color:var(--text);">등록</strong> — 파일이 <code>posts/</code>에 저장되고 <code>posts.json</code>이 자동 업데이트</span>
+            </div>
+            <div style="display:flex; gap:.6rem;">
+              <span style="color:var(--accent); font-weight:700; flex-shrink:0;">⑤</span>
+              <span><strong style="color:var(--text);">Git push</strong> — Vercel 자동 배포 완료</span>
+            </div>
+          </div>
+          <div style="margin-top:1rem; padding:.75rem; background:var(--surface); border-radius:8px; border:1px solid var(--border); color:var(--muted); font-size:.75rem;">
+            💡 파일명을 <code>YYYY-MM-DD-제목.html</code> 형식으로 하면 날짜가 자동 추출됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let dirHandle = null;
+    let selectedFile = null;
+    let currentPosts = [];
+    let currentTags = [];
+
+    // ── 폴더 선택 ──────────────────────────────────────────
+    async function selectFolder() {
+      if (!('showDirectoryPicker' in window)) {
+        showError('이 기능은 Chrome 또는 Edge 브라우저에서만 지원됩니다. (File System Access API)');
+        return;
+      }
+      try {
+        dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+        document.getElementById('folder-dot').classList.add('ok');
+        document.getElementById('folder-name').textContent = dirHandle.name;
+        document.getElementById('alert-folder').classList.remove('show');
+        await loadPostsList();
+        checkSubmitReady();
+      } catch (e) {
+        if (e.name !== 'AbortError') showError('폴더 선택에 실패했습니다: ' + e.message);
+      }
+    }
+
+    // ── posts.json 읽기 ──────────────────────────────────
+    async function loadPostsList() {
+      try {
+        const fh = await dirHandle.getFileHandle('posts.json', { create: false });
+        const f = await fh.getFile();
+        const txt = await f.text();
+        currentPosts = JSON.parse(txt);
+        renderPostsList();
+      } catch {
+        currentPosts = [];
+        renderPostsList();
+      }
+    }
+
+    function renderPostsList() {
+      const el = document.getElementById('posts-list');
+      if (!currentPosts.length) {
+        el.innerHTML = '<div class="empty-state">등록된 글이 없습니다.</div>';
+        return;
+      }
+      const sorted = [...currentPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+      el.innerHTML = sorted.map((p, i) => `
+        <div class="post-item">
+          <div class="post-num">${i + 1}</div>
+          <div class="post-info">
+            <div class="post-title-sm">${escHtml(p.title)}</div>
+            <div style="display:flex; align-items:center; gap:.4rem; margin-top:.3rem; flex-wrap:wrap;">
+              <span class="post-date-sm">${p.date}</span>
+              ${(p.tags || []).map(t => `<span class="post-tag-sm">${escHtml(t)}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── 파일 선택 ──────────────────────────────────────────
+    function handleFileSelect(file) {
+      if (!file || !file.name.endsWith('.html')) {
+        showError('HTML 파일만 업로드할 수 있습니다.');
+        return;
+      }
+      selectedFile = file;
+      const dz = document.getElementById('drop-zone');
+      dz.classList.add('has-file');
+      document.getElementById('drop-icon').textContent = '✅';
+      document.getElementById('drop-title').textContent = file.name;
+      document.getElementById('drop-sub').textContent = `${(file.size / 1024).toFixed(1)} KB`;
+      document.getElementById('drop-file-name').textContent = '';
+
+      // 파일명에서 날짜 자동 추출 (YYYY-MM-DD-)
+      const dateMatch = file.name.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (dateMatch) document.getElementById('post-date').value = dateMatch[1];
+
+      // <title> 태그에서 제목 추출
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const html = e.target.result;
+        const titleMatch = html.match(/<title[^>]*>([^<|]+)/i);
+        if (titleMatch) {
+          let t = titleMatch[1].trim().replace(/\s*[|—–-]\s*.*$/, '').trim();
+          if (t && !document.getElementById('post-title').value) {
+            document.getElementById('post-title').value = t;
+          }
+        }
+        updatePreview();
+      };
+      reader.readAsText(file);
+      checkSubmitReady();
+    }
+
+    // ── 드래그 앤 드롭 ──────────────────────────────────────
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFileSelect(file);
+    });
+
+    // ── 태그 입력 ──────────────────────────────────────────
+    document.getElementById('tag-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addTag(e.target.value.trim().replace(',', ''));
+        e.target.value = '';
+      } else if (e.key === 'Backspace' && !e.target.value && currentTags.length) {
+        removeTag(currentTags.length - 1);
+      }
+    });
+
+    function addTag(val) {
+      if (!val || currentTags.includes(val)) return;
+      currentTags.push(val);
+      renderTags();
+      updatePreview();
+    }
+
+    function removeTag(i) {
+      currentTags.splice(i, 1);
+      renderTags();
+      updatePreview();
+    }
+
+    function renderTags() {
+      const input = document.getElementById('tag-input');
+      const container = document.getElementById('tags-container');
+      const chips = currentTags.map((t, i) => `
+        <span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeTag(${i})">×</button></span>
+      `).join('');
+      container.innerHTML = chips;
+      container.appendChild(input);
+    }
+
+    // ── 미리보기 업데이트 ──────────────────────────────────
+    ['post-title', 'post-date', 'post-desc'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => { updatePreview(); checkSubmitReady(); });
+    });
+
+    function updatePreview() {
+      const title = document.getElementById('post-title').value;
+      const date = document.getElementById('post-date').value;
+      const desc = document.getElementById('post-desc').value;
+      const card = document.getElementById('preview-card');
+      if (!title && !date) { card.classList.remove('show'); return; }
+      card.classList.add('show');
+      document.getElementById('pv-title').textContent = title || '제목 없음';
+      document.getElementById('pv-date').textContent = date ? formatDate(date) : '';
+      document.getElementById('pv-desc').textContent = desc || '설명이 없습니다.';
+      document.getElementById('pv-tags').innerHTML = currentTags.map(t =>
+        `<span style="padding:.15rem .55rem; border-radius:9999px; font-size:.68rem; background:rgba(99,102,241,.14); color:#a5b4fc; border:1px solid rgba(99,102,241,.28);">${escHtml(t)}</span>`
+      ).join('');
+    }
+
+    // ── 등록 가능 여부 확인 ──────────────────────────────────
+    function checkSubmitReady() {
+      const ok = dirHandle && selectedFile
+        && document.getElementById('post-title').value.trim()
+        && document.getElementById('post-date').value;
+      document.getElementById('submit-btn').disabled = !ok;
+    }
+
+    // ── 글 등록 ─────────────────────────────────────────────
+    async function submitPost() {
+      const title = document.getElementById('post-title').value.trim();
+      const date = document.getElementById('post-date').value;
+      const desc = document.getElementById('post-desc').value.trim();
+
+      if (!dirHandle) { showError('먼저 블로그 폴더를 선택해주세요.'); return; }
+      if (!selectedFile) { showError('HTML 파일을 선택해주세요.'); return; }
+      if (!title) { showError('제목을 입력해주세요.'); return; }
+      if (!date) { showError('날짜를 입력해주세요.'); return; }
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = '등록 중...';
+
+      try {
+        // 1. posts/ 폴더 핸들 가져오기 (없으면 생성)
+        const postsDirHandle = await dirHandle.getDirectoryHandle('posts', { create: true });
+
+        // 2. HTML 파일 복사
+        const fileName = selectedFile.name;
+        const fileHandle = await postsDirHandle.getFileHandle(fileName, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(selectedFile);
+        await writable.close();
+
+        // 3. posts.json 업데이트
+        const filePath = `posts/${fileName}`;
+        const newEntry = {
+          date,
+          title,
+          description: desc,
+          file: filePath,
+          tags: [...currentTags],
+        };
+
+        // 중복 체크 (같은 file 경로)
+        const exists = currentPosts.find(p => p.file === filePath);
+        if (exists) {
+          Object.assign(exists, newEntry);
+        } else {
+          currentPosts.push(newEntry);
+        }
+
+        // 날짜순 정렬 후 저장
+        currentPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const jsonHandle = await dirHandle.getFileHandle('posts.json', { create: true });
+        const jsonWritable = await jsonHandle.createWritable();
+        await jsonWritable.write(JSON.stringify(currentPosts, null, 2));
+        await jsonWritable.close();
+
+        // 4. 성공
+        renderPostsList();
+        document.getElementById('success-overlay').classList.add('show');
+
+      } catch (e) {
+        showError('등록 중 오류가 발생했습니다: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = '글 등록하기';
+        return;
+      }
+
+      btn.textContent = '글 등록하기';
+      checkSubmitReady();
+    }
+
+    // ── 초기화 ─────────────────────────────────────────────
+    function resetForm() {
+      selectedFile = null;
+      currentTags = [];
+      document.getElementById('drop-zone').classList.remove('has-file');
+      document.getElementById('drop-icon').textContent = '📄';
+      document.getElementById('drop-title').textContent = 'HTML 파일을 드래그하거나 클릭해서 선택';
+      document.getElementById('drop-sub').textContent = '보고서 .html 파일 (파일명: YYYY-MM-DD-제목.html 권장)';
+      document.getElementById('drop-file-name').textContent = '';
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-date').value = '';
+      document.getElementById('post-desc').value = '';
+      renderTags();
+      document.getElementById('preview-card').classList.remove('show');
+      document.getElementById('alert-success').classList.remove('show');
+      document.getElementById('alert-error').classList.remove('show');
+      checkSubmitReady();
+    }
+
+    function closeSuccess() {
+      document.getElementById('success-overlay').classList.remove('show');
+      resetForm();
+    }
+
+    // ── 유틸 ─────────────────────────────────────────────
+    function showError(msg) {
+      const el = document.getElementById('alert-error');
+      document.getElementById('alert-error-msg').textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 5000);
+    }
+
+    function formatDate(d) {
+      return new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+      );
+    }
+
+    // 폼 변경 시 미리보기 갱신
+    document.getElementById('post-date').addEventListener('change', updatePreview);
+  </script>
+</body>
+</html>
