@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>투자 인사이트 블로그</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#121212',
+            card: '#1e1e1e',
+            border: '#2a2a2a',
+            accent: '#6366f1',
+            accentHover: '#818cf8',
+          },
+          fontFamily: {
+            sans: ['Pretendard', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-bg text-gray-200 font-sans min-h-screen">
+
+  <!-- 헤더 -->
+  <header class="border-b border-border sticky top-0 bg-bg z-10 backdrop-blur-sm bg-opacity-90">
+    <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="Index.html" class="text-xl font-bold text-white tracking-tight hover:text-accent transition-colors">
+        투자 인사이트
+      </a>
+      <span class="text-sm text-gray-500">Investment Research Blog</span>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 -->
+  <main class="max-w-4xl mx-auto px-6 py-12">
+
+    <!-- 소개 영역 -->
+    <section class="mb-12">
+      <h1 class="text-3xl font-bold text-white mb-3">투자 인사이트</h1>
+      <p class="text-gray-400 text-base leading-relaxed">
+        주식 분석, 시장 리포트, 투자 전략을 담은 개인 투자 리서치 블로그입니다.<br />
+        데이터 기반의 깊이 있는 분석으로 더 나은 투자 결정을 돕습니다.
+      </p>
+    </section>
+
+    <!-- 태그 필터 -->
+    <section class="mb-8">
+      <div class="flex flex-wrap gap-2" id="tag-filters">
+        <!-- JS로 동적 생성 -->
+      </div>
+    </section>
+
+    <!-- 검색 결과 없음 메시지 -->
+    <div id="no-results" class="hidden text-center py-20 text-gray-500">
+      <p class="text-lg">해당 태그의 글이 없습니다.</p>
+    </div>
+
+    <!-- 글 목록 -->
+    <section id="posts-grid" class="grid gap-4">
+      <!-- JS로 동적 렌더링 -->
+    </section>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="border-t border-border mt-20">
+    <div class="max-w-4xl mx-auto px-6 py-8 text-center text-gray-600 text-sm">
+      © 2025 투자 인사이트. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    let allPosts = [];
+    let currentTag = '전체';
+
+    async function loadPosts() {
+      try {
+        const res = await fetch('posts.json');
+        if (!res.ok) throw new Error('posts.json 로드 실패');
+        allPosts = await res.json();
+        allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        buildTagFilters();
+        renderPosts(allPosts);
+      } catch (e) {
+        document.getElementById('posts-grid').innerHTML =
+          '<p class="text-gray-500 text-center py-20">글을 불러오는 중 오류가 발생했습니다.<br/><span class="text-sm">' + e.message + '</span></p>';
+      }
+    }
+
+    function buildTagFilters() {
+      const tagSet = new Set(['전체']);
+      allPosts.forEach(p => (p.tags || []).forEach(t => tagSet.add(t)));
+
+      const container = document.getElementById('tag-filters');
+      container.innerHTML = '';
+
+      tagSet.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'tag-btn px-4 py-1.5 rounded-full text-sm font-medium transition-all' + (tag === '전체' ? ' active' : '');
+        btn.dataset.tag = tag;
+        btn.textContent = tag;
+        btn.onclick = () => filterPosts(tag);
+        container.appendChild(btn);
+      });
+    }
+
+    function filterPosts(tag) {
+      currentTag = tag;
+      document.querySelectorAll('.tag-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tag === tag);
+      });
+      const filtered = tag === '전체' ? allPosts : allPosts.filter(p => (p.tags || []).includes(tag));
+      renderPosts(filtered);
+    }
+
+    function renderPosts(posts) {
+      const grid = document.getElementById('posts-grid');
+      const noResults = document.getElementById('no-results');
+
+      if (posts.length === 0) {
+        grid.innerHTML = '';
+        noResults.classList.remove('hidden');
+        return;
+      }
+      noResults.classList.add('hidden');
+
+      grid.innerHTML = posts.map(post => `
+        <article
+          class="post-card bg-card border border-border rounded-xl p-6 cursor-pointer transition-all duration-200 hover:border-accent hover:shadow-lg hover:shadow-indigo-500/10 hover:-translate-y-0.5"
+          onclick="location.href='${post.file}'"
+        >
+          <div class="flex items-center justify-between mb-3">
+            <time class="text-xs text-gray-500 font-mono">${formatDate(post.date)}</time>
+            <div class="flex flex-wrap gap-1.5 justify-end">
+              ${(post.tags || []).map(tag => `
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">${tag}</span>
+              `).join('')}
+            </div>
+          </div>
+          <h2 class="text-lg font-semibold text-white mb-2 leading-snug">${post.title}</h2>
+          <p class="text-gray-400 text-sm leading-relaxed line-clamp-2">${post.description}</p>
+        </article>
+      `).join('');
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
