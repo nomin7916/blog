@@ -31,134 +31,64 @@
     .btn-back { font-size: .8rem; color: var(--muted); text-decoration: none; border: 1px solid var(--border); border-radius: 9999px; padding: .3rem .8rem; transition: all .15s; }
     .btn-back:hover { color: var(--text); border-color: var(--border2); }
 
-    /* 상태바 */
-    .status-bar {
-      max-width: 1200px; margin: 0 auto;
-      padding: .6rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    }
-    .status-pill {
-      display: inline-flex; align-items: center; gap: .4rem;
-      font-size: .75rem; font-weight: 600; padding: .3rem .75rem;
-      border-radius: 9999px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--muted); cursor: default;
-    }
+    .status-bar { max-width: 1200px; margin: 0 auto; padding: .6rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .status-pill { display: inline-flex; align-items: center; gap: .4rem; font-size: .75rem; font-weight: 600; padding: .3rem .75rem; border-radius: 9999px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: default; }
     .status-pill.ok { color: var(--success); border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.08); }
     .status-pill.warn { color: var(--warning); border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.08); cursor: pointer; }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-    /* 레이아웃 */
     .main-wrap { max-width: 1200px; margin: 0 auto; padding: .75rem 1.5rem 5rem; display: grid; grid-template-columns: 1fr 420px; gap: 1.75rem; }
     @media (max-width: 900px) { .main-wrap { grid-template-columns: 1fr; } }
 
-    /* 공통 */
     .section-title { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin-bottom: .85rem; }
     .panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; margin-bottom: 1.25rem; }
     .form-group { margin-bottom: 1.15rem; }
     label { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: .4rem; letter-spacing: .03em; }
-    input[type="text"], input[type="date"], textarea, select {
-      width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: .6rem .85rem; font-size: .875rem;
-      color: var(--text); font-family: inherit; transition: border-color .15s; outline: none;
-    }
+    input[type="text"], input[type="date"], textarea, select { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .6rem .85rem; font-size: .875rem; color: var(--text); font-family: inherit; outline: none; }
     input:focus, textarea:focus { border-color: var(--accent); }
     textarea { resize: vertical; min-height: 72px; line-height: 1.6; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .4; }
 
-    /* 태그 & 첨부파일 */
-    .tags-container { display: flex; flex-wrap: wrap; gap: .4rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .5rem .75rem; min-height: 44px; cursor: text; transition: border-color .15s; }
+    .tags-container { display: flex; flex-wrap: wrap; gap: .4rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .5rem .75rem; min-height: 44px; cursor: text; }
     .tags-container:focus-within { border-color: var(--accent); }
     .tag-chip { display: inline-flex; align-items: center; gap: .3rem; background: rgba(99,102,241,.18); color: var(--accent-light); border: 1px solid rgba(99,102,241,.3); border-radius: 9999px; padding: .2rem .65rem; font-size: .75rem; font-weight: 500; }
     .tag-chip button { background: none; border: none; cursor: pointer; color: var(--accent-light); font-size: .85rem; line-height: 1; padding: 0; opacity: .7; }
-    .tag-input-inner { border: none; background: none; outline: none; font-size: .8rem; color: var(--text); font-family: inherit; min-width: 80px; flex: 1; padding: .15rem 0; }
-    .tag-hint { font-size: .72rem; color: var(--muted); margin-top: .35rem; }
+    .tag-input-inner { border: none; background: none; outline: none; font-size: .8rem; color: var(--text); flex: 1; padding: .15rem 0; }
     
-    .attach-item { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--border); padding: .4rem .6rem; border-radius: 8px; font-size: .8rem; }
-    .attach-item-info { display: flex; align-items: center; gap: .5rem; overflow: hidden; }
-    .attach-item-title { font-weight: 600; color: var(--text); white-space: nowrap; }
-    .attach-item-url { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .attach-item { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--border); padding: .4rem .6rem; border-radius: 8px; font-size: .8rem; margin-bottom:.3rem; }
+    .attach-item-title { font-weight: 600; color: var(--text); white-space: nowrap; margin-right:.5rem; }
+    .attach-item-url { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex:1; }
 
-    /* 소스 토글 & 드롭 존 */
     .source-toggle { display: flex; gap: .35rem; margin-bottom: 1rem; }
-    .src-btn { flex: 1; padding: .55rem; border-radius: 9px; font-size: .8rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
+    .src-btn { flex: 1; padding: .55rem; border-radius: 9px; font-size: .8rem; font-weight: 600; font-family: inherit; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
     .src-btn.active { background: rgba(99,102,241,.18); color: var(--accent-light); border-color: rgba(99,102,241,.4); }
-    .drop-zone { border: 2px dashed var(--border2); border-radius: 14px; padding: 1.75rem 1.25rem; text-align: center; cursor: pointer; transition: all .2s; background: var(--surface); }
-    .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(99,102,241,.06); }
-    .drop-zone.has-file { border-color: var(--success); background: rgba(16,185,129,.05); }
 
-    /* 버튼 & 알림 */
-    .btn-primary { width: 100%; padding: .8rem; background: linear-gradient(135deg,#6366f1,#7c3aed); color: #fff; border: none; border-radius: 12px; font-size: .9rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity .15s, transform .1s; }
-    .btn-primary:hover { opacity: .9; }
+    .btn-primary { width: 100%; padding: .8rem; background: linear-gradient(135deg,#6366f1,#7c3aed); color: #fff; border: none; border-radius: 12px; font-size: .9rem; font-weight: 700; cursor: pointer; }
     .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-secondary { width: 100%; padding: .65rem; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 12px; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; margin-top: .5rem; }
-    .btn-secondary:hover { color: var(--text); border-color: var(--border2); }
-    .alert { border-radius: 10px; padding: .75rem 1rem; font-size: .82rem; margin-bottom: .85rem; display: none; }
-    .alert.show { display: flex; align-items: flex-start; gap: .5rem; }
-    .alert-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
+    .btn-secondary { padding: .5rem 1rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-size: .8rem; font-weight: 600; cursor: pointer; }
 
-    /* Drive 파일 목록 */
-    .gd-file-item { padding: .75rem .9rem; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); margin-bottom: .4rem; cursor: pointer; display: flex; align-items: center; gap: .65rem; }
-    .gd-file-item:hover { border-color: rgba(99,102,241,.4); }
-    .gd-file-item.gd-selected { border-color: var(--accent); background: rgba(99,102,241,.08); }
-    .gd-file-icon { font-size: 1.2rem; flex-shrink: 0; }
-    .gd-file-info { flex: 1; min-width: 0; }
-    .gd-file-name { font-size: .82rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .gd-file-meta { font-size: .7rem; color: var(--muted); margin-top: .15rem; }
-
-    /* Drive 연결 상태 */
-    .gd-auth-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .85rem; }
-    .btn-google { padding: .6rem 1rem; background: #fff; color: #1f1f1f; border: 1px solid #dadce0; border-radius: 10px; font-size: .82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: .45rem; }
-    .btn-google-small { padding: .35rem .75rem; border-radius: 8px; font-size: .75rem; font-weight: 600; background: var(--surface); color: var(--muted); border: 1px solid var(--border); cursor: pointer;}
-    .btn-google-small:hover { color: var(--text); }
-
-    /* 게시 폼 & 미리보기 */
-    .publish-form { background: var(--surface); border: 1px solid rgba(99,102,241,.3); border-radius: 14px; padding: 1.25rem; margin-top: 1rem; }
-    .selected-file-info { background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.25); border-radius: 8px; padding: .6rem .85rem; font-size: .8rem; color: var(--accent-light); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
-    .preview-card { background: var(--surface); border: 1px solid rgba(99,102,241,.35); border-radius: 12px; padding: 1rem; margin-bottom: 1.15rem; display: none; }
-    .preview-card.show { display: block; }
-    .preview-label { font-size: .65rem; font-weight: 700; letter-spacing: .08em; color: var(--accent-light); text-transform: uppercase; margin-bottom: .65rem; }
-
-    /* 글 목록 */
-    .post-item { padding: .9rem 1rem; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); margin-bottom: .5rem; transition: border-color .15s; }
-    .post-item:hover { border-color: var(--border2); }
+    .post-item { padding: .9rem 1rem; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); margin-bottom: .5rem; }
     .post-item.post-hidden { opacity: .55; }
-    .post-item-top { display: flex; align-items: flex-start; gap: .65rem; }
-    .post-num { width: 22px; height: 22px; flex-shrink: 0; border-radius: 6px; background: var(--card); font-size: .7rem; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+    .post-item-top { display: flex; justify-content: space-between; gap: .65rem; }
     .post-info { flex: 1; min-width: 0; }
-    .post-title-sm { font-size: .83rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: .3rem; }
-    .post-meta-sm { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
-    .post-date-sm { font-size: .7rem; color: var(--muted); font-family: monospace; }
-    .post-tag-sm { font-size: .65rem; padding: .1rem .45rem; border-radius: 9999px; background: rgba(99,102,241,.12); color: var(--accent-light); border: 1px solid rgba(99,102,241,.22); }
-    .post-actions { display: flex; gap: .35rem; flex-shrink: 0; flex-wrap: wrap; }
-    .btn-edit, .btn-delete, .btn-toggle { padding: .28rem .6rem; border-radius: 7px; font-size: .72rem; font-weight: 600; border: 1px solid; cursor: pointer; white-space: nowrap; }
-    .btn-edit { background: rgba(99,102,241,.12); color: var(--accent-light); border-color: rgba(99,102,241,.3); }
-    .btn-delete { background: rgba(239,68,68,.1); color: #fca5a5; border-color: rgba(239,68,68,.25); }
-    .btn-toggle-show { background: rgba(16,185,129,.1); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
-    .btn-toggle-hide { background: rgba(245,158,11,.1); color: #fcd34d; border-color: rgba(245,158,11,.3); }
-    .empty-state { text-align: center; padding: 2rem; color: var(--muted); font-size: .85rem; }
+    .post-title-sm { font-size: .85rem; font-weight: 600; color: var(--text); margin-bottom: .3rem; }
+    .post-actions { display: flex; gap: .35rem; flex-shrink: 0; }
+    .btn-action { padding: .28rem .6rem; border-radius: 7px; font-size: .72rem; font-weight: 600; border: 1px solid var(--border); background:var(--surface); color:var(--text); cursor: pointer; }
 
-    /* 리치 텍스트 에디터 */
-    .editor-toolbar { display: flex; align-items: center; gap: .2rem; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: 10px 10px 0 0; padding: .45rem .6rem; }
-    .tb-btn { padding: .3rem .52rem; border-radius: 6px; font-size: .78rem; font-weight: 700; border: 1px solid transparent; background: none; color: var(--muted); cursor: pointer; }
-    .tb-btn:hover { background: var(--card); color: var(--text); border-color: var(--border); }
-    .tb-sep { width: 1px; height: 18px; background: var(--border); margin: 0 .15rem; flex-shrink: 0; }
+    .editor-toolbar { display: flex; align-items: center; gap: .2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px 10px 0 0; padding: .45rem .6rem; }
+    .tb-btn { padding: .3rem .52rem; border-radius: 6px; font-size: .78rem; font-weight: 700; background: none; color: var(--muted); cursor: pointer; border:none; }
+    .tb-btn:hover { background: var(--card); color: var(--text); }
     .write-editor-area { min-height: 340px; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; padding: 1rem 1.15rem; font-size: .9rem; line-height: 1.8; color: var(--text); outline: none; overflow-y: auto; }
-    .write-editor-area:focus { border-color: var(--accent); }
-    .write-editor-area a { color: var(--accent-light); text-decoration: underline; cursor: pointer; }
-    .write-char-count { font-size: .7rem; color: var(--muted); text-align: right; margin-top: .35rem; }
+    .write-editor-area iframe { max-width: 100%; border-radius: 8px; }
+    .write-editor-area a { color: var(--accent-light); text-decoration: underline; }
 
-    /* 오버레이 */
     .overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(13,13,15,.93); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1rem; }
     .overlay.show { display: flex; }
-    .overlay-box { background: var(--card); border-radius: 20px; padding: 2rem; text-align: center; max-width: 440px; width: 100%; border: 1px solid var(--border); }
-    #edit-overlay .overlay-box { max-width: 580px; text-align: left; max-height: 90vh; overflow-y: auto; }
-
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .overlay-box { background: var(--card); border-radius: 20px; padding: 2rem; max-width: 580px; width: 100%; border: 1px solid var(--border); max-height:90vh; overflow-y:auto; }
   </style>
 </head>
 <body>
 
-<!-- ── 헤더 ── -->
 <header>
   <a href="Index.html" class="logo">
     <div class="logo-icon">M</div>
@@ -170,7 +100,6 @@
   </div>
 </header>
 
-<!-- ── 상태바 ── -->
 <div class="status-bar" style="padding-top:.85rem;">
   <span class="status-pill warn" id="drive-pill" onclick="gdSignIn()">
     <span class="status-dot"></span><span id="drive-pill-text">Drive 로그인 필요</span>
@@ -180,44 +109,18 @@
   </span>
 </div>
 
-<!-- ── 메인 레이아웃 ── -->
 <div class="main-wrap">
-
-  <!-- ════════════ 왼쪽: 파일 소스 + 게시 폼 ════════════ -->
   <div>
     <div class="source-toggle">
-      <button class="src-btn active" id="src-drive-btn" onclick="switchSource('drive')">☁️ Google Drive</button>
-      <button class="src-btn" id="src-local-btn" onclick="switchSource('local')">📄 PC 파일 업로드</button>
-      <button class="src-btn" id="src-write-btn" onclick="switchSource('write')">✏️ 직접 작성</button>
+      <button class="src-btn active" id="src-write-btn" onclick="switchSource('write')">✏️ 직접 작성</button>
+      <button class="src-btn" id="src-local-btn" onclick="switchSource('local')">📄 PC HTML 업로드</button>
     </div>
 
-    <!-- ── Drive 소스 패널 ── -->
-    <div id="src-drive-panel" class="panel">
-      <div class="gd-auth-row">
-        <div id="gd-auth-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;"></div>
-        <span id="gd-auth-text" style="font-size:.8rem;color:var(--muted);flex:1;">연결 안 됨</span>
-        <button class="btn-google" id="gd-signin-btn" onclick="gdSignIn()" style="font-size:.78rem;padding:.45rem .85rem;">Google 로그인</button>
-        <button class="btn-google-small" id="gd-signout-btn" onclick="gdSignOut()" style="display:none;">로그아웃</button>
-        <button class="btn-google-small" id="gd-refresh-btn" onclick="loadGDFiles()" style="display:none;">🔄</button>
-      </div>
-      <div id="gd-files-list"><div class="empty-state">Google 계정에 로그인하면<br/>파일 목록이 표시됩니다.</div></div>
-    </div>
-
-    <!-- ── Local 소스 패널 ── -->
-    <div id="src-local-panel" class="panel" style="display:none;">
-      <p class="section-title">PC에서 HTML 파일 업로드</p>
-      <div class="drop-zone" id="u-drop-zone" onclick="document.getElementById('u-file-input').click()">
-        <div style="font-size:2rem;margin-bottom:.5rem;" id="u-drop-icon">📄</div>
-        <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.3rem;" id="u-drop-title">클릭해서 파일 선택</div>
-      </div>
-      <input type="file" id="u-file-input" accept=".html,.htm" style="display:none;" onchange="handleLocalFile(this.files[0])" />
-    </div>
-
-    <!-- ── 직접 작성 패널 ── -->
-    <div id="src-write-panel" class="panel" style="display:none;">
+    <!-- 직접 작성 패널 -->
+    <div id="src-write-panel" class="panel">
       <div class="form-group"><label>제목 *</label><input type="text" id="w-title" oninput="checkWriteReady()" /></div>
       <div class="form-group"><label>날짜 *</label><input type="date" id="w-date" oninput="checkWriteReady()" /></div>
-      <div class="form-group"><label>설명</label><input type="text" id="w-desc" /></div>
+      <div class="form-group"><label>설명 요약</label><input type="text" id="w-desc" /></div>
       <div class="form-group">
         <label>태그</label>
         <div class="tags-container" onclick="document.getElementById('w-tag-input').focus()">
@@ -226,74 +129,51 @@
         </div>
       </div>
       <div class="form-group">
-        <label>첨부파일 및 링크</label>
+        <label>외부 첨부파일 / 관련 링크 추가</label>
         <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
-          <input type="text" id="w-attach-title" placeholder="제목 (예: 문서)" style="width:30%;" />
+          <input type="text" id="w-attach-title" placeholder="버튼 이름 (예: 리포트 다운)" style="width:30%;" />
           <input type="text" id="w-attach-url" placeholder="https://..." style="flex:1;" />
-          <button class="btn-secondary" style="width:auto;margin:0;padding:.5rem 1rem;" onclick="addAttachment('w')">추가</button>
+          <button class="btn-secondary" onclick="addAttachment('w')">추가</button>
         </div>
-        <div id="w-attachments-list" style="display:flex;flex-direction:column;gap:.3rem;"></div>
+        <div id="w-attachments-list"></div>
       </div>
 
       <p class="section-title">본문 작성</p>
       <div class="editor-toolbar">
-        <button class="tb-btn" onclick="document.execCommand('bold', false, null)"><b>B</b></button>
-        <button class="tb-btn" onclick="document.execCommand('formatBlock', false, 'h2')">H2</button>
-        <button class="tb-btn" onclick="document.execCommand('formatBlock', false, 'p')">¶</button>
+        <button class="tb-btn" onclick="execCmd('bold')"><b>B</b></button>
+        <button class="tb-btn" onclick="execCmd('formatBlock', 'h2')">H2</button>
+        <button class="tb-btn" onclick="execCmd('formatBlock', 'p')">¶</button>
+        <div style="width:1px;height:18px;background:var(--border);margin:0 .3rem;"></div>
+        <button class="tb-btn" style="color:var(--accent-light);" onclick="insertYoutube('w')">▶️ 본문에 유튜브 삽입</button>
       </div>
-      <!-- 에디터에 keyup 이벤트 추가 (자동 링크 감지) -->
-      <div id="write-editor" class="write-editor-area" contenteditable="true" onkeyup="checkAutoLink(event)" oninput="document.getElementById('write-char-count').textContent = this.innerText.length + '자';"></div>
-      <div class="write-char-count" id="write-char-count">0자</div>
+      <div id="write-editor" class="write-editor-area" contenteditable="true" onkeyup="checkAutoLink(event)"></div>
 
-      <div id="w-alert-error" class="alert alert-error"><span>⚠️</span><span id="w-alert-error-msg"></span></div>
-      <button class="btn-primary" id="write-publish-btn" onclick="publishWritePost()" style="margin-top:.75rem;" disabled>🚀 Drive에 게시하기</button>
+      <button class="btn-primary" id="write-publish-btn" onclick="publishWritePost()" style="margin-top:1.5rem;" disabled>🚀 Drive에 게시하기</button>
     </div>
 
-    <!-- ── 게시 폼 (파일 선택 시) ── -->
-    <div class="publish-form" id="publish-form" style="display:none;">
-      <div class="selected-file-info">
-        <span id="selected-file-name" style="flex:1;"></span>
-        <button onclick="clearSelection()" style="background:none;border:none;cursor:pointer;color:var(--muted);">✕</button>
+    <!-- 로컬 파일 패널 -->
+    <div id="src-local-panel" class="panel" style="display:none;">
+      <p class="section-title">PC에서 완성된 HTML 파일 업로드</p>
+      <div style="border: 2px dashed var(--border2); border-radius: 14px; padding: 2rem; text-align: center; cursor: pointer;" onclick="document.getElementById('u-file-input').click()">
+        클릭해서 HTML 파일 선택
       </div>
-      <div class="form-group"><label>날짜 *</label><input type="date" id="f-date" oninput="checkPublishReady()" /></div>
-      <div class="form-group"><label>제목 *</label><input type="text" id="f-title" oninput="checkPublishReady()" /></div>
-      <div class="form-group"><label>설명</label><textarea id="f-desc"></textarea></div>
-      <div class="form-group">
-        <label>태그</label>
-        <div class="tags-container" onclick="document.getElementById('f-tag-input').focus()">
-          <div id="f-tags-list" style="display:contents;"></div>
-          <input type="text" id="f-tag-input" class="tag-input-inner" placeholder="입력 후 Enter" onkeydown="handleTagInput(event, 'f')" />
-        </div>
+      <input type="file" id="u-file-input" accept=".html,.htm" style="display:none;" onchange="handleLocalFile(this.files[0])" />
+      <div id="publish-form" style="display:none; margin-top:1rem;">
+        <div style="color:var(--accent-light); margin-bottom:1rem;" id="selected-file-name"></div>
+        <button class="btn-primary" id="f-publish-btn" onclick="publishLocalPost()">업로드 및 게시</button>
       </div>
-      <div class="form-group">
-        <label>첨부파일 및 링크</label>
-        <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
-          <input type="text" id="f-attach-title" placeholder="제목 (예: 참고자료)" style="width:30%;" />
-          <input type="text" id="f-attach-url" placeholder="https://..." style="flex:1;" />
-          <button class="btn-secondary" style="width:auto;margin:0;padding:.5rem 1rem;" onclick="addAttachment('f')">추가</button>
-        </div>
-        <div id="f-attachments-list" style="display:flex;flex-direction:column;gap:.3rem;"></div>
-      </div>
-
-      <div id="f-alert-error" class="alert alert-error"><span>⚠️</span><span id="f-alert-error-msg"></span></div>
-      <button class="btn-primary" id="f-publish-btn" onclick="publishPost()" disabled>🚀 Drive에 게시하기</button>
     </div>
   </div>
 
-  <!-- ════════════ 오른쪽: 게시된 글 관리 ════════════ -->
   <div>
     <div class="panel">
-      <div class="section-title" style="display:flex;justify-content:space-between;">
-        <span>게시된 글 관리 (Drive 연동)</span>
-      </div>
+      <div class="section-title">게시된 글 관리 (Drive)</div>
       <div id="m-posts-list"><div class="empty-state">로딩 대기중...</div></div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     편집 모달
-══════════════════════════════════════ -->
+<!-- 수정 모달 -->
 <div class="overlay" id="edit-overlay">
   <div class="overlay-box">
     <div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
@@ -315,102 +195,77 @@
       <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
         <input type="text" id="e-attach-title" placeholder="제목" style="width:30%;" />
         <input type="text" id="e-attach-url" placeholder="https://..." style="flex:1;" />
-        <button class="btn-secondary" style="width:auto;margin:0;padding:.5rem 1rem;" onclick="addAttachment('e')">추가</button>
+        <button class="btn-secondary" onclick="addAttachment('e')">추가</button>
       </div>
-      <div id="e-attachments-list" style="display:flex;flex-direction:column;gap:.3rem;"></div>
+      <div id="e-attachments-list"></div>
     </div>
     
-    <label>본문 편집 (HTML)</label>
-    <textarea id="e-html" style="font-family:monospace;min-height:200px;"></textarea>
+    <label style="margin-top:1.5rem;">본문 편집</label>
+    <div class="editor-toolbar">
+      <button class="tb-btn" onclick="execCmdEdit('bold')"><b>B</b></button>
+      <button class="tb-btn" onclick="execCmdEdit('formatBlock', 'h2')">H2</button>
+      <button class="tb-btn" onclick="execCmdEdit('formatBlock', 'p')">¶</button>
+      <div style="width:1px;height:18px;background:var(--border);margin:0 .3rem;"></div>
+      <button class="tb-btn" style="color:var(--accent-light);" onclick="insertYoutube('e')">▶️ 본문에 유튜브 삽입</button>
+    </div>
+    <div id="e-editor" class="write-editor-area" contenteditable="true" onkeyup="checkAutoLink(event)"></div>
     
-    <button class="btn-primary" onclick="saveEdit()" style="margin-top:1rem;">저장하기</button>
+    <button class="btn-primary" onclick="saveEdit()" style="margin-top:1.5rem;">변경사항 저장</button>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  설정 및 상태 변수
-// ═══════════════════════════════════════════════
+// API 및 상태
 const GD_CLIENT_ID = '1094703739324-gp9ln7ghnh61lak10or45koh01tu121r.apps.googleusercontent.com';
 const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
 const GD_SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
 
 let gdAccessToken = sessionStorage.getItem('gd_admin_token') || null;
 let gdTokenClient = null;
-
 let currentPosts = [];
-let gdFiles = [];
-let gdSelectedFile = null;
-let selectedLocalFile = null;
-let currentSource = 'drive'; 
-
-let tagsData = { f: [], w: [], e: [] };
-let attachmentsData = { f: [], w: [], e: [] };
+let tagsData = { w: [], e: [] };
+let attachmentsData = { w: [], e: [] };
 let editingPostIndex = -1;
+let selectedLocalFile = null;
 
-// ═══════════════════════════════════════════════
-//  초기화 & Google Drive 인증
-// ═══════════════════════════════════════════════
+// 시작
 window.onload = () => {
   document.getElementById('w-date').value = new Date().toISOString().split('T')[0];
   if (gdAccessToken) {
     updateGDAuthUI(true);
-    loadDriveData();
+    loadPostsJsonFromDrive();
   }
 };
 
+// 로그인
 function gdSignIn() {
-  if (!window.google) { alert('Google API 로딩중입니다.'); return; }
+  if (!window.google) return alert('Google API 로딩중입니다.');
   gdTokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: GD_CLIENT_ID,
-    scope: GD_SCOPE,
-    callback: (response) => {
-      if (response.error) return alert('로그인 실패');
-      gdAccessToken = response.access_token;
+    client_id: GD_CLIENT_ID, scope: GD_SCOPE,
+    callback: (res) => {
+      if (res.error) return alert('로그인 실패');
+      gdAccessToken = res.access_token;
       sessionStorage.setItem('gd_admin_token', gdAccessToken);
       updateGDAuthUI(true);
-      loadDriveData();
+      loadPostsJsonFromDrive();
     },
   });
   gdTokenClient.requestAccessToken({ prompt: '' });
 }
 
-function gdSignOut() {
-  gdAccessToken = null;
-  sessionStorage.removeItem('gd_admin_token');
-  updateGDAuthUI(false);
-  document.getElementById('m-posts-list').innerHTML = '<div class="empty-state">로그인이 필요합니다.</div>';
-}
-
 function updateGDAuthUI(isSignedIn) {
-  document.getElementById('gd-auth-dot').style.background = isSignedIn ? 'var(--success)' : 'var(--border2)';
-  document.getElementById('gd-auth-text').textContent = isSignedIn ? 'Drive 연결됨' : '연결 안 됨';
-  document.getElementById('gd-signin-btn').style.display = isSignedIn ? 'none' : 'inline-flex';
-  document.getElementById('gd-signout-btn').style.display = isSignedIn ? 'inline-block' : 'none';
-  document.getElementById('gd-refresh-btn').style.display = isSignedIn ? 'inline-block' : 'none';
-  
-  const pill = document.getElementById('drive-pill');
-  pill.className = isSignedIn ? 'status-pill ok' : 'status-pill warn';
-  document.getElementById('drive-pill-text').textContent = isSignedIn ? 'Drive 연결됨' : 'Drive 로그인 필요';
+  document.getElementById('drive-pill').className = isSignedIn ? 'status-pill ok' : 'status-pill warn';
+  document.getElementById('drive-pill-text').textContent = isSignedIn ? 'Drive 연동 완료' : 'Drive 로그인 필요';
 }
 
-async function loadDriveData() {
-  await loadGDFiles();
-  await loadPostsJsonFromDrive();
-}
-
-// ═══════════════════════════════════════════════
-//  Drive API 헬퍼 함수
-// ═══════════════════════════════════════════════
+// Drive API
 async function gdApiCall(url, options = {}) {
   options.headers = { ...options.headers, Authorization: `Bearer ${gdAccessToken}` };
   const res = await fetch(url, options);
-  if (res.status === 401) { gdSignOut(); throw new Error('인증 만료'); }
   if (!res.ok) throw new Error(`API Error: ${res.status}`);
   return res;
 }
 
-// 파일명으로 ID 찾기 (posts.json 등 검색용)
 async function getDriveFileId(filename) {
   const q = encodeURIComponent(`name='${filename}' and '${GD_FOLDER_ID}' in parents and trashed=false`);
   const res = await gdApiCall(`https://www.googleapis.com/drive/v3/files?q=${q}`);
@@ -418,404 +273,221 @@ async function getDriveFileId(filename) {
   return data.files && data.files.length > 0 ? data.files[0].id : null;
 }
 
-// Multipart 업로드 (생성 또는 덮어쓰기)
 async function uploadToDrive(filename, content, mimeType) {
   const fileId = await getDriveFileId(filename);
   const boundary = '-------314159265358979323846';
   const delimiter = "\r\n--" + boundary + "\r\n";
   const close_delim = "\r\n--" + boundary + "--";
-
   const metadata = { name: filename, mimeType };
   if (!fileId) metadata.parents = [GD_FOLDER_ID];
-
-  const multipartBody =
-    delimiter +
-    'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-    JSON.stringify(metadata) +
-    delimiter +
-    'Content-Type: ' + mimeType + '\r\n\r\n' +
-    content +
-    close_delim;
-
-  const url = fileId
-    ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
-    : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-  
-  await gdApiCall(url, {
-    method: fileId ? 'PATCH' : 'POST',
-    headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
-    body: multipartBody
-  });
+  const multipartBody = delimiter + 'Content-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) + delimiter + 'Content-Type: ' + mimeType + '\r\n\r\n' + content + close_delim;
+  const url = fileId ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart` : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+  await gdApiCall(url, { method: fileId ? 'PATCH' : 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipartBody });
 }
 
-// ═══════════════════════════════════════════════
-//  Posts DB 관리 (Drive 연동)
-// ═══════════════════════════════════════════════
+// 데이터 마이그레이션 및 로드
 async function loadPostsJsonFromDrive() {
-  document.getElementById('posts-count-text').textContent = '데이터 불러오는 중...';
+  document.getElementById('posts-count-text').textContent = '데이터 로딩 중...';
   try {
     const fileId = await getDriveFileId('posts.json');
     if (fileId) {
       const res = await gdApiCall(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
       currentPosts = await res.json();
-      
-      // 기존 link 데이터를 attachments 구조로 자동 마이그레이션 적용 (메모리 상에서만)
-      currentPosts = currentPosts.map(p => {
-        if (p.link && (!p.attachments || p.attachments.length === 0)) {
-          p.attachments = [{ title: '관련 링크', url: p.link }];
-          delete p.link;
-        }
-        return p;
-      });
     } else {
-      currentPosts = [];
+      // Drive에 posts.json이 없다면 Vercel(GitHub)에 있는 기존 데이터를 가져와서 Drive에 저장 (마이그레이션)
+      const res = await fetch('posts.json');
+      if(res.ok) currentPosts = await res.json();
+      else currentPosts = [];
     }
+    
+    // 데이터 구조 자동 정리
+    currentPosts = currentPosts.map(p => {
+      if (p.link && (!p.attachments || p.attachments.length === 0)) {
+        p.attachments = [{ title: '관련 링크', url: p.link }];
+        delete p.link;
+      }
+      if(!p.attachments) p.attachments = [];
+      return p;
+    });
+
+    if(!fileId && currentPosts.length > 0) {
+      await uploadToDrive('posts.json', JSON.stringify(currentPosts, null, 2), 'application/json');
+    }
+
     renderManageList();
-    document.getElementById('posts-count-text').textContent = `총 ${currentPosts.length}개 작성됨`;
+    document.getElementById('posts-count-text').textContent = `총 ${currentPosts.length}개`;
   } catch(e) {
-    console.error(e);
-    document.getElementById('posts-count-text').textContent = '데이터 로드 실패';
+    document.getElementById('posts-count-text').textContent = '로드 실패: ' + e.message;
   }
 }
 
 async function savePostsToDrive() {
   await uploadToDrive('posts.json', JSON.stringify(currentPosts, null, 2), 'application/json');
-  document.getElementById('posts-count-text').textContent = `총 ${currentPosts.length}개 작성됨`;
+  renderManageList();
 }
 
-// ═══════════════════════════════════════════════
-//  소스 파일 목록 로드
-// ═══════════════════════════════════════════════
-async function loadGDFiles() {
-  const el = document.getElementById('gd-files-list');
-  el.innerHTML = '<div class="empty-state">파일 목록 불러오는 중...</div>';
-  try {
-    const q = encodeURIComponent(`'${GD_FOLDER_ID}' in parents and trashed=false`);
-    const res = await gdApiCall(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType,modifiedTime)&orderBy=modifiedTime+desc`);
-    const data = await res.json();
-    gdFiles = data.files.filter(f => f.mimeType === 'text/html' || f.name.endsWith('.html') || f.mimeType === 'application/vnd.google-apps.document');
-    renderGDFiles();
-  } catch(e) { el.innerHTML = `<div class="empty-state">오류: ${e.message}</div>`; }
-}
-
-function renderGDFiles() {
-  const el = document.getElementById('gd-files-list');
-  if (!gdFiles.length) { el.innerHTML = '<div class="empty-state">폴더에 파일이 없습니다.</div>'; return; }
-  el.innerHTML = gdFiles.map((f, i) => {
-    const isDoc = f.mimeType === 'application/vnd.google-apps.document';
-    const isSelected = gdSelectedFile && gdSelectedFile.id === f.id;
-    return `
-    <div class="gd-file-item${isSelected ? ' gd-selected' : ''}" onclick="selectGDFile(${i})">
-      <span class="gd-file-icon">${isDoc ? '📝' : '🌐'}</span>
-      <div class="gd-file-info">
-        <div class="gd-file-name">${f.name}</div>
-        <div class="gd-file-meta">${isDoc ? 'Google Docs' : 'HTML'} · ${new Date(f.modifiedTime).toLocaleDateString()}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function selectGDFile(idx) {
-  gdSelectedFile = gdFiles[idx];
-  selectedLocalFile = null;
-  renderGDFiles();
-  document.getElementById('selected-file-name').textContent = gdSelectedFile.name;
-  
-  // 기본값 채우기
-  const nameNoExt = gdSelectedFile.name.replace(/\.html?$/i, '');
-  const m = nameNoExt.match(/^(\d{4}-\d{2}-\d{2})/);
-  document.getElementById('f-date').value = m ? m[1] : new Date().toISOString().split('T')[0];
-  document.getElementById('f-title').value = nameNoExt.replace(/^\d{4}-\d{2}-\d{2}[-_\s]*/,'').trim();
-  
-  tagsData.f = []; renderTags('f');
-  attachmentsData.f = []; renderAttachments('f');
-  
-  document.getElementById('publish-form').style.display = 'block';
-  checkPublishReady();
-}
-
-function handleLocalFile(file) {
-  if (!file) return;
-  selectedLocalFile = file;
-  gdSelectedFile = null;
-  document.getElementById('u-drop-zone').classList.add('has-file');
-  document.getElementById('u-drop-title').textContent = file.name;
-  document.getElementById('selected-file-name').textContent = file.name;
-  
-  document.getElementById('publish-form').style.display = 'block';
-  checkPublishReady();
-}
-
+// 탭 전환
 function switchSource(src) {
-  currentSource = src;
-  ['drive','local','write'].forEach(s => {
-    document.getElementById(`src-${s}-btn`).classList.toggle('active', src === s);
-    document.getElementById(`src-${s}-panel`).style.display = src === s ? 'block' : 'none';
-  });
-  clearSelection();
+  document.getElementById('src-write-btn').classList.toggle('active', src==='write');
+  document.getElementById('src-local-btn').classList.toggle('active', src==='local');
+  document.getElementById('src-write-panel').style.display = src==='write'?'block':'none';
+  document.getElementById('src-local-panel').style.display = src==='local'?'block':'none';
 }
 
-function clearSelection() {
-  gdSelectedFile = null; selectedLocalFile = null;
-  document.getElementById('publish-form').style.display = 'none';
-  document.getElementById('u-drop-zone').classList.remove('has-file');
-  document.getElementById('u-drop-title').textContent = '클릭해서 파일 선택';
-  renderGDFiles();
-}
-
-// ═══════════════════════════════════════════════
-//  태그 및 첨부파일 UI 컨트롤
-// ═══════════════════════════════════════════════
-function handleTagInput(e, prefix) {
+// 태그 / 첨부파일
+function handleTagInput(e, p) {
   if (e.key === 'Enter' || e.key === ',') {
-    e.preventDefault();
-    const val = e.target.value.trim().replace(',', '');
-    if (val && !tagsData[prefix].includes(val)) {
-      tagsData[prefix].push(val);
-      renderTags(prefix);
-    }
+    e.preventDefault(); const v = e.target.value.trim().replace(',', '');
+    if (v && !tagsData[p].includes(v)) { tagsData[p].push(v); renderTags(p); }
     e.target.value = '';
   }
 }
-function removeTag(prefix, idx) { tagsData[prefix].splice(idx,1); renderTags(prefix); }
-function renderTags(prefix) {
-  document.getElementById(`${prefix}-tags-list`).innerHTML = tagsData[prefix].map((t,i) => 
-    `<span class="tag-chip">${t}<button type="button" onclick="removeTag('${prefix}',${i})">×</button></span>`
-  ).join('');
-}
+function removeTag(p, i) { tagsData[p].splice(i,1); renderTags(p); }
+function renderTags(p) { document.getElementById(`${p}-tags-list`).innerHTML = tagsData[p].map((t,i) => `<span class="tag-chip">${t}<button type="button" onclick="removeTag('${p}',${i})">×</button></span>`).join(''); }
 
-function addAttachment(prefix) {
-  const tEl = document.getElementById(`${prefix}-attach-title`);
-  const uEl = document.getElementById(`${prefix}-attach-url`);
-  const title = tEl.value.trim() || '링크';
-  const url = uEl.value.trim();
-  if (!url) return;
-  attachmentsData[prefix].push({ title, url });
-  tEl.value = ''; uEl.value = '';
-  renderAttachments(prefix);
+function addAttachment(p) {
+  const tEl = document.getElementById(`${p}-attach-title`), uEl = document.getElementById(`${p}-attach-url`);
+  const t = tEl.value.trim() || '링크', u = uEl.value.trim();
+  if(!u) return; attachmentsData[p].push({title:t, url:u});
+  tEl.value=''; uEl.value=''; renderAttachments(p);
 }
-function removeAttachment(prefix, idx) { attachmentsData[prefix].splice(idx,1); renderAttachments(prefix); }
-function renderAttachments(prefix) {
-  document.getElementById(`${prefix}-attachments-list`).innerHTML = attachmentsData[prefix].map((a,i) => `
-    <div class="attach-item">
-      <div class="attach-item-info"><span>🔗</span><span class="attach-item-title">${a.title}</span><span class="attach-item-url">${a.url}</span></div>
-      <button class="btn-delete" style="padding:.1rem .4rem;" onclick="removeAttachment('${prefix}',${i})">삭제</button>
-    </div>
+function removeAttachment(p, i) { attachmentsData[p].splice(i,1); renderAttachments(p); }
+function renderAttachments(p) {
+  document.getElementById(`${p}-attachments-list`).innerHTML = attachmentsData[p].map((a,i) => `
+    <div class="attach-item"><div class="attach-item-info"><span>🔗</span><span class="attach-item-title">${a.title}</span><span class="attach-item-url">${a.url}</span></div>
+    <button class="btn-action" onclick="removeAttachment('${p}',${i})">삭제</button></div>
   `).join('');
 }
 
-// ═══════════════════════════════════════════════
-//  에디터 자동 링크 변환 기능
-// ═══════════════════════════════════════════════
+// 에디터 도구
+function execCmd(cmd, val) { document.getElementById('write-editor').focus(); document.execCommand(cmd, false, val); }
+function execCmdEdit(cmd, val) { document.getElementById('e-editor').focus(); document.execCommand(cmd, false, val); }
+
+function insertYoutube(target) {
+  const url = prompt("유튜브 URL을 붙여넣어주세요:\n(예: https://www.youtube.com/watch?v=...)");
+  if(!url) return;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if(m) {
+    const html = `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:1.25rem 0;background:#000;"><iframe src="https://www.youtube.com/embed/${m[1]}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px;" allowfullscreen></iframe></div><br>`;
+    const ed = document.getElementById(target === 'w' ? 'write-editor' : 'e-editor');
+    ed.focus(); document.execCommand('insertHTML', false, html);
+  } else alert("올바른 유튜브 링크가 아닙니다.");
+}
+
 function checkAutoLink(e) {
   if (e.key === ' ' || e.key === 'Enter') {
-    const sel = window.getSelection();
-    if (!sel.isCollapsed) return;
-    const range = sel.getRangeAt(0);
-    const textNode = range.startContainer;
+    const sel = window.getSelection(); if (!sel.isCollapsed) return;
+    const range = sel.getRangeAt(0); const textNode = range.startContainer;
     if (textNode.nodeType !== Node.TEXT_NODE) return;
-
-    const text = textNode.textContent;
-    const offset = range.startOffset;
-    const beforeCursor = text.slice(0, offset);
-    // URL 매칭 정규식
-    const urlMatch = beforeCursor.match(/(https?:\/\/[^\s]+)$/);
-
-    if (urlMatch) {
-      const url = urlMatch[0];
-      // URL 텍스트 선택
-      range.setStart(textNode, offset - url.length);
-      range.setEnd(textNode, offset);
-      sel.removeAllRanges();
-      sel.addRange(range);
-      
-      // 링크 생성
-      document.execCommand('createLink', false, url);
-      
-      // 커서를 링크 뒤로 이동
+    const text = textNode.textContent, offset = range.startOffset;
+    const match = text.slice(0, offset).match(/(https?:\/\/[^\s]+)$/);
+    if (match) {
+      range.setStart(textNode, offset - match[0].length); range.setEnd(textNode, offset);
+      sel.removeAllRanges(); sel.addRange(range);
+      document.execCommand('createLink', false, match[0]);
       sel.collapseToEnd();
     }
   }
 }
 
-// ═══════════════════════════════════════════════
-//  게시 및 저장 처리 (Drive 연동)
-// ═══════════════════════════════════════════════
-function checkPublishReady() {
-  const ok = document.getElementById('f-title').value.trim() && document.getElementById('f-date').value;
-  document.getElementById('f-publish-btn').disabled = !ok;
-}
+// 작성/등록
 function checkWriteReady() {
-  const ok = document.getElementById('w-title').value.trim() && document.getElementById('w-date').value;
-  document.getElementById('write-publish-btn').disabled = !ok;
+  document.getElementById('write-publish-btn').disabled = !(document.getElementById('w-title').value.trim() && document.getElementById('w-date').value);
 }
 
-// 파일 선택 게시
-async function publishPost() {
-  const title = document.getElementById('f-title').value.trim();
-  const date = document.getElementById('f-date').value;
-  const desc = document.getElementById('f-desc').value.trim();
-  
-  const btn = document.getElementById('f-publish-btn');
-  btn.disabled = true; btn.textContent = '업로드 중...';
-
-  try {
-    let content;
-    if (gdSelectedFile) {
-      const isDoc = gdSelectedFile.mimeType === 'application/vnd.google-apps.document';
-      const url = isDoc ? `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}/export?mimeType=text%2Fhtml`
-                        : `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}?alt=media`;
-      const res = await gdApiCall(url);
-      content = await res.text();
-    } else if (selectedLocalFile) {
-      content = await selectedLocalFile.text();
-    }
-    
-    const filename = `${date}-${title.replace(/\s+/g,'-')}.html`;
-    await uploadToDrive(filename, content, 'text/html');
-
-    const entry = {
-      date, title, description: desc, file: filename,
-      tags: [...tagsData.f],
-      attachments: [...attachmentsData.f],
-      visible: true
-    };
-    currentPosts.unshift(entry);
-    await savePostsToDrive();
-
-    alert('업로드 완료!');
-    clearSelection();
-  } catch(e) {
-    document.getElementById('f-alert-error').classList.add('show');
-    document.getElementById('f-alert-error-msg').textContent = e.message;
-  }
-  btn.disabled = false; btn.textContent = '🚀 Drive에 게시하기';
+function buildHtmlFile(title, date, bodyContent) {
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title}</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" /><style>body{background:#121212;color:#e5e7eb;font-family:'Pretendard',sans-serif;line-height:1.8;padding:2rem 1rem 4rem}.post-wrap{max-width:760px;margin:0 auto}.post-header{margin-bottom:2.5rem;border-bottom:1px solid #252529;padding-bottom:1.5rem}.post-title{font-size:1.85rem;font-weight:800;color:#f3f4f6;margin-bottom:0.75rem}.post-date{font-size:0.8rem;color:#6b7280;margin-bottom:0.6rem}.post-body{font-size:0.95rem}</style></head><body><div class="post-wrap"><div class="post-header"><div class="post-date">${date}</div><h1 class="post-title">${title}</h1></div><div class="post-body">${bodyContent}</div></div></body></html>`;
 }
 
-// 직접 작성 게시
 async function publishWritePost() {
-  const title = document.getElementById('w-title').value.trim();
-  const date = document.getElementById('w-date').value;
-  const desc = document.getElementById('w-desc').value.trim();
-  const bodyContent = document.getElementById('write-editor').innerHTML;
-  
-  const btn = document.getElementById('write-publish-btn');
-  btn.disabled = true; btn.textContent = '업로드 중...';
-
+  const btn = document.getElementById('write-publish-btn'); btn.disabled=true; btn.textContent='업로드 중...';
   try {
-    const htmlContent = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>${title}</title><style>body{background:#121212;color:#e5e7eb;font-family:sans-serif;padding:2rem;}img{max-width:100%;}</style></head><body><h1>${title}</h1><div>${bodyContent}</div></body></html>`;
-    const filename = `${date}-${title.replace(/\s+/g,'-')}.html`;
+    const title = document.getElementById('w-title').value.trim(), date = document.getElementById('w-date').value;
+    const htmlContent = buildHtmlFile(title, date, document.getElementById('write-editor').innerHTML);
+    const filename = `posts/${date}-${title.replace(/\s+/g,'-')}.html`;
     
     await uploadToDrive(filename, htmlContent, 'text/html');
-
-    const entry = {
-      date, title, description: desc, file: filename,
-      tags: [...tagsData.w],
-      attachments: [...attachmentsData.w],
-      visible: true
-    };
-    currentPosts.unshift(entry);
+    currentPosts.unshift({ date, title, description: document.getElementById('w-desc').value, file: filename, tags: [...tagsData.w], attachments: [...attachmentsData.w], visible: true });
     await savePostsToDrive();
 
-    alert('직접 작성 업로드 완료!');
-    // 폼 초기화
-    document.getElementById('w-title').value = '';
-    document.getElementById('w-desc').value = '';
-    document.getElementById('write-editor').innerHTML = '';
-    tagsData.w = []; renderTags('w');
-    attachmentsData.w = []; renderAttachments('w');
-  } catch(e) {
-    document.getElementById('w-alert-error').classList.add('show');
-    document.getElementById('w-alert-error-msg').textContent = e.message;
-  }
-  btn.disabled = false; btn.textContent = '🚀 Drive에 게시하기';
+    alert('게시 완료!');
+    document.getElementById('w-title').value=''; document.getElementById('w-desc').value=''; document.getElementById('write-editor').innerHTML='';
+    tagsData.w=[]; renderTags('w'); attachmentsData.w=[]; renderAttachments('w');
+  } catch(e) { alert('오류: ' + e.message); }
+  btn.disabled=false; btn.textContent='🚀 Drive에 게시하기';
 }
 
-// ═══════════════════════════════════════════════
-//  글 목록 관리 (수정, 표시/숨기기, 삭제)
-// ═══════════════════════════════════════════════
+function handleLocalFile(file) {
+  if(!file) return; selectedLocalFile = file;
+  document.getElementById('selected-file-name').textContent = file.name;
+  document.getElementById('publish-form').style.display = 'block';
+}
+
+async function publishLocalPost() {
+  if(!selectedLocalFile) return;
+  try {
+    const content = await selectedLocalFile.text();
+    const filename = `posts/${selectedLocalFile.name}`;
+    await uploadToDrive(filename, content, 'text/html');
+    
+    const dateMatch = filename.match(/^posts\/(\d{4}-\d{2}-\d{2})/);
+    const date = dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0];
+    const title = selectedLocalFile.name.replace(/\.html?$/i, '').replace(/^\d{4}-\d{2}-\d{2}-/,'');
+    
+    currentPosts.unshift({ date, title, description: '', file: filename, tags: [], attachments: [], visible: true });
+    await savePostsToDrive();
+    alert('업로드 완료!');
+    document.getElementById('publish-form').style.display = 'none';
+  } catch(e) { alert('오류: '+e.message); }
+}
+
+// 리스트 관리 및 수정
 function renderManageList() {
   const el = document.getElementById('m-posts-list');
-  if (!currentPosts.length) { el.innerHTML = '<div class="empty-state">등록된 글이 없습니다.</div>'; return; }
+  if(!currentPosts.length) return el.innerHTML = '<div class="empty-state">게시글이 없습니다.</div>';
   el.innerHTML = currentPosts.map((p, idx) => {
     const isHidden = p.visible === false;
-    return `
-    <div class="post-item${isHidden ? ' post-hidden' : ''}">
-      <div class="post-item-top">
-        <div class="post-info">
-          <div class="post-title-sm">${p.title}</div>
-          <div class="post-meta-sm"><span class="post-date-sm">${p.date}</span></div>
-        </div>
-        <div class="post-actions">
-          <button class="btn-toggle ${isHidden ? 'btn-toggle-show' : 'btn-toggle-hide'}" onclick="toggleVis(${idx})">${isHidden ? '👁 표시' : '🙈 숨김'}</button>
-          <button class="btn-edit" onclick="openEdit(${idx})">✏️ 수정</button>
-          <button class="btn-delete" onclick="deletePost(${idx})">🗑️ 삭제</button>
-        </div>
-      </div>
-    </div>`;
+    return `<div class="post-item${isHidden ? ' post-hidden' : ''}"><div class="post-item-top"><div class="post-info"><div class="post-title-sm">${p.title}</div><div style="font-size:0.7rem;color:var(--muted);">${p.date}</div></div><div class="post-actions">
+      <button class="btn-action" onclick="toggleVis(${idx})">${isHidden ? '👁 표시' : '🙈 숨김'}</button>
+      <button class="btn-action" onclick="openEdit(${idx})" style="color:var(--accent-light);">✏️ 수정</button>
+      <button class="btn-action" onclick="deletePost(${idx})" style="color:var(--error);">🗑️ 삭제</button>
+    </div></div></div>`;
   }).join('');
 }
 
-async function toggleVis(idx) {
-  currentPosts[idx].visible = currentPosts[idx].visible === false ? true : false;
-  renderManageList();
-  await savePostsToDrive();
-}
-
-async function deletePost(idx) {
-  if(!confirm('목록에서 삭제하시겠습니까? (Drive 파일은 유지됩니다)')) return;
-  currentPosts.splice(idx, 1);
-  renderManageList();
-  await savePostsToDrive();
-}
+async function toggleVis(idx) { currentPosts[idx].visible = currentPosts[idx].visible === false ? true : false; await savePostsToDrive(); }
+async function deletePost(idx) { if(!confirm('삭제하시겠습니까?')) return; currentPosts.splice(idx, 1); await savePostsToDrive(); }
 
 async function openEdit(idx) {
-  editingPostIndex = idx;
-  const p = currentPosts[idx];
-  document.getElementById('e-title').value = p.title || '';
-  document.getElementById('e-date').value = p.date || '';
-  document.getElementById('e-desc').value = p.description || '';
+  editingPostIndex = idx; const p = currentPosts[idx];
+  document.getElementById('e-title').value = p.title || ''; document.getElementById('e-date').value = p.date || ''; document.getElementById('e-desc').value = p.description || '';
+  tagsData.e = [...(p.tags || [])]; renderTags('e'); attachmentsData.e = [...(p.attachments || [])]; renderAttachments('e');
   
-  tagsData.e = [...(p.tags || [])]; renderTags('e');
-  attachmentsData.e = [...(p.attachments || [])]; renderAttachments('e');
-  
-  document.getElementById('e-html').value = '불러오는 중...';
+  const ed = document.getElementById('e-editor'); ed.innerHTML = '불러오는 중...';
   document.getElementById('edit-overlay').classList.add('show');
   
   try {
     const fileId = await getDriveFileId(p.file);
     if(fileId) {
       const res = await gdApiCall(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
-      document.getElementById('e-html').value = await res.text();
-    } else {
-      document.getElementById('e-html').value = '파일을 찾을 수 없습니다.';
-    }
-  } catch(e) { document.getElementById('e-html').value = '로드 실패: ' + e.message; }
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const body = doc.querySelector('.post-body');
+      ed.innerHTML = body ? body.innerHTML : doc.body.innerHTML;
+    } else ed.innerHTML = '<div style="color:var(--error);">HTML 파일을 Drive에서 찾을 수 없습니다. (내용을 새로 작성해주세요)</div>';
+  } catch(e) { ed.innerHTML = '로드 실패: ' + e.message; }
 }
 
 async function saveEdit() {
-  const title = document.getElementById('e-title').value;
   const p = currentPosts[editingPostIndex];
-  
   try {
-    // HTML 덮어쓰기
-    const htmlContent = document.getElementById('e-html').value;
-    if(htmlContent && !htmlContent.startsWith('불러')) {
-      await uploadToDrive(p.file, htmlContent, 'text/html');
-    }
+    const title = document.getElementById('e-title').value, date = document.getElementById('e-date').value;
+    const htmlContent = buildHtmlFile(title, date, document.getElementById('e-editor').innerHTML);
+    await uploadToDrive(p.file, htmlContent, 'text/html');
     
-    // 메타데이터 업데이트
-    currentPosts[editingPostIndex] = {
-      ...p, title,
-      date: document.getElementById('e-date').value,
-      description: document.getElementById('e-desc').value,
-      tags: [...tagsData.e],
-      attachments: [...attachmentsData.e]
-    };
+    currentPosts[editingPostIndex] = { ...p, title, date, description: document.getElementById('e-desc').value, tags: [...tagsData.e], attachments: [...attachmentsData.e] };
     await savePostsToDrive();
-    
-    closeOverlay('edit-overlay');
-    alert('수정 완료!');
+    closeOverlay('edit-overlay'); alert('수정 완료!');
   } catch(e) { alert('수정 실패: ' + e.message); }
 }
 
