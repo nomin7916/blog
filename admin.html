@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — My Insight Blog</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -193,6 +194,28 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ── Google Drive 탭 ── */
+    .gd-file-item {
+      padding: .8rem 1rem; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      margin-bottom: .4rem; cursor: pointer; transition: all .15s;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .gd-file-item:hover { border-color: rgba(99,102,241,.4); }
+    .gd-file-item.gd-selected { border-color: var(--accent); background: rgba(99,102,241,.08); }
+    .gd-file-item.gd-unsupported { opacity: .45; cursor: default; }
+    .gd-file-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .gd-file-info { flex: 1; min-width: 0; }
+    .gd-file-name { font-size: .83rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gd-file-meta { font-size: .7rem; color: var(--muted); margin-top: .2rem; }
+    .gd-auth-bar { display: flex; align-items: center; gap: .6rem; font-size: .8rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .65rem 1rem; margin-bottom: .75rem; }
+    .btn-google { width: 100%; padding: .7rem; background: #fff; color: #1f1f1f; border: 1px solid #dadce0; border-radius: 10px; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; gap: .5rem; margin-bottom: .6rem; }
+    .btn-google:hover { background: #f8f9fa; }
+    .btn-google-out { width: 100%; padding: .55rem; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 10px; font-size: .8rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; margin-bottom: .75rem; display: none; }
+    .btn-google-out:hover { color: var(--text); }
+    .gd-import-form { background: var(--surface); border: 1px solid rgba(99,102,241,.3); border-radius: 12px; padding: 1.25rem; margin-top: 1rem; display: none; }
+    .gd-selected-info { background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.25); border-radius: 8px; padding: .65rem .9rem; font-size: .8rem; color: var(--accent-light); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
   </style>
 </head>
 <body>
@@ -213,6 +236,7 @@
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('upload')">새 글 등록</button>
   <button class="tab-btn" onclick="switchTab('manage')">글 관리 · 수정 · 삭제</button>
+  <button class="tab-btn" onclick="switchTab('gdrive')">☁️ Google Drive</button>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -367,6 +391,119 @@
 </div>
 
 <!-- ══════════════════════════════════════
+     탭 3: Google Drive 가져오기
+══════════════════════════════════════ -->
+<div id="tab-gdrive" class="tab-pane">
+  <div class="layout">
+
+    <!-- 왼쪽: Drive 파일 브라우저 -->
+    <div>
+      <p class="section-title">Google Drive — MY-Insight Blog 폴더</p>
+      <div class="panel">
+
+        <!-- 폴더 연결 (로컬 저장용) -->
+        <div style="margin-bottom:1.25rem;">
+          <label>블로그 폴더 연결 <span style="color:var(--error)">*</span></label>
+          <div class="folder-status">
+            <span class="folder-dot" id="gd-folder-dot"></span>
+            <span class="folder-name" id="gd-folder-name">폴더가 선택되지 않았습니다</span>
+          </div>
+          <button class="btn-folder" onclick="selectFolder('gdrive')">📂 블로그 폴더 열기</button>
+        </div>
+
+        <!-- Google 인증 -->
+        <label>Google 계정 연결</label>
+        <div class="gd-auth-bar">
+          <span class="folder-dot" id="gd-auth-dot"></span>
+          <span id="gd-auth-status" style="flex:1;">연결 안 됨</span>
+          <span id="gd-user-email" style="font-size:.72rem;color:var(--muted);"></span>
+        </div>
+        <button class="btn-google" id="gd-signin-btn" onclick="gdSignIn()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.2 33.3 29.7 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l6-6C34.5 6.5 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-7.7 19.7-20 0-1.3-.1-2.7-.2-4z"/></svg>
+          Google 계정으로 로그인
+        </button>
+        <button class="btn-google-out" id="gd-signout-btn" onclick="gdSignOut()">로그아웃</button>
+
+        <!-- 새로고침 버튼 -->
+        <button id="gd-refresh-btn" onclick="loadGDFiles()" style="display:none;width:100%;padding:.55rem;background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:10px;font-size:.8rem;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:.75rem;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">🔄 목록 새로고침</button>
+
+        <!-- 파일 목록 -->
+        <div id="gd-files-list">
+          <div class="empty-state">Google 계정에 로그인하면 MY-Insight Blog 폴더의 파일 목록이 표시됩니다.</div>
+        </div>
+
+        <!-- 선택된 파일 등록 폼 -->
+        <div class="gd-import-form" id="gd-import-form">
+          <div class="gd-selected-info">
+            <span>📎</span>
+            <span id="gd-selected-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;"></span>
+          </div>
+
+          <div class="form-group">
+            <label>날짜 <span style="color:var(--error)">*</span></label>
+            <input type="date" id="gd-date" oninput="updateGDPreview();checkGDReady()" />
+          </div>
+          <div class="form-group">
+            <label>제목 <span style="color:var(--error)">*</span></label>
+            <input type="text" id="gd-title" placeholder="예: 삼성전자 2025 Q2 실적 분석" oninput="updateGDPreview();checkGDReady()" />
+          </div>
+          <div class="form-group">
+            <label>설명</label>
+            <textarea id="gd-desc" placeholder="글 목록에 표시될 한 줄 요약" oninput="updateGDPreview()"></textarea>
+          </div>
+          <div class="form-group">
+            <label>태그</label>
+            <div class="tags-container" id="gd-tags-container" onclick="document.getElementById('gd-tag-input').focus()">
+              <input type="text" id="gd-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
+            </div>
+            <p class="tag-hint">Enter 또는 쉼표로 추가</p>
+          </div>
+
+          <!-- 미리보기 -->
+          <div class="preview-card" id="gd-preview" style="display:none;margin-bottom:1rem;">
+            <div class="preview-label">카드 미리보기</div>
+            <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.35rem;">
+                <span id="gd-pv-date" style="font-size:.72rem;color:var(--muted);font-family:monospace;"></span>
+                <span id="gd-pv-tags" style="display:flex;gap:.3rem;flex-wrap:wrap;"></span>
+              </div>
+              <div id="gd-pv-title" style="font-size:.95rem;font-weight:700;color:#f3f4f6;margin-bottom:.4rem;"></div>
+              <div id="gd-pv-desc" style="font-size:.8rem;color:var(--muted);line-height:1.6;"></div>
+            </div>
+          </div>
+
+          <div id="gd-alert-error" class="alert alert-error"><span>⚠️</span><span id="gd-alert-error-msg"></span></div>
+
+          <button class="btn-primary" id="gd-import-btn" onclick="importFromDrive()" disabled>☁️ 블로그에 등록하기</button>
+          <button class="btn-secondary" onclick="resetGDForm()">선택 취소</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 안내 -->
+    <div>
+      <p class="section-title">사용 방법</p>
+      <div class="panel" style="font-size:.8rem;line-height:1.85;color:var(--muted);">
+        <div style="display:flex;flex-direction:column;gap:.7rem;">
+          <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">①</span><span><strong style="color:var(--text);">블로그 폴더 열기</strong> — 로컬 <code>blog/</code> 폴더 선택</span></div>
+          <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">②</span><span><strong style="color:var(--text);">Google 로그인</strong> — MY-Insight Blog 폴더에 접근</span></div>
+          <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">③</span><span><strong style="color:var(--text);">파일 선택</strong> — 가져올 HTML 또는 Google Docs 선택</span></div>
+          <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">④</span><span><strong style="color:var(--text);">메타데이터 입력</strong> — 제목·날짜·설명·태그</span></div>
+          <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">⑤</span><span><strong style="color:var(--text);">등록</strong> — 파일 저장 + posts.json 업데이트</span></div>
+          <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">⑥</span><span><strong style="color:var(--text);">Git push</strong> — Vercel 자동 배포</span></div>
+        </div>
+        <div style="margin-top:1rem;padding:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:.75rem;">
+          💡 Google Docs 파일은 자동으로 HTML로 변환되어 저장됩니다.
+        </div>
+        <div style="margin-top:.6rem;padding:.75rem;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-size:.75rem;color:var(--accent-light);">
+          ☁️ 연동 폴더: <strong>MY-Insight Blog</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
      성공 오버레이
 ══════════════════════════════════════ -->
 <div class="overlay" id="success-overlay">
@@ -496,10 +633,11 @@ let editHtmlVisible = false;
 //  탭 전환
 // ═══════════════════════════════════════════════
 function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', ['upload','manage'][i] === name));
-  document.getElementById('tab-upload').classList.toggle('active', name === 'upload');
-  document.getElementById('tab-manage').classList.toggle('active', name === 'manage');
+  const tabs = ['upload', 'manage', 'gdrive'];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === name));
+  tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === name));
   if (name === 'manage') renderManageList();
+  if (name === 'gdrive') syncGDFolderStatus();
 }
 
 // ═══════════════════════════════════════════════
@@ -512,11 +650,11 @@ async function selectFolder(mode) {
   }
   try {
     dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
-    // 두 탭 폴더 상태 모두 업데이트
-    ['u','m'].forEach(prefix => {
+    // 모든 탭 폴더 상태 업데이트
+    ['u','m','gd'].forEach(prefix => {
       const dot = document.getElementById(prefix + '-folder-dot');
       const name = document.getElementById(prefix + '-folder-name');
-      if (dot) { dot.classList.add('ok'); }
+      if (dot) dot.classList.add('ok');
       if (name) name.textContent = dirHandle.name;
     });
     const alertEl = document.getElementById('u-alert-folder');
@@ -932,6 +1070,230 @@ function showEditError(msg) {
 // ═══════════════════════════════════════════════
 function formatDate(d) { return new Date(d).toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }); }
 function escHtml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ═══════════════════════════════════════════════
+//  Google Drive 연동
+// ═══════════════════════════════════════════════
+const GD_CLIENT_ID = '1094703739324-gp9ln7ghnh61lak10or45koh01tu121r.apps.googleusercontent.com';
+const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
+const GD_SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
+
+let gdTokenClient = null;
+let gdAccessToken = null;
+let gdFiles = [];
+let gdSelectedFile = null;
+let gdTags = [];
+
+function syncGDFolderStatus() {
+  if (!dirHandle) return;
+  const dot = document.getElementById('gd-folder-dot');
+  const name = document.getElementById('gd-folder-name');
+  if (dot) dot.classList.add('ok');
+  if (name) name.textContent = dirHandle.name;
+}
+
+function gdSignIn() {
+  if (!window.google) { showGDError('Google 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.'); return; }
+  if (!gdTokenClient) {
+    gdTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GD_CLIENT_ID,
+      scope: GD_SCOPE,
+      callback: (response) => {
+        if (response.error) { showGDError('Google 로그인 실패: ' + response.error); return; }
+        gdAccessToken = response.access_token;
+        updateGDAuthUI(true);
+        loadGDFiles();
+      },
+    });
+  }
+  gdTokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function gdSignOut() {
+  if (gdAccessToken) google.accounts.oauth2.revoke(gdAccessToken);
+  gdAccessToken = null;
+  gdFiles = [];
+  gdSelectedFile = null;
+  gdTags = [];
+  updateGDAuthUI(false);
+  document.getElementById('gd-files-list').innerHTML = '<div class="empty-state">Google 계정에 로그인하면 MY-Insight Blog 폴더의 파일 목록이 표시됩니다.</div>';
+  document.getElementById('gd-import-form').style.display = 'none';
+  document.getElementById('gd-refresh-btn').style.display = 'none';
+}
+
+function updateGDAuthUI(isSignedIn) {
+  document.getElementById('gd-signin-btn').style.display = isSignedIn ? 'none' : 'block';
+  document.getElementById('gd-signout-btn').style.display = isSignedIn ? 'block' : 'none';
+  document.getElementById('gd-refresh-btn').style.display = isSignedIn ? 'block' : 'none';
+  document.getElementById('gd-auth-status').textContent = isSignedIn ? '연결됨' : '연결 안 됨';
+  document.getElementById('gd-auth-dot').classList.toggle('ok', isSignedIn);
+}
+
+async function loadGDFiles() {
+  const el = document.getElementById('gd-files-list');
+  el.innerHTML = '<div class="empty-state">📂 파일 목록 불러오는 중...</div>';
+  try {
+    const q = encodeURIComponent(`'${GD_FOLDER_ID}' in parents and trashed=false`);
+    const fields = encodeURIComponent('files(id,name,mimeType,modifiedTime,size)');
+    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=modifiedTime+desc`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${gdAccessToken}` } });
+    if (res.status === 401) { gdSignOut(); showGDError('세션이 만료되었습니다. 다시 로그인해주세요.'); return; }
+    if (!res.ok) throw new Error('Drive API 오류: ' + res.status);
+    const data = await res.json();
+    gdFiles = data.files || [];
+    renderGDFiles();
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state" style="color:var(--error);">${e.message}</div>`;
+  }
+}
+
+function renderGDFiles() {
+  const el = document.getElementById('gd-files-list');
+  if (!gdFiles.length) { el.innerHTML = '<div class="empty-state">폴더에 파일이 없습니다.</div>'; return; }
+  el.innerHTML = gdFiles.map((f, i) => {
+    const isHtml = f.mimeType === 'text/html' || f.name.toLowerCase().endsWith('.html');
+    const isDoc = f.mimeType === 'application/vnd.google-apps.document';
+    const canImport = isHtml || isDoc;
+    const isSelected = gdSelectedFile && gdSelectedFile.id === f.id;
+    const icon = isDoc ? '📝' : isHtml ? '🌐' : '📄';
+    const typeLabel = isDoc ? 'Google Docs' : isHtml ? 'HTML' : f.mimeType.split('/').pop();
+    const date = new Date(f.modifiedTime).toLocaleDateString('ko-KR');
+    return `
+    <div class="gd-file-item${isSelected ? ' gd-selected' : ''}${!canImport ? ' gd-unsupported' : ''}" ${canImport ? `onclick="selectGDFile(${i})"` : ''}>
+      <span class="gd-file-icon">${icon}</span>
+      <div class="gd-file-info">
+        <div class="gd-file-name">${escHtml(f.name)}</div>
+        <div class="gd-file-meta">${typeLabel} · ${date}</div>
+      </div>
+      ${canImport
+        ? `<button class="btn-edit" onclick="event.stopPropagation();selectGDFile(${i})" style="flex-shrink:0;">${isSelected ? '✓ 선택됨' : '선택'}</button>`
+        : '<span style="font-size:.7rem;color:var(--muted);flex-shrink:0;">미지원</span>'
+      }
+    </div>`;
+  }).join('');
+}
+
+function selectGDFile(idx) {
+  gdSelectedFile = gdFiles[idx];
+  renderGDFiles();
+  const nameNoExt = gdSelectedFile.name.replace(/\.html?$/i, '');
+  const dateMatch = nameNoExt.match(/^(\d{4}-\d{2}-\d{2})/);
+  document.getElementById('gd-date').value = dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0];
+  document.getElementById('gd-title').value = nameNoExt.replace(/^\d{4}-\d{2}-\d{2}[-_\s]*/,'');
+  document.getElementById('gd-desc').value = '';
+  document.getElementById('gd-selected-name').textContent = gdSelectedFile.name;
+  gdTags = [];
+  renderGDTags();
+  updateGDPreview();
+  checkGDReady();
+  const form = document.getElementById('gd-import-form');
+  form.style.display = 'block';
+  form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── 태그 (GDrive)
+document.getElementById('gd-tag-input').addEventListener('keydown', e => {
+  if (e.key==='Enter'||e.key===',') { e.preventDefault(); addGDTag(e.target.value.trim().replace(',','')); e.target.value=''; }
+  else if (e.key==='Backspace'&&!e.target.value&&gdTags.length) { removeGDTag(gdTags.length-1); }
+});
+function addGDTag(v) { if(!v||gdTags.includes(v)) return; gdTags.push(v); renderGDTags(); updateGDPreview(); }
+function removeGDTag(i) { gdTags.splice(i,1); renderGDTags(); updateGDPreview(); }
+function renderGDTags() {
+  const inp = document.getElementById('gd-tag-input');
+  const c = document.getElementById('gd-tags-container');
+  c.innerHTML = gdTags.map((t,i)=>`<span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeGDTag(${i})">×</button></span>`).join('');
+  c.appendChild(inp);
+}
+
+function updateGDPreview() {
+  const title = document.getElementById('gd-title').value;
+  const date = document.getElementById('gd-date').value;
+  const desc = document.getElementById('gd-desc').value;
+  const preview = document.getElementById('gd-preview');
+  if (!title && !date) { preview.style.display = 'none'; return; }
+  preview.style.display = 'block';
+  document.getElementById('gd-pv-title').textContent = title || '제목 없음';
+  document.getElementById('gd-pv-date').textContent = date ? formatDate(date) : '';
+  document.getElementById('gd-pv-desc').textContent = desc || '';
+  document.getElementById('gd-pv-tags').innerHTML = gdTags.map(t=>`<span style="padding:.15rem .55rem;border-radius:9999px;font-size:.68rem;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28);">${escHtml(t)}</span>`).join('');
+}
+
+function checkGDReady() {
+  const ok = dirHandle && gdSelectedFile
+    && document.getElementById('gd-title').value.trim()
+    && document.getElementById('gd-date').value;
+  document.getElementById('gd-import-btn').disabled = !ok;
+}
+
+function resetGDForm() {
+  gdSelectedFile = null;
+  gdTags = [];
+  document.getElementById('gd-import-form').style.display = 'none';
+  renderGDFiles();
+}
+
+async function importFromDrive() {
+  const title = document.getElementById('gd-title').value.trim();
+  const date = document.getElementById('gd-date').value;
+  const desc = document.getElementById('gd-desc').value.trim();
+  if (!dirHandle) { showGDError('블로그 폴더를 먼저 연결해주세요.'); return; }
+  if (!gdSelectedFile || !title || !date) { showGDError('필수 항목을 모두 입력해주세요.'); return; }
+
+  const btn = document.getElementById('gd-import-btn');
+  btn.disabled = true; btn.textContent = '가져오는 중...';
+
+  try {
+    let content;
+    const isDoc = gdSelectedFile.mimeType === 'application/vnd.google-apps.document';
+    if (isDoc) {
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}/export?mimeType=text%2Fhtml`,
+        { headers: { Authorization: `Bearer ${gdAccessToken}` } }
+      );
+      if (!res.ok) throw new Error('Google Docs 변환 실패: ' + res.status);
+      content = await res.text();
+    } else {
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}?alt=media`,
+        { headers: { Authorization: `Bearer ${gdAccessToken}` } }
+      );
+      if (!res.ok) throw new Error('파일 다운로드 실패: ' + res.status);
+      content = await res.text();
+    }
+
+    const safeName = `${date}-${title.replace(/[^\w가-힣]/g, '')}.html`;
+    const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
+    const fh = await postsDH.getFileHandle(safeName, { create: true });
+    const w = await fh.createWritable();
+    await w.write(content); await w.close();
+
+    const filePath = `posts/${safeName}`;
+    const existing = currentPosts.findIndex(p => p.file === filePath);
+    const entry = { date, title, description: desc, file: filePath, tags: [...gdTags], visible: true };
+    if (existing >= 0) currentPosts[existing] = entry; else currentPosts.push(entry);
+    await savePosts();
+
+    renderUploadList();
+    renderManageList();
+    resetGDForm();
+    showSuccess('☁️', 'Drive 가져오기 완료!', `"${title}" 글이 등록되었습니다.`, [
+      { n:1, text: `<code>posts/${safeName}</code>에 저장되었습니다` },
+      { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
+      { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
+    ]);
+  } catch(e) {
+    showGDError('가져오기 실패: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = '☁️ 블로그에 등록하기';
+  checkGDReady();
+}
+
+function showGDError(msg) {
+  const el = document.getElementById('gd-alert-error');
+  document.getElementById('gd-alert-error-msg').textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
 </script>
 </body>
 </html>
