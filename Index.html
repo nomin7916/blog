@@ -163,6 +163,7 @@
         const res = await fetch('posts.json');
         if (!res.ok) throw new Error('posts.json 로드 실패');
         allPosts = await res.json();
+        allPosts = allPosts.filter(p => p.visible !== false);
         allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderStats();
         buildTagFilters();

@@ -138,7 +138,7 @@
     .post-date-sm { font-size: .7rem; color: var(--muted); font-family: monospace; }
     .post-tag-sm { font-size: .65rem; padding: .1rem .45rem; border-radius: 9999px; background: rgba(99,102,241,.12); color: var(--accent-light); border: 1px solid rgba(99,102,241,.22); }
     .post-actions { display: flex; gap: .4rem; flex-shrink: 0; }
-    .btn-edit, .btn-delete {
+    .btn-edit, .btn-delete, .btn-toggle {
       padding: .3rem .65rem; border-radius: 7px; font-size: .72rem; font-weight: 600;
       border: 1px solid; cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap;
     }
@@ -146,6 +146,12 @@
     .btn-edit:hover { background: rgba(99,102,241,.22); }
     .btn-delete { background: rgba(239,68,68,.1); color: #fca5a5; border-color: rgba(239,68,68,.25); }
     .btn-delete:hover { background: rgba(239,68,68,.2); }
+    .btn-toggle-show { background: rgba(16,185,129,.1); color: #6ee7b7; border-color: rgba(16,185,129,.3); }
+    .btn-toggle-show:hover { background: rgba(16,185,129,.2); }
+    .btn-toggle-hide { background: rgba(245,158,11,.1); color: #fcd34d; border-color: rgba(245,158,11,.3); }
+    .btn-toggle-hide:hover { background: rgba(245,158,11,.2); }
+    .post-item.post-hidden { opacity: .5; }
+    .hidden-badge { display:inline-flex; align-items:center; font-size:.62rem; font-weight:700; padding:.1rem .45rem; border-radius:9999px; background:rgba(245,158,11,.15); color:#fcd34d; border:1px solid rgba(245,158,11,.3); margin-left:.35rem; }
     .empty-state { text-align: center; padding: 2rem; color: var(--muted); font-size: .85rem; }
 
     /* ── 미리보기 ── */
@@ -574,12 +580,16 @@ function renderManageList() {
   const sorted = [...currentPosts].sort((a,b) => new Date(b.date) - new Date(a.date));
   el.innerHTML = sorted.map((p, i) => {
     const originalIdx = currentPosts.indexOf(p);
+    const isHidden = p.visible === false;
     return `
-    <div class="post-item">
+    <div class="post-item${isHidden ? ' post-hidden' : ''}">
       <div class="post-item-top" style="align-items:flex-start;">
         <div class="post-num">${i+1}</div>
         <div class="post-info">
-          <div class="post-title-sm">${escHtml(p.title)}</div>
+          <div class="post-title-sm">
+            ${escHtml(p.title)}
+            ${isHidden ? '<span class="hidden-badge">숨김</span>' : ''}
+          </div>
           <div class="post-meta-sm" style="margin-bottom:.55rem;">
             <span class="post-date-sm">${p.date}</span>
             ${(p.tags||[]).map(t=>`<span class="post-tag-sm">${escHtml(t)}</span>`).join('')}
@@ -587,6 +597,7 @@ function renderManageList() {
           <div style="font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(p.file)}</div>
         </div>
         <div class="post-actions">
+          <button class="btn-toggle ${isHidden ? 'btn-toggle-show' : 'btn-toggle-hide'}" onclick="toggleVisibility(${originalIdx})">${isHidden ? '👁️ 표시' : '🙈 숨기기'}</button>
           <button class="btn-edit" onclick="openEditModal(${originalIdx})">✏️ 수정</button>
           <button class="btn-delete" onclick="openDeleteDialog(${originalIdx})">🗑️ 삭제</button>
         </div>
@@ -683,7 +694,7 @@ async function submitUpload() {
 
     const filePath = `posts/${selectedUploadFile.name}`;
     const idx = currentPosts.findIndex(p => p.file === filePath);
-    const entry = { date, title, description: desc, file: filePath, tags: [...uploadTags] };
+    const entry = { date, title, description: desc, file: filePath, tags: [...uploadTags], visible: true };
     if (idx >= 0) currentPosts[idx] = entry; else currentPosts.push(entry);
     await savePosts();
 
@@ -824,6 +835,16 @@ async function saveEdit() {
     { n:1, text: editHtmlVisible ? 'HTML 파일과 posts.json이 업데이트되었습니다' : '<code>posts.json</code> 메타데이터가 업데이트되었습니다' },
     { n:2, text: '<code>git add . && git commit && git push</code> 실행 후 배포' },
   ]);
+}
+
+// ═══════════════════════════════════════════════
+//  표시/숨기기 토글
+// ═══════════════════════════════════════════════
+async function toggleVisibility(idx) {
+  currentPosts[idx].visible = currentPosts[idx].visible === false ? true : false;
+  await savePosts();
+  renderManageList();
+  renderUploadList();
 }
 
 // ═══════════════════════════════════════════════
