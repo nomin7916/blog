@@ -72,10 +72,9 @@
 
   <script>
     // =========================================================================
-    // [경고! 필수 설정!]
-    // 구글 클라우드 콘솔에서 발급받은 본인의 'API 키'를 반드시 아래에 입력하세요!
+    // 새로 발급받으신 API 키를 적용했습니다.
     // =========================================================================
-    const GD_API_KEY = "여기에_본인의_API_KEY를_붙여넣으세요"; 
+    const GD_API_KEY = "AIzaSyDPLApCbnHSfMRhgrGoaYv5k5PX_hwoikM"; 
     const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
 
     let allPosts = [];
@@ -92,10 +91,8 @@
 
     // ── 1. 구글 드라이브에서 posts.json 읽어오기 ──
     async function loadPosts() {
-      // API 키를 입력하지 않은 경우 시각적으로 경고창 띄우기
-      if (GD_API_KEY === "여기에_본인의_API_KEY를_붙여넣으세요" || !GD_API_KEY) {
+      if (!GD_API_KEY) {
         document.getElementById('posts-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem 0;color:#ef4444;font-size:1.2rem;font-weight:bold;">⚠️ Index.html 파일 안에 구글 드라이브 API 키를 입력해주세요!</div>';
-        alert("알림: Index.html 코드를 열고 GD_API_KEY 부분에 발급받은 본인의 구글 API 키를 꼭 넣어주세요.");
         return;
       }
 
@@ -109,7 +106,7 @@
           const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${GD_API_KEY}`);
           allPosts = (await res.json()).filter(p => p.visible !== false);
         } else {
-          // 백업: 드라이브에 접근할 수 없을 경우 로컬 Vercel 서버에서 기존 글 로드
+          // 백업: 드라이브에 접근할 수 없을 경우 로컬 서버에서 기존 글 로드
           const res = await fetch('posts.json');
           if(res.ok) allPosts = (await res.json()).filter(p => p.visible !== false);
         }
@@ -140,7 +137,7 @@
           
           document.open(); document.write(html); document.close();
         } else {
-          // 2) 만약 드라이브에 없다면 예전 Vercel 경로 (posts/폴더) 에 있는 기존 글로 백업 로드
+          // 2) 만약 드라이브에 없다면 예전 경로 (posts/폴더) 에 있는 기존 글로 백업 로드
           const res = await fetch('posts/' + filename);
           if (res.ok) {
             const html = await res.text();
