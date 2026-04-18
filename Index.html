@@ -114,6 +114,27 @@
       max-width: 340px; width: 100%;
     }
 
+    /* ── 링크 버튼 ── */
+    .post-link-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .3rem .75rem; border-radius: 9999px; font-size: .72rem; font-weight: 600;
+      background: rgba(99,102,241,.12); color: #a5b4fc;
+      border: 1px solid rgba(99,102,241,.3); text-decoration: none;
+      transition: background .15s;
+    }
+    .post-link-btn:hover { background: rgba(99,102,241,.22); }
+
+    /* ── 카테고리 탭 ── */
+    .category-tabs {
+      display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
+      padding: .75rem 1rem; background: #131316;
+      border: 1px solid #252529; border-radius: 14px; margin-bottom: 2rem;
+    }
+    .category-label {
+      font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+      color: #4b5563; text-transform: uppercase; margin-right: .25rem; flex-shrink: 0;
+    }
+
     /* ── 별점 ── */
     .star-row { display: flex; gap: .05rem; }
     .star-btn {
@@ -171,8 +192,10 @@
   <!-- 메인 -->
   <main class="max-w-5xl mx-auto px-6 pb-20">
 
-    <!-- 태그 필터 -->
-    <div class="flex flex-wrap gap-2 mb-8" id="tag-filters"></div>
+    <!-- 카테고리 탭 -->
+    <div class="category-tabs" id="tag-filters">
+      <span class="category-label">카테고리</span>
+    </div>
 
     <!-- 글 없음 -->
     <div id="no-results" class="hidden text-center py-20" style="color:#4b5563;">
@@ -274,12 +297,13 @@
       const tagSet = new Set(['전체']);
       allPosts.forEach(p => (p.tags || []).forEach(t => tagSet.add(t)));
       const container = document.getElementById('tag-filters');
-      container.innerHTML = '';
+      container.innerHTML = '<span class="category-label">카테고리</span>';
       tagSet.forEach(tag => {
+        const count = tag === '전체' ? allPosts.length : allPosts.filter(p => (p.tags||[]).includes(tag)).length;
         const btn = document.createElement('button');
         btn.className = 'tag-btn px-4 py-1.5 rounded-full text-sm font-medium' + (tag === '전체' ? ' active' : '');
         btn.dataset.tag = tag;
-        btn.textContent = tag;
+        btn.innerHTML = `${tag} <span style="font-size:.65rem;opacity:.6;">${count}</span>`;
         btn.onclick = () => filterPosts(tag);
         container.appendChild(btn);
       });
@@ -312,6 +336,9 @@
               </div>
               <h2 style="font-size:${isFeatured?'1.25rem':'1rem'};font-weight:700;color:#f3f4f6;margin-bottom:.5rem;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${post.title}</h2>
               <p style="font-size:.85rem;color:#6b7280;line-height:1.65;" class="line-clamp-2">${post.description}</p>
+              ${post.link ? `<div style="margin-top:.75rem;" onclick="event.stopPropagation()">
+                ${renderPostLink(post.link)}
+              </div>` : ''}
               ${FB_ON ? `
               <div class="post-foot" onclick="event.stopPropagation()">
                 <span class="view-count" id="views-${key}"></span>
@@ -446,6 +473,26 @@
     document.getElementById('auth-modal').addEventListener('click', e => {
       if (e.target === document.getElementById('auth-modal')) closeAuthModal();
     });
+
+    // ── 링크 렌더링 ──────────────────────────────────────────
+    function renderPostLink(url) {
+      let icon = '🔗', label = '링크 열기';
+      if (/notebooklm\.google/i.test(url)) { icon = '🎙️'; label = 'NotebookLM 열기'; }
+      else if (/docs\.google\.com\/presentation/i.test(url)) { icon = '📊'; label = '슬라이드 보기'; }
+      else if (/podcast|audio|soundcloud|spotify/i.test(url)) { icon = '🎧'; label = '팟캐스트 듣기'; }
+      else if (/youtube\.com|youtu\.be/i.test(url)) { icon = '▶️'; label = '영상 보기'; }
+
+      // Google Slides: 임베드 가능
+      const slideMatch = url.match(/docs\.google\.com\/presentation\/d\/([^/]+)/);
+      if (slideMatch) {
+        const embedUrl = `https://docs.google.com/presentation/d/${slideMatch[1]}/embed?start=false&loop=false`;
+        return `<details style="margin-top:.25rem;">
+          <summary class="post-link-btn" style="cursor:pointer;list-style:none;">${icon} ${label}</summary>
+          <iframe src="${escapeHtml(embedUrl)}" style="width:100%;height:220px;border:none;border-radius:10px;margin-top:.5rem;" allowfullscreen></iframe>
+        </details>`;
+      }
+      return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="post-link-btn">${icon} ${label}</a>`;
+    }
 
     // ── 유틸 ────────────────────────────────────────────────
     function formatDate(d) {
