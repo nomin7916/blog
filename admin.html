@@ -244,6 +244,24 @@
     .embed-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 10px; }
     .write-char-count { font-size: .7rem; color: var(--muted); text-align: right; margin-top: .35rem; }
 
+    /* 링크 카드 (NotebookLM 등 iframe 불가 사이트) */
+    .link-card { display: flex; align-items: center; gap: .85rem; background: var(--card); border: 1px solid rgba(99,102,241,.3); border-radius: 12px; padding: .85rem 1rem; margin: .65rem 0; }
+    .link-card-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .link-card-info { flex: 1; min-width: 0; }
+    .link-card-label { font-size: .78rem; font-weight: 600; color: var(--text); margin-bottom: .35rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-card-btn { display: inline-block; font-size: .75rem; font-weight: 700; color: var(--accent-light); text-decoration: none; background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.3); border-radius: 7px; padding: .25rem .65rem; transition: all .15s; }
+    .link-card-btn:hover { background: rgba(99,102,241,.22); }
+
+    /* 직접 작성 패널 메타 영역 */
+    .write-meta-section { background: rgba(99,102,241,.05); border: 1px solid rgba(99,102,241,.2); border-radius: 12px; padding: 1rem; margin-bottom: .9rem; }
+    .write-meta-row { display: flex; gap: .65rem; align-items: flex-start; }
+    @media (max-width: 600px) { .write-meta-row { flex-direction: column; } }
+    .write-meta-row .form-group { margin-bottom: 0; }
+
+    /* 수정 모달 에디터 모드 토글 */
+    .edit-mode-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+    .edit-mode-btns { display: flex; gap: .25rem; }
+
     /* 섹션 헤더 */
     .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .85rem; }
     .panel-title { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
@@ -329,44 +347,71 @@
 
     <!-- ── 직접 작성 패널 ── -->
     <div id="src-write-panel" class="panel" style="display:none;">
-      <p class="section-title" style="margin-bottom:.75rem;">직접 글 작성</p>
 
-      <!-- 툴바 -->
+      <!-- 메타 정보 (제목·날짜·설명·태그 한 곳에) -->
+      <div class="write-meta-section">
+        <div class="write-meta-row">
+          <div class="form-group" style="flex:1;">
+            <label>제목 <span style="color:var(--error)">*</span></label>
+            <input type="text" id="w-title" placeholder="예: 삼성전자 2025 Q2 실적 분석" oninput="checkWriteReady()" />
+          </div>
+          <div class="form-group" style="width:148px;flex-shrink:0;">
+            <label>날짜 <span style="color:var(--error)">*</span></label>
+            <input type="date" id="w-date" oninput="checkWriteReady()" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:.7rem;margin-bottom:0;">
+          <label>설명 <span style="color:var(--muted);font-weight:400;">(선택 · 글 목록 요약)</span></label>
+          <input type="text" id="w-desc" placeholder="한 줄 요약을 입력하세요" />
+        </div>
+        <div class="form-group" style="margin-top:.7rem;margin-bottom:0;">
+          <label>태그 / 카테고리</label>
+          <div class="tags-container" id="w-tags-container" onclick="document.getElementById('w-tag-input').focus()">
+            <input type="text" id="w-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
+          </div>
+          <p class="tag-hint">Enter 또는 쉼표로 추가</p>
+        </div>
+      </div>
+
+      <!-- 본문 작성 -->
+      <p class="section-title" style="margin-bottom:.5rem;">본문 작성 <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;">(비워도 게시 가능)</span></p>
+
+      <!-- 툴바 (수정2: 링크·유튜브·슬라이드 단일 버튼으로 통합) -->
       <div class="editor-toolbar">
-        <button class="tb-btn" onclick="fmtDoc('bold')" title="굵게 (Ctrl+B)"><b>B</b></button>
-        <button class="tb-btn" onclick="fmtDoc('italic')" title="기울임 (Ctrl+I)"><i style="font-style:italic;">I</i></button>
-        <button class="tb-btn" onclick="fmtDoc('underline')" title="밑줄 (Ctrl+U)"><u>U</u></button>
+        <button class="tb-btn" onclick="fmtDoc('bold')" title="굵게"><b>B</b></button>
+        <button class="tb-btn" onclick="fmtDoc('italic')" title="기울임"><i style="font-style:italic;">I</i></button>
+        <button class="tb-btn" onclick="fmtDoc('underline')" title="밑줄"><u>U</u></button>
         <span class="tb-sep"></span>
         <button class="tb-btn" onclick="fmtBlock('h2')" title="큰 제목">H2</button>
         <button class="tb-btn" onclick="fmtBlock('h3')" title="작은 제목">H3</button>
         <button class="tb-btn" onclick="fmtBlock('p')" title="본문">¶</button>
         <button class="tb-btn" onclick="fmtBlock('blockquote')" title="인용">❝</button>
         <span class="tb-sep"></span>
-        <button class="tb-btn" onclick="fmtDoc('insertUnorderedList')" title="글머리 목록">•목록</button>
-        <button class="tb-btn" onclick="fmtDoc('insertOrderedList')" title="번호 목록">1.목록</button>
+        <button class="tb-btn" onclick="fmtDoc('insertUnorderedList')" title="글머리 목록">• 목록</button>
+        <button class="tb-btn" onclick="fmtDoc('insertOrderedList')" title="번호 목록">1. 목록</button>
         <span class="tb-sep"></span>
-        <button class="tb-btn" onclick="insertEditorLink()" title="링크 삽입">🔗 링크</button>
-        <button class="tb-btn" onclick="insertEditorImage()" title="이미지 삽입">🖼 이미지</button>
-        <button class="tb-btn" onclick="insertEditorYoutube()" title="유튜브 삽입">▶ YouTube</button>
-        <button class="tb-btn" onclick="insertEditorSlide()" title="슬라이드/NotebookLM 삽입">📊 슬라이드</button>
+        <button class="tb-btn" onclick="insertEditorMedia('write')" title="URL 입력 → YouTube·슬라이드·NotebookLM·링크 자동 감지">🔗 링크/미디어</button>
+        <button class="tb-btn" onclick="insertEditorImage('write')" title="이미지 파일 업로드 또는 URL">🖼 이미지</button>
         <span class="tb-sep"></span>
-        <button class="tb-btn" onclick="clearEditorContent()" title="에디터 초기화" style="color:var(--error);">✕ 초기화</button>
+        <button class="tb-btn" onclick="clearEditorContent()" title="본문 초기화" style="color:var(--error);">✕ 초기화</button>
       </div>
 
       <!-- 에디터 영역 -->
       <div id="write-editor"
            class="write-editor-area"
            contenteditable="true"
-           data-placeholder="여기에 글을 작성하세요. 텍스트를 입력하거나 위 툴바에서 이미지, 링크, 유튜브 영상 등을 삽입하세요."
+           data-placeholder="여기에 본문을 작성하세요. 비워도 됩니다."
            oninput="onEditorInput()"></div>
       <div class="write-char-count" id="write-char-count">0자</div>
 
-      <!-- 숨겨진 이미지 업로드 input -->
-      <input type="file" id="editor-img-input" accept="image/*" style="display:none;" onchange="handleEditorImageFile(this)" />
+      <input type="file" id="editor-img-input" accept="image/*" style="display:none;" onchange="handleEditorImageFile(this,'write')" />
 
-      <button class="btn-primary" id="write-ready-btn" onclick="handleWriteReady()" style="margin-top:.75rem;" disabled>
-        📝 작성 완료 → 게시 설정하기
+      <div id="w-alert-error" class="alert alert-error" style="margin-top:.75rem;"><span>⚠️</span><span id="w-alert-error-msg"></span></div>
+
+      <button class="btn-primary" id="write-publish-btn" onclick="publishWritePost()" style="margin-top:.75rem;" disabled>
+        🚀 블로그에 게시하기
       </button>
+      <button class="btn-secondary" onclick="clearWritePanel()">초기화</button>
     </div>
 
     <!-- ── 게시 폼 (파일 선택 시 나타남) ── -->
@@ -526,11 +571,45 @@
       </div>
     </div>
 
-    <!-- HTML 편집 -->
+    <!-- 본문 편집 (수정3: 시각 편집기) -->
     <div style="margin-bottom:1rem;">
-      <a class="edit-html-toggle" id="html-toggle-btn" onclick="toggleHtmlEditor()">▶ HTML 본문 편집 (펼치기)</a>
-      <div id="html-editor-area" style="display:none;">
-        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem;">⚠️ GitHub 토큰이 설정된 경우에만 저장됩니다.</div>
+      <div class="edit-mode-bar">
+        <label style="margin-bottom:0;">본문 편집</label>
+        <div class="edit-mode-btns">
+          <button class="tb-btn tb-active" id="e-mode-visual" onclick="setEditMode('visual')">시각 편집</button>
+          <button class="tb-btn" id="e-mode-html" onclick="setEditMode('html')">HTML</button>
+        </div>
+      </div>
+
+      <!-- 시각 편집기 -->
+      <div id="e-visual-editor-wrap">
+        <div class="editor-toolbar" style="border-radius:10px 10px 0 0;">
+          <button class="tb-btn" onclick="fmtDocEdit('bold')"><b>B</b></button>
+          <button class="tb-btn" onclick="fmtDocEdit('italic')"><i style="font-style:italic;">I</i></button>
+          <button class="tb-btn" onclick="fmtDocEdit('underline')"><u>U</u></button>
+          <span class="tb-sep"></span>
+          <button class="tb-btn" onclick="fmtBlockEdit('h2')">H2</button>
+          <button class="tb-btn" onclick="fmtBlockEdit('h3')">H3</button>
+          <button class="tb-btn" onclick="fmtBlockEdit('p')">¶</button>
+          <button class="tb-btn" onclick="fmtBlockEdit('blockquote')">❝</button>
+          <span class="tb-sep"></span>
+          <button class="tb-btn" onclick="fmtDocEdit('insertUnorderedList')">• 목록</button>
+          <button class="tb-btn" onclick="fmtDocEdit('insertOrderedList')">1. 목록</button>
+          <span class="tb-sep"></span>
+          <button class="tb-btn" onclick="insertEditorMedia('edit')" title="URL → YouTube·슬라이드·NotebookLM·링크 자동 감지">🔗 링크/미디어</button>
+          <button class="tb-btn" onclick="insertEditorImage('edit')">🖼 이미지</button>
+        </div>
+        <div id="e-body-editor"
+             class="write-editor-area"
+             contenteditable="true"
+             style="min-height:200px;"
+             data-placeholder="본문 내용이 여기에 표시됩니다..."></div>
+        <input type="file" id="edit-img-input" accept="image/*" style="display:none;" onchange="handleEditorImageFile(this,'edit')" />
+      </div>
+
+      <!-- HTML 모드 -->
+      <div id="e-html-editor-wrap" style="display:none;">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem;">⚠️ 직접 HTML 편집 — GitHub 토큰이 설정된 경우에만 저장됩니다.</div>
         <textarea id="e-html" style="font-size:.78rem;font-family:monospace;min-height:200px;"></textarea>
       </div>
     </div>
@@ -587,16 +666,19 @@
 let currentPosts = [];
 let formTags = [];
 let editTags = [];
+let writeTags = [];
 let editingPostIndex = -1;
 let deletingPostIndex = -1;
 let editHtmlVisible = false;
+let editMode = 'visual'; // 'visual' | 'html'
 let gdFiles = [];
 let gdSelectedFile = null;
 let selectedLocalFile = null;
 let currentSource = 'drive'; // 'drive' | 'local' | 'write'
 let gdTokenClient = null;
-let writeEditorReady = false; // 직접 작성 완료 여부
-let savedEditorSelection = null; // 에디터 커서 위치 저장용
+let writeEditorReady = false;
+let savedEditorSelection = null;
+let savedEditSelection = null;
 
 // ── 인증 체크
 const ADMIN_TOKEN = sessionStorage.getItem('gd_admin_token');
@@ -632,6 +714,12 @@ let githubRepo = localStorage.getItem('gh_repo') || 'nomin7916/blog';
     if (e.key==='Enter'||e.key===',') { e.preventDefault(); addEditTag(e.target.value.trim().replace(',','')); e.target.value=''; }
     else if (e.key==='Backspace'&&!e.target.value&&editTags.length) { removeEditTag(editTags.length-1); }
   });
+  document.getElementById('w-tag-input').addEventListener('keydown', e => {
+    if (e.key==='Enter'||e.key===',') { e.preventDefault(); addWriteTag(e.target.value.trim().replace(',','')); e.target.value=''; }
+    else if (e.key==='Backspace'&&!e.target.value&&writeTags.length) { removeWriteTag(writeTags.length-1); }
+  });
+  // 오늘 날짜 기본값
+  document.getElementById('w-date').value = new Date().toISOString().split('T')[0];
 })();
 
 // ═══════════════════════════════════════════════
@@ -998,8 +1086,6 @@ function clearSelection() {
   document.getElementById('u-drop-title').textContent = 'HTML 파일을 드래그하거나 클릭해서 선택';
   document.getElementById('u-drop-sub').textContent = '파일명 권장: YYYY-MM-DD-제목.html';
   document.getElementById('u-file-input').value = '';
-  // 직접 작성 리셋
-  document.getElementById('write-ready-btn').disabled = true;
   renderGDFiles();
 }
 
@@ -1230,11 +1316,27 @@ async function openEditModal(idx) {
   renderEditTags();
   updateEditPreview();
 
-  // HTML 에디터 초기화
-  document.getElementById('e-html').value = '클릭해서 HTML을 불러오세요...';
-  editHtmlVisible = false;
-  document.getElementById('html-editor-area').style.display = 'none';
-  document.getElementById('html-toggle-btn').textContent = '▶ HTML 본문 편집 (펼치기)';
+  // 시각 편집기 모드로 초기화
+  setEditMode('visual');
+  document.getElementById('e-html').value = '로딩 대기 중...';
+  const bodyEditor = document.getElementById('e-body-editor');
+
+  if (githubToken && p.file) {
+    bodyEditor.innerHTML = '<div style="color:var(--muted);font-size:.82rem;padding:.5rem 0;">본문 불러오는 중... ⏳</div>';
+    try {
+      const html = await ghGetFileContent(p.file);
+      if (html) {
+        const body = extractPostBody(html);
+        bodyEditor.innerHTML = body || '<div style="color:var(--muted);font-size:.82rem;">본문 내용이 없거나 인식할 수 없는 형식입니다.</div>';
+      } else {
+        bodyEditor.innerHTML = '<div style="color:var(--muted);font-size:.82rem;">파일을 찾을 수 없습니다.</div>';
+      }
+    } catch(e) {
+      bodyEditor.innerHTML = `<div style="color:var(--error);font-size:.82rem;">로드 실패: ${e.message}</div>`;
+    }
+  } else {
+    bodyEditor.innerHTML = `<div style="color:var(--muted);font-size:.82rem;">${githubToken ? '파일 경로가 없습니다.' : 'GitHub 토큰을 설정해야 본문을 불러올 수 있습니다.'}</div>`;
+  }
 
   document.getElementById('edit-overlay').classList.add('show');
 }
@@ -1289,10 +1391,24 @@ async function saveEdit() {
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 저장 중...';
 
   try {
-    // HTML 파일 저장 (에디터 열려있고 내용이 있을 때)
-    const htmlContent = document.getElementById('e-html').value;
-    if (editHtmlVisible && htmlContent && !htmlContent.startsWith('//') && !htmlContent.startsWith('로딩') && !htmlContent.startsWith('클릭')) {
-      await ghPutFile(p.file, htmlContent, `수정: ${title} - HTML`);
+    let bodyUpdated = false;
+
+    if (editMode === 'visual') {
+      const bodyEditor = document.getElementById('e-body-editor');
+      const bodyHtml = bodyEditor.innerHTML;
+      const isPlaceholder = bodyHtml.includes('불러오는 중') || bodyHtml.includes('불러올 수') || bodyHtml.includes('토큰을 설정') || bodyHtml.includes('파일을 찾을') || bodyHtml.includes('로드 실패') || bodyHtml.includes('파일 경로');
+      if (p.file && !isPlaceholder) {
+        const newHtml = buildPostHtml(title, date, [...editTags], desc, bodyHtml);
+        await ghPutFile(p.file, newHtml, `수정: ${title}`);
+        bodyUpdated = true;
+      }
+    } else {
+      const htmlContent = document.getElementById('e-html').value;
+      const isValid = htmlContent && !htmlContent.startsWith('//') && !htmlContent.startsWith('로딩') && !htmlContent.startsWith('클릭');
+      if (p.file && isValid) {
+        await ghPutFile(p.file, htmlContent, `수정: ${title} - HTML`);
+        bodyUpdated = true;
+      }
     }
 
     // 메타데이터 업데이트
@@ -1305,7 +1421,7 @@ async function saveEdit() {
     renderManageList();
     closeOverlay('edit-overlay');
     showSuccess('✏️', '수정 완료!', `"${title}" 글이 수정되었습니다.`, [
-      { n:1, text: editHtmlVisible && htmlContent && !htmlContent.startsWith('//') ? 'HTML 파일 + posts.json 업데이트 완료' : 'posts.json 메타데이터 업데이트 완료' },
+      { n:1, text: bodyUpdated ? '본문 + 메타데이터 업데이트 완료' : '메타데이터만 업데이트 완료' },
       { n:2, text: 'Vercel이 자동으로 재배포됩니다' },
     ]);
   } catch(e) {
@@ -1393,90 +1509,136 @@ function formatDate(d) { try { return new Date(d + 'T00:00:00').toLocaleDateStri
 function escHtml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // ═══════════════════════════════════════════════
-//  직접 작성 에디터
+//  직접 작성 패널 태그 관리
+// ═══════════════════════════════════════════════
+function addWriteTag(v) { if(!v||writeTags.includes(v)) return; writeTags.push(v); renderWriteTags(); }
+function removeWriteTag(i) { writeTags.splice(i,1); renderWriteTags(); }
+function renderWriteTags() {
+  const inp = document.getElementById('w-tag-input');
+  const c = document.getElementById('w-tags-container');
+  c.innerHTML = writeTags.map((t,i)=>`<span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeWriteTag(${i})">×</button></span>`).join('');
+  c.appendChild(inp);
+}
+
+function checkWriteReady() {
+  const ok = document.getElementById('w-title').value.trim() && document.getElementById('w-date').value;
+  document.getElementById('write-publish-btn').disabled = !ok;
+}
+
+function clearWritePanel() {
+  document.getElementById('w-title').value = '';
+  document.getElementById('w-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('w-desc').value = '';
+  writeTags = [];
+  renderWriteTags();
+  document.getElementById('write-editor').innerHTML = '';
+  onEditorInput();
+  document.getElementById('w-alert-error').classList.remove('show');
+}
+
+async function publishWritePost() {
+  const title = document.getElementById('w-title').value.trim();
+  const date = document.getElementById('w-date').value;
+  const desc = document.getElementById('w-desc').value.trim();
+  if (!title || !date) { showWriteError('제목과 날짜를 입력해주세요.'); return; }
+  if (!githubToken) { showWriteError('GitHub 토큰을 먼저 설정해주세요. 상단 ⚡ GitHub 버튼을 클릭하세요.'); return; }
+
+  const btn = document.getElementById('write-publish-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 게시 중...';
+
+  try {
+    const content = buildPostHtml(title, date, writeTags, desc);
+    const safeName = sanitizeFilename(title);
+    const filename = `${date}-${safeName}.html`;
+    const filePath = `posts/${filename}`;
+
+    btn.innerHTML = '<span class="spinner"></span> HTML 업로드 중...';
+    await ghPutFile(filePath, content, `글 추가: ${title}`);
+
+    btn.innerHTML = '<span class="spinner"></span> 목록 업데이트 중...';
+    const existing = currentPosts.findIndex(p => p.file === filePath);
+    const entry = { date, title, description: desc, file: filePath, tags: [...writeTags], visible: true };
+    if (existing >= 0) currentPosts[existing] = entry; else currentPosts.unshift(entry);
+    await savePostsJson(`글 추가: ${title}`);
+    renderManageList();
+
+    showSuccess('🚀', '게시 완료!', `"${title}" 글이 블로그에 게시되었습니다.`, [
+      { n:1, text: `<code>${filePath}</code> GitHub 업로드 완료` },
+      { n:2, text: '<code>posts.json</code> 업데이트 완료' },
+      { n:3, text: 'Vercel이 자동으로 재배포됩니다 (약 30초~1분)' },
+    ]);
+    clearWritePanel();
+  } catch(e) {
+    showWriteError('게시 실패: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = '🚀 블로그에 게시하기';
+  checkWriteReady();
+}
+
+function showWriteError(msg) {
+  const el = document.getElementById('w-alert-error');
+  document.getElementById('w-alert-error-msg').textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 7000);
+}
+
+// ═══════════════════════════════════════════════
+//  에디터 공용 함수 (write / edit 모드 공용)
 // ═══════════════════════════════════════════════
 function onEditorInput() {
   const editor = document.getElementById('write-editor');
   const len = editor.innerText.replace(/\s+/g, ' ').trim().length;
   document.getElementById('write-char-count').textContent = len + '자';
-  document.getElementById('write-ready-btn').disabled = len < 10;
 }
 
 function fmtDoc(cmd) {
   document.getElementById('write-editor').focus();
   document.execCommand(cmd, false, null);
 }
-
 function fmtBlock(tag) {
   document.getElementById('write-editor').focus();
   document.execCommand('formatBlock', false, tag);
 }
-
-function saveEditorSelection() {
-  const sel = window.getSelection();
-  if (sel && sel.rangeCount > 0) savedEditorSelection = sel.getRangeAt(0).cloneRange();
+function fmtDocEdit(cmd) {
+  document.getElementById('e-body-editor').focus();
+  document.execCommand(cmd, false, null);
+}
+function fmtBlockEdit(tag) {
+  document.getElementById('e-body-editor').focus();
+  document.execCommand('formatBlock', false, tag);
 }
 
-function restoreEditorSelection() {
-  const editor = document.getElementById('write-editor');
-  editor.focus();
-  if (savedEditorSelection) {
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(savedEditorSelection);
+function saveSelection(target) {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0) {
+    if (target === 'write') savedEditorSelection = sel.getRangeAt(0).cloneRange();
+    else savedEditSelection = sel.getRangeAt(0).cloneRange();
   }
 }
 
-function insertAtCursor(html) {
-  restoreEditorSelection();
+function restoreSelection(target) {
+  const editorId = target === 'write' ? 'write-editor' : 'e-body-editor';
+  document.getElementById(editorId).focus();
+  const saved = target === 'write' ? savedEditorSelection : savedEditSelection;
+  if (saved) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(saved);
+  }
+}
+
+function insertAtCursor(html, target) {
+  restoreSelection(target);
   document.execCommand('insertHTML', false, html);
 }
 
-function insertEditorLink() {
-  const editor = document.getElementById('write-editor');
-  saveEditorSelection();
-  const sel = window.getSelection();
-  const selectedText = sel && sel.toString().trim() ? sel.toString().trim() : '';
-  const url = prompt('링크 URL을 입력하세요:', 'https://');
-  if (!url) return;
-  const text = selectedText || prompt('링크 텍스트를 입력하세요:', url) || url;
-  insertAtCursor(`<a href="${escHtml(url)}" target="_blank" rel="noopener">${escHtml(text)}</a>`);
-}
-
-function insertEditorImage() {
-  saveEditorSelection();
-  const choice = confirm('이미지 파일을 업로드하려면 확인, URL로 삽입하려면 취소를 누르세요.');
-  if (choice) {
-    document.getElementById('editor-img-input').click();
-  } else {
-    const url = prompt('이미지 URL을 입력하세요:', 'https://');
-    if (!url) return;
-    const alt = prompt('이미지 설명(alt)을 입력하세요 (선택):', '') || '';
-    insertAtCursor(`<img src="${escHtml(url)}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`);
-  }
-}
-
-function handleEditorImageFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const alt = file.name.replace(/\.[^.]+$/, '');
-    insertAtCursor(`<img src="${e.target.result}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`);
-    onEditorInput();
-  };
-  reader.readAsDataURL(file);
-  input.value = '';
-}
-
-function insertEditorYoutube() {
-  saveEditorSelection();
-  const url = prompt('YouTube URL을 입력하세요:', 'https://www.youtube.com/watch?v=');
-  if (!url) return;
-  const vid = extractYoutubeId(url);
-  if (!vid) { alert('유효한 YouTube URL이 아닙니다.'); return; }
-  insertAtCursor(`<div class="embed-wrap"><iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen title="YouTube 영상"></iframe></div>`);
-  onEditorInput();
+// 수정2: URL 하나로 YouTube·슬라이드·NotebookLM·링크 자동 감지
+function detectMediaType(url) {
+  if (/youtube\.com|youtu\.be/.test(url)) return 'youtube';
+  if (/docs\.google\.com\/presentation/.test(url)) return 'gslides';
+  if (/notebooklm\.google|notebooklm\.com/.test(url)) return 'notebooklm';
+  if (/\.(jpg|jpeg|png|gif|webp|svg)(\?|$)/i.test(url)) return 'image';
+  return 'link';
 }
 
 function extractYoutubeId(url) {
@@ -1484,81 +1646,155 @@ function extractYoutubeId(url) {
   return m ? m[1] : null;
 }
 
-function insertEditorSlide() {
-  saveEditorSelection();
-  const url = prompt('슬라이드 또는 NotebookLM URL을 입력하세요:', 'https://');
-  if (!url) return;
-  // Google Slides: /pub?start=false&loop=false&delayms=3000 → embed URL
-  let embedUrl = url;
-  if (url.includes('docs.google.com/presentation') && !url.includes('/embed')) {
-    embedUrl = url.replace(/\/pub(\?.*)?$/, '/embed').replace(/\/edit(\?.*)?$/, '/embed');
+function insertEditorMedia(target) {
+  saveSelection(target);
+  const url = prompt('URL을 입력하세요\n(YouTube, Google Slides, NotebookLM, 이미지 URL, 일반 링크 모두 가능)', 'https://');
+  if (!url || url === 'https://') return;
+
+  const type = detectMediaType(url);
+
+  if (type === 'youtube') {
+    const vid = extractYoutubeId(url);
+    if (!vid) { alert('유효한 YouTube URL이 아닙니다.'); return; }
+    insertAtCursor(`<div class="embed-wrap"><iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen title="YouTube 영상"></iframe></div>`, target);
+
+  } else if (type === 'gslides') {
+    // Google Slides: pub 또는 edit URL → embed URL로 변환
+    let embedUrl = url.replace(/\/(edit|pub|present)(\/.*)?(\?.*)?$/, '/embed');
     if (!embedUrl.includes('/embed')) embedUrl = url.split('?')[0].replace(/\/$/, '') + '/embed';
+    insertAtCursor(`<div class="embed-wrap"><iframe src="${escHtml(embedUrl)}" allowfullscreen title="Google Slides"></iframe></div>`, target);
+
+  } else if (type === 'notebooklm') {
+    // 수정1: NotebookLM은 iframe 불가 → 슬라이드 열기 카드로 표시
+    insertAtCursor(
+      `<div class="link-card">` +
+        `<div class="link-card-icon">📊</div>` +
+        `<div class="link-card-info">` +
+          `<div class="link-card-label">NotebookLM 슬라이드</div>` +
+          `<a href="${escHtml(url)}" target="_blank" rel="noopener" class="link-card-btn">슬라이드 열기 →</a>` +
+        `</div>` +
+      `</div>`, target);
+
+  } else if (type === 'image') {
+    const alt = url.split('/').pop().replace(/\.[^.]+$/, '') || '이미지';
+    insertAtCursor(`<img src="${escHtml(url)}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`, target);
+
+  } else {
+    const sel = window.getSelection();
+    const selectedText = sel && sel.toString().trim();
+    const text = selectedText || prompt('링크 텍스트를 입력하세요:', url) || url;
+    insertAtCursor(`<a href="${escHtml(url)}" target="_blank" rel="noopener">${escHtml(text)}</a>`, target);
   }
-  const title = url.includes('notebooklm') ? 'NotebookLM 슬라이드' : '슬라이드';
-  insertAtCursor(`<div class="embed-wrap"><iframe src="${escHtml(embedUrl)}" allowfullscreen title="${title}"></iframe></div>`);
-  onEditorInput();
+
+  if (target === 'write') onEditorInput();
+}
+
+function insertEditorImage(target) {
+  saveSelection(target);
+  const choice = confirm('이미지 파일을 업로드하려면 확인\nURL로 삽입하려면 취소');
+  if (choice) {
+    const inputId = target === 'write' ? 'editor-img-input' : 'edit-img-input';
+    document.getElementById(inputId).dataset.target = target;
+    document.getElementById(inputId).click();
+  } else {
+    const url = prompt('이미지 URL을 입력하세요:', 'https://');
+    if (!url) return;
+    const alt = prompt('이미지 설명(alt) (선택):', '') || '';
+    insertAtCursor(`<img src="${escHtml(url)}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`, target);
+    if (target === 'write') onEditorInput();
+  }
+}
+
+function handleEditorImageFile(input, target) {
+  const file = input.files[0];
+  if (!file) return;
+  const t = target || input.dataset.target || 'write';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const alt = file.name.replace(/\.[^.]+$/, '');
+    insertAtCursor(`<img src="${e.target.result}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`, t);
+    if (t === 'write') onEditorInput();
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
 }
 
 function clearEditorContent() {
-  if (!confirm('에디터 내용을 모두 지우시겠습니까?')) return;
+  if (!confirm('본문 내용을 모두 지우시겠습니까?')) return;
   document.getElementById('write-editor').innerHTML = '';
   onEditorInput();
 }
 
-function handleWriteReady() {
-  const editor = document.getElementById('write-editor');
-  const len = editor.innerText.replace(/\s+/g, ' ').trim().length;
-  if (len < 10) { alert('글 내용을 좀 더 작성해주세요.'); return; }
-  writeEditorReady = true;
-  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('f-title').value = '';
-  document.getElementById('f-desc').value = '';
-  document.getElementById('f-link').value = '';
-  document.getElementById('selected-file-name').textContent = '직접 작성한 글 (' + len + '자)';
-  formTags = [];
-  renderFormTags();
-  updatePublishPreview();
-  checkPublishReady();
-  document.getElementById('publish-form').style.display = 'block';
-  document.getElementById('publish-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+// ═══════════════════════════════════════════════
+//  편집 모달 — 시각 편집기 (수정3)
+// ═══════════════════════════════════════════════
+function setEditMode(mode) {
+  editMode = mode;
+  document.getElementById('e-visual-editor-wrap').style.display = mode === 'visual' ? 'block' : 'none';
+  document.getElementById('e-html-editor-wrap').style.display = mode === 'html' ? 'block' : 'none';
+  document.getElementById('e-mode-visual').classList.toggle('tb-active', mode === 'visual');
+  document.getElementById('e-mode-html').classList.toggle('tb-active', mode === 'html');
+
+  if (mode === 'html') {
+    const p = currentPosts[editingPostIndex];
+    const htmlEl = document.getElementById('e-html');
+    if (p && p.file && (!htmlEl.value || htmlEl.value.startsWith('로딩') || htmlEl.value.startsWith('클릭'))) {
+      loadHtmlForEdit(p.file);
+    }
+  }
 }
 
-function buildPostHtml(title, date, tags, desc) {
-  const editor = document.getElementById('write-editor');
-  const bodyContent = editor.innerHTML;
-  const tagStr = (tags || []).join(', ');
+function extractPostBody(html) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const postBody = doc.querySelector('.post-body');
+    if (postBody) return postBody.innerHTML;
+    // 폴백: body에서 헤더 제거
+    const body = doc.body;
+    if (body) {
+      body.querySelectorAll('.back-link, .post-header, header, nav').forEach(el => el.remove());
+      return body.innerHTML.trim();
+    }
+  } catch(e) {}
+  return '';
+}
+
+function buildPostHtml(title, date, tags, desc, bodyContent) {
+  if (bodyContent === undefined) bodyContent = document.getElementById('write-editor').innerHTML;
   const formattedDate = formatDate(date);
+  const linkCardCss = `.link-card{display:flex;align-items:center;gap:.85rem;background:#1a1a1e;border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:.85rem 1rem;margin:.65rem 0}.link-card-icon{font-size:1.4rem;flex-shrink:0}.link-card-info{flex:1;min-width:0}.link-card-label{font-size:.78rem;font-weight:600;color:#e5e7eb;margin-bottom:.35rem}.link-card-btn{display:inline-block;font-size:.75rem;font-weight:700;color:#818cf8;text-decoration:none;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:7px;padding:.25rem .65rem;transition:all .15s}.link-card-btn:hover{background:rgba(99,102,241,.22)}`;
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escHtml(title)}</title>
-  <link rel="stylesheet" href="../style.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
   <style>
-    body { background: #0d0d0f; color: #e5e7eb; font-family: 'Pretendard', sans-serif; line-height: 1.8; padding: 2rem 1rem 4rem; }
-    .post-wrap { max-width: 760px; margin: 0 auto; }
-    .back-link { display: inline-flex; align-items: center; gap: .4rem; color: #6b7280; text-decoration: none; font-size: .82rem; margin-bottom: 2rem; border: 1px solid #252529; padding: .35rem .85rem; border-radius: 9999px; transition: all .15s; }
-    .back-link:hover { color: #e5e7eb; border-color: #3f3f46; }
-    .post-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #252529; }
-    .post-date { font-size: .8rem; color: #6b7280; font-family: monospace; margin-bottom: .6rem; }
-    .post-title { font-size: 1.85rem; font-weight: 800; color: #f3f4f6; line-height: 1.35; margin-bottom: .75rem; }
-    .post-desc { font-size: .9rem; color: #9ca3af; line-height: 1.65; margin-bottom: .85rem; }
-    .post-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
-    .post-tag { font-size: .72rem; padding: .2rem .6rem; border-radius: 9999px; background: rgba(99,102,241,.14); color: #a5b4fc; border: 1px solid rgba(99,102,241,.28); }
-    .post-body { font-size: .95rem; line-height: 1.85; }
-    .post-body h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 .6rem; color: #f3f4f6; border-bottom: 1px solid #252529; padding-bottom: .4rem; }
-    .post-body h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 .5rem; color: #e5e7eb; }
-    .post-body p { margin: .65rem 0; }
-    .post-body ul, .post-body ol { margin: .65rem 0; padding-left: 1.5rem; }
-    .post-body li { margin: .3rem 0; }
-    .post-body a { color: #818cf8; text-decoration: underline; }
-    .post-body a:hover { color: #a5b4fc; }
-    .post-body blockquote { border-left: 3px solid #6366f1; padding-left: 1rem; color: #9ca3af; margin: 1rem 0; font-style: italic; }
-    .post-body img { max-width: 100%; border-radius: 10px; margin: 1rem 0; display: block; }
-    .post-body .embed-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin: 1.25rem 0; background: #000; }
-    .post-body .embed-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 12px; }
+    body{background:#0d0d0f;color:#e5e7eb;font-family:'Pretendard',sans-serif;line-height:1.8;padding:2rem 1rem 4rem}
+    .post-wrap{max-width:760px;margin:0 auto}
+    .back-link{display:inline-flex;align-items:center;gap:.4rem;color:#6b7280;text-decoration:none;font-size:.82rem;margin-bottom:2rem;border:1px solid #252529;padding:.35rem .85rem;border-radius:9999px;transition:all .15s}
+    .back-link:hover{color:#e5e7eb;border-color:#3f3f46}
+    .post-header{margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid #252529}
+    .post-date{font-size:.8rem;color:#6b7280;font-family:monospace;margin-bottom:.6rem}
+    .post-title{font-size:1.85rem;font-weight:800;color:#f3f4f6;line-height:1.35;margin-bottom:.75rem}
+    .post-desc{font-size:.9rem;color:#9ca3af;line-height:1.65;margin-bottom:.85rem}
+    .post-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+    .post-tag{font-size:.72rem;padding:.2rem .6rem;border-radius:9999px;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28)}
+    .post-body{font-size:.95rem;line-height:1.85}
+    .post-body h2{font-size:1.25rem;font-weight:700;margin:2rem 0 .6rem;color:#f3f4f6;border-bottom:1px solid #252529;padding-bottom:.4rem}
+    .post-body h3{font-size:1.05rem;font-weight:700;margin:1.5rem 0 .5rem;color:#e5e7eb}
+    .post-body p{margin:.65rem 0}
+    .post-body ul,.post-body ol{margin:.65rem 0;padding-left:1.5rem}
+    .post-body li{margin:.3rem 0}
+    .post-body a{color:#818cf8;text-decoration:underline}
+    .post-body a:hover{color:#a5b4fc}
+    .post-body blockquote{border-left:3px solid #6366f1;padding-left:1rem;color:#9ca3af;margin:1rem 0;font-style:italic}
+    .post-body img{max-width:100%;border-radius:10px;margin:1rem 0;display:block}
+    .embed-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:1.25rem 0;background:#000}
+    .embed-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px}
+    ${linkCardCss}
   </style>
 </head>
 <body>
