@@ -283,9 +283,9 @@
           <div class="drop-zone" id="u-drop-zone" onclick="document.getElementById('u-file-input').click()">
             <div style="font-size:2rem;margin-bottom:.6rem;" id="u-drop-icon">📄</div>
             <div style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.35rem;" id="u-drop-title">HTML 파일을 드래그하거나 클릭해서 선택</div>
-            <div style="font-size:.78rem;color:var(--muted);" id="u-drop-sub">파일명 권장: YYYY-MM-DD-제목.html</div>
+            <div style="font-size:.78rem;color:var(--muted);" id="u-drop-sub">파일명 권장: YYYY-MM-DD-제목.html · .html / .htm 지원</div>
           </div>
-          <input type="file" id="u-file-input" accept=".html" style="display:none;" onchange="handleUploadFile(this.files[0])" />
+          <input type="file" id="u-file-input" accept=".html,.htm" style="display:none;" onchange="handleUploadFile(this.files[0])" />
         </div>
 
         <div class="form-group">
@@ -672,6 +672,19 @@ let editingPostIndex = -1;
 let deletingPostIndex = -1;
 let editHtmlVisible = false;
 
+// ── 관리자 인증 체크
+const ADMIN_TOKEN = sessionStorage.getItem('gd_admin_token');
+if (!ADMIN_TOKEN) { location.href = 'Index.html'; }
+
+// ── 초기 posts.json 로드 (폴더 없어도 fetch로 읽기)
+(async () => {
+  try {
+    const res = await fetch('posts.json?' + Date.now());
+    currentPosts = await res.json();
+    renderUploadList();
+  } catch {}
+})();
+
 // ═══════════════════════════════════════════════
 //  탭 전환
 // ═══════════════════════════════════════════════
@@ -680,7 +693,7 @@ function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === name));
   tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === name));
   if (name === 'manage') renderManageList();
-  if (name === 'gdrive') syncGDFolderStatus();
+  if (name === 'gdrive') { syncGDFolderStatus(); if (gdAccessToken && !gdFiles.length) loadGDFiles(); }
 }
 
 // ═══════════════════════════════════════════════
@@ -715,10 +728,17 @@ async function selectFolder(mode) {
 //  posts.json 로드/저장
 // ═══════════════════════════════════════════════
 async function loadPosts() {
-  try {
-    const fh = await dirHandle.getFileHandle('posts.json', { create: false });
-    currentPosts = JSON.parse(await (await fh.getFile()).text());
-  } catch { currentPosts = []; }
+  if (dirHandle) {
+    try {
+      const fh = await dirHandle.getFileHandle('posts.json', { create: false });
+      currentPosts = JSON.parse(await (await fh.getFile()).text());
+    } catch { currentPosts = []; }
+  } else {
+    try {
+      const res = await fetch('posts.json?' + Date.now());
+      currentPosts = await res.json();
+    } catch { currentPosts = []; }
+  }
 }
 
 async function savePosts() {
@@ -794,7 +814,7 @@ function renderManageList() {
 //  파일 업로드 처리
 // ═══════════════════════════════════════════════
 function handleUploadFile(file) {
-  if (!file || !file.name.endsWith('.html')) { showUploadError('HTML 파일만 업로드할 수 있습니다.'); return; }
+  if (!file || !/\.html?$/i.test(file.name)) { showUploadError('HTML 파일만 업로드할 수 있습니다.'); return; }
   selectedUploadFile = file;
   const dz = document.getElementById('u-drop-zone');
   dz.classList.add('has-file');
@@ -852,7 +872,7 @@ function updateUploadPreview() {
 }
 
 function checkUploadReady() {
-  const ok = dirHandle && selectedUploadFile
+  const ok = selectedUploadFile
     && document.getElementById('u-title').value.trim()
     && document.getElementById('u-date').value;
   document.getElementById('u-submit-btn').disabled = !ok;
@@ -865,30 +885,44 @@ async function submitUpload() {
   const title = document.getElementById('u-title').value.trim();
   const date = document.getElementById('u-date').value;
   const desc = document.getElementById('u-desc').value.trim();
-  if (!dirHandle||!selectedUploadFile||!title||!date) { showUploadError('필수 항목을 모두 입력해 주세요.'); return; }
+  if (!selectedUploadFile||!title||!date) { showUploadError('필수 항목을 모두 입력해 주세요.'); return; }
 
   const btn = document.getElementById('u-submit-btn');
   btn.disabled = true; btn.textContent = '등록 중...';
 
+  const safeName = selectedUploadFile.name;
+  const filePath = `posts/${safeName}`;
+  const idx = currentPosts.findIndex(p => p.file === filePath);
+  const entry = { date, title, description: desc, file: filePath, tags: [...uploadTags], visible: true };
+  if (idx >= 0) currentPosts[idx] = entry; else currentPosts.unshift(entry);
+
   try {
-    const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
-    const fh = await postsDH.getFileHandle(selectedUploadFile.name, { create: true });
-    const w = await fh.createWritable();
-    await w.write(selectedUploadFile); await w.close();
-
-    const filePath = `posts/${selectedUploadFile.name}`;
-    const idx = currentPosts.findIndex(p => p.file === filePath);
-    const entry = { date, title, description: desc, file: filePath, tags: [...uploadTags], visible: true };
-    if (idx >= 0) currentPosts[idx] = entry; else currentPosts.unshift(entry);
-    await savePosts();
-
-    renderUploadList();
-    renderManageList();
-    showSuccess('✅', '등록 완료!', `"${title}" 글이 등록되었습니다.`, [
-      { n:1, text: `파일이 <code>posts/</code>에 저장되었습니다` },
-      { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
-      { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
-    ]);
+    if (dirHandle) {
+      // 로컬 폴더에 직접 저장
+      const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
+      const fh = await postsDH.getFileHandle(safeName, { create: true });
+      const w = await fh.createWritable();
+      await w.write(selectedUploadFile); await w.close();
+      await savePosts();
+      renderUploadList();
+      renderManageList();
+      showSuccess('✅', '등록 완료!', `"${title}" 글이 등록되었습니다.`, [
+        { n:1, text: `파일이 <code>posts/</code>에 저장되었습니다` },
+        { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
+        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
+      ]);
+    } else {
+      // 폴더 미연결 시 다운로드로 제공
+      const content = await selectedUploadFile.text();
+      downloadBlob(new Blob([content], { type: 'text/html' }), safeName);
+      setTimeout(() => downloadJson(currentPosts, 'posts.json'), 400);
+      renderUploadList();
+      showSuccess('📥', '파일 다운로드 시작!', `"${title}" 파일이 준비되었습니다.`, [
+        { n:1, text: `다운로드된 <code>${safeName}</code>을 블로그 <code>posts/</code> 폴더에 넣으세요` },
+        { n:2, text: `다운로드된 <code>posts.json</code>을 블로그 루트에 덮어씌우세요` },
+        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
+      ]);
+    }
     resetUpload();
   } catch(e) {
     showUploadError('등록 실패: ' + e.message);
@@ -1117,6 +1151,18 @@ function showEditError(msg) {
 function formatDate(d) { return new Date(d).toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }); }
 function escHtml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function downloadJson(data, name) {
+  downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), name);
+}
+
 // ═══════════════════════════════════════════════
 //  Google Drive 연동
 // ═══════════════════════════════════════════════
@@ -1125,17 +1171,19 @@ const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
 const GD_SCOPE = 'https://www.googleapis.com/auth/drive';
 
 let gdTokenClient = null;
-let gdAccessToken = null;
+let gdAccessToken = ADMIN_TOKEN;
 let gdFiles = [];
 let gdSelectedFile = null;
 let gdTags = [];
 
 function syncGDFolderStatus() {
-  if (!dirHandle) return;
-  const dot = document.getElementById('gd-folder-dot');
-  const name = document.getElementById('gd-folder-name');
-  if (dot) dot.classList.add('ok');
-  if (name) name.textContent = dirHandle.name;
+  if (dirHandle) {
+    const dot = document.getElementById('gd-folder-dot');
+    const name = document.getElementById('gd-folder-name');
+    if (dot) dot.classList.add('ok');
+    if (name) name.textContent = dirHandle.name;
+  }
+  if (gdAccessToken) updateGDAuthUI(true);
 }
 
 function gdSignIn() {
@@ -1273,7 +1321,7 @@ function updateGDPreview() {
 }
 
 function checkGDReady() {
-  const ok = dirHandle && gdSelectedFile
+  const ok = gdSelectedFile
     && document.getElementById('gd-title').value.trim()
     && document.getElementById('gd-date').value;
   document.getElementById('gd-import-btn').disabled = !ok;
@@ -1290,7 +1338,6 @@ async function importFromDrive() {
   const title = document.getElementById('gd-title').value.trim();
   const date = document.getElementById('gd-date').value;
   const desc = document.getElementById('gd-desc').value.trim();
-  if (!dirHandle) { showGDError('블로그 폴더를 먼저 연결해주세요.'); return; }
   if (!gdSelectedFile || !title || !date) { showGDError('필수 항목을 모두 입력해주세요.'); return; }
 
   const btn = document.getElementById('gd-import-btn');
@@ -1316,25 +1363,36 @@ async function importFromDrive() {
     }
 
     const safeName = `${date}-${title.replace(/[^\w가-힣]/g, '')}.html`;
-    const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
-    const fh = await postsDH.getFileHandle(safeName, { create: true });
-    const w = await fh.createWritable();
-    await w.write(content); await w.close();
-
     const filePath = `posts/${safeName}`;
     const existing = currentPosts.findIndex(p => p.file === filePath);
     const entry = { date, title, description: desc, file: filePath, tags: [...gdTags], visible: true };
     if (existing >= 0) currentPosts[existing] = entry; else currentPosts.unshift(entry);
-    await savePosts();
 
-    renderUploadList();
-    renderManageList();
-    resetGDForm();
-    showSuccess('☁️', 'Drive 가져오기 완료!', `"${title}" 글이 등록되었습니다.`, [
-      { n:1, text: `<code>posts/${safeName}</code>에 저장되었습니다` },
-      { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
-      { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
-    ]);
+    if (dirHandle) {
+      const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
+      const fh = await postsDH.getFileHandle(safeName, { create: true });
+      const w = await fh.createWritable();
+      await w.write(content); await w.close();
+      await savePosts();
+      renderUploadList();
+      renderManageList();
+      resetGDForm();
+      showSuccess('☁️', 'Drive 가져오기 완료!', `"${title}" 글이 등록되었습니다.`, [
+        { n:1, text: `<code>posts/${safeName}</code>에 저장되었습니다` },
+        { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
+        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
+      ]);
+    } else {
+      downloadBlob(new Blob([content], { type: 'text/html' }), safeName);
+      setTimeout(() => downloadJson(currentPosts, 'posts.json'), 400);
+      renderUploadList();
+      resetGDForm();
+      showSuccess('📥', 'Drive 파일 다운로드!', `"${title}" 파일이 준비되었습니다.`, [
+        { n:1, text: `다운로드된 <code>${safeName}</code>을 블로그 <code>posts/</code> 폴더에 넣으세요` },
+        { n:2, text: `다운로드된 <code>posts.json</code>을 블로그 루트에 덮어씌우세요` },
+        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
+      ]);
+    }
   } catch(e) {
     showGDError('가져오기 실패: ' + e.message);
   }

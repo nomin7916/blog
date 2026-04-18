@@ -408,7 +408,7 @@
       if (!adminTokenClient) {
         adminTokenClient = google.accounts.oauth2.initTokenClient({
           client_id: GD_CLIENT_ID,
-          scope: 'https://www.googleapis.com/auth/drive.readonly',
+          scope: 'https://www.googleapis.com/auth/drive',
           callback: checkAdminAccess,
         });
       }
