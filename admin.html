@@ -210,6 +210,40 @@
     .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* 리치 텍스트 에디터 */
+    .editor-toolbar {
+      display: flex; align-items: center; gap: .2rem; flex-wrap: wrap;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px 10px 0 0;
+      padding: .45rem .6rem;
+    }
+    .tb-btn {
+      padding: .3rem .52rem; border-radius: 6px; font-size: .78rem; font-weight: 700;
+      border: 1px solid transparent; background: none; color: var(--muted); cursor: pointer;
+      font-family: inherit; transition: all .15s; min-width: 28px; line-height: 1.2; white-space: nowrap;
+    }
+    .tb-btn:hover { background: var(--card); color: var(--text); border-color: var(--border); }
+    .tb-btn.tb-active { background: rgba(99,102,241,.18); color: var(--accent-light); border-color: rgba(99,102,241,.3); }
+    .tb-sep { width: 1px; height: 18px; background: var(--border); margin: 0 .15rem; flex-shrink: 0; }
+    .write-editor-area {
+      min-height: 340px; background: var(--surface); border: 1px solid var(--border); border-top: none;
+      border-radius: 0 0 10px 10px; padding: 1rem 1.15rem; font-size: .9rem; line-height: 1.8;
+      color: var(--text); outline: none; overflow-y: auto; transition: border-color .15s;
+      font-family: 'Pretendard', sans-serif;
+    }
+    .write-editor-area:focus { border-color: var(--accent); }
+    .write-editor-area:empty::before { content: attr(data-placeholder); color: var(--muted); pointer-events: none; display: block; }
+    .write-editor-area h2 { font-size: 1.2rem; font-weight: 700; margin: 1.1rem 0 .45rem; color: #f3f4f6; border-bottom: 1px solid var(--border); padding-bottom: .35rem; }
+    .write-editor-area h3 { font-size: 1rem; font-weight: 700; margin: .9rem 0 .35rem; color: #e5e7eb; }
+    .write-editor-area p { margin: .45rem 0; }
+    .write-editor-area ul, .write-editor-area ol { margin: .45rem 0; padding-left: 1.5rem; }
+    .write-editor-area li { margin: .2rem 0; }
+    .write-editor-area a { color: var(--accent-light); text-decoration: underline; }
+    .write-editor-area blockquote { border-left: 3px solid var(--accent); padding-left: .9rem; color: var(--muted); margin: .65rem 0; font-style: italic; }
+    .write-editor-area img { max-width: 100%; border-radius: 8px; margin: .6rem 0; display: block; }
+    .embed-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: .85rem 0; background: #000; }
+    .embed-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 10px; }
+    .write-char-count { font-size: .7rem; color: var(--muted); text-align: right; margin-top: .35rem; }
+
     /* 섹션 헤더 */
     .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .85rem; }
     .panel-title { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
@@ -261,6 +295,7 @@
     <div class="source-toggle">
       <button class="src-btn active" id="src-drive-btn" onclick="switchSource('drive')">☁️ Google Drive</button>
       <button class="src-btn" id="src-local-btn" onclick="switchSource('local')">📄 PC 파일 업로드</button>
+      <button class="src-btn" id="src-write-btn" onclick="switchSource('write')">✏️ 직접 작성</button>
     </div>
 
     <!-- ── Drive 소스 패널 ── -->
@@ -290,6 +325,48 @@
         <div style="font-size:.75rem;color:var(--muted);" id="u-drop-sub">파일명 권장: YYYY-MM-DD-제목.html</div>
       </div>
       <input type="file" id="u-file-input" accept=".html,.htm" style="display:none;" onchange="handleLocalFile(this.files[0])" />
+    </div>
+
+    <!-- ── 직접 작성 패널 ── -->
+    <div id="src-write-panel" class="panel" style="display:none;">
+      <p class="section-title" style="margin-bottom:.75rem;">직접 글 작성</p>
+
+      <!-- 툴바 -->
+      <div class="editor-toolbar">
+        <button class="tb-btn" onclick="fmtDoc('bold')" title="굵게 (Ctrl+B)"><b>B</b></button>
+        <button class="tb-btn" onclick="fmtDoc('italic')" title="기울임 (Ctrl+I)"><i style="font-style:italic;">I</i></button>
+        <button class="tb-btn" onclick="fmtDoc('underline')" title="밑줄 (Ctrl+U)"><u>U</u></button>
+        <span class="tb-sep"></span>
+        <button class="tb-btn" onclick="fmtBlock('h2')" title="큰 제목">H2</button>
+        <button class="tb-btn" onclick="fmtBlock('h3')" title="작은 제목">H3</button>
+        <button class="tb-btn" onclick="fmtBlock('p')" title="본문">¶</button>
+        <button class="tb-btn" onclick="fmtBlock('blockquote')" title="인용">❝</button>
+        <span class="tb-sep"></span>
+        <button class="tb-btn" onclick="fmtDoc('insertUnorderedList')" title="글머리 목록">•목록</button>
+        <button class="tb-btn" onclick="fmtDoc('insertOrderedList')" title="번호 목록">1.목록</button>
+        <span class="tb-sep"></span>
+        <button class="tb-btn" onclick="insertEditorLink()" title="링크 삽입">🔗 링크</button>
+        <button class="tb-btn" onclick="insertEditorImage()" title="이미지 삽입">🖼 이미지</button>
+        <button class="tb-btn" onclick="insertEditorYoutube()" title="유튜브 삽입">▶ YouTube</button>
+        <button class="tb-btn" onclick="insertEditorSlide()" title="슬라이드/NotebookLM 삽입">📊 슬라이드</button>
+        <span class="tb-sep"></span>
+        <button class="tb-btn" onclick="clearEditorContent()" title="에디터 초기화" style="color:var(--error);">✕ 초기화</button>
+      </div>
+
+      <!-- 에디터 영역 -->
+      <div id="write-editor"
+           class="write-editor-area"
+           contenteditable="true"
+           data-placeholder="여기에 글을 작성하세요. 텍스트를 입력하거나 위 툴바에서 이미지, 링크, 유튜브 영상 등을 삽입하세요."
+           oninput="onEditorInput()"></div>
+      <div class="write-char-count" id="write-char-count">0자</div>
+
+      <!-- 숨겨진 이미지 업로드 input -->
+      <input type="file" id="editor-img-input" accept="image/*" style="display:none;" onchange="handleEditorImageFile(this)" />
+
+      <button class="btn-primary" id="write-ready-btn" onclick="handleWriteReady()" style="margin-top:.75rem;" disabled>
+        📝 작성 완료 → 게시 설정하기
+      </button>
     </div>
 
     <!-- ── 게시 폼 (파일 선택 시 나타남) ── -->
@@ -516,8 +593,10 @@ let editHtmlVisible = false;
 let gdFiles = [];
 let gdSelectedFile = null;
 let selectedLocalFile = null;
-let currentSource = 'drive'; // 'drive' | 'local'
+let currentSource = 'drive'; // 'drive' | 'local' | 'write'
 let gdTokenClient = null;
+let writeEditorReady = false; // 직접 작성 완료 여부
+let savedEditorSelection = null; // 에디터 커서 위치 저장용
 
 // ── 인증 체크
 const ADMIN_TOKEN = sessionStorage.getItem('gd_admin_token');
@@ -723,8 +802,10 @@ function switchSource(src) {
   currentSource = src;
   document.getElementById('src-drive-btn').classList.toggle('active', src === 'drive');
   document.getElementById('src-local-btn').classList.toggle('active', src === 'local');
+  document.getElementById('src-write-btn').classList.toggle('active', src === 'write');
   document.getElementById('src-drive-panel').style.display = src === 'drive' ? 'block' : 'none';
   document.getElementById('src-local-panel').style.display = src === 'local' ? 'block' : 'none';
+  document.getElementById('src-write-panel').style.display = src === 'write' ? 'block' : 'none';
   clearSelection();
 }
 
@@ -899,6 +980,7 @@ udz.addEventListener('drop', e => {
 function clearSelection() {
   gdSelectedFile = null;
   selectedLocalFile = null;
+  writeEditorReady = false;
   formTags = [];
   renderFormTags();
   document.getElementById('publish-form').style.display = 'none';
@@ -916,6 +998,8 @@ function clearSelection() {
   document.getElementById('u-drop-title').textContent = 'HTML 파일을 드래그하거나 클릭해서 선택';
   document.getElementById('u-drop-sub').textContent = '파일명 권장: YYYY-MM-DD-제목.html';
   document.getElementById('u-file-input').value = '';
+  // 직접 작성 리셋
+  document.getElementById('write-ready-btn').disabled = true;
   renderGDFiles();
 }
 
@@ -967,7 +1051,8 @@ function updatePublishPreview() {
 }
 
 function checkPublishReady() {
-  const ok = (gdSelectedFile || selectedLocalFile)
+  const hasSource = gdSelectedFile || selectedLocalFile || (currentSource === 'write' && writeEditorReady);
+  const ok = hasSource
     && document.getElementById('f-title').value.trim()
     && document.getElementById('f-date').value;
   document.getElementById('f-publish-btn').disabled = !ok;
@@ -1003,13 +1088,17 @@ async function publishPost() {
       content = await res.text();
     } else if (selectedLocalFile) {
       content = await selectedLocalFile.text();
+    } else if (currentSource === 'write' && writeEditorReady) {
+      content = buildPostHtml(title, date, formTags, desc);
     } else {
       throw new Error('파일이 선택되지 않았습니다.');
     }
 
     const rawName = gdSelectedFile
       ? gdSelectedFile.name.replace(/\.html?$/i, '')
-      : selectedLocalFile.name.replace(/\.html?$/i, '');
+      : selectedLocalFile
+        ? selectedLocalFile.name.replace(/\.html?$/i, '')
+        : title;
     const baseNameNoDate = rawName.replace(/^\d{4}-\d{2}-\d{2}[-_\s]*/, '');
     const safeName = sanitizeFilename(baseNameNoDate) || sanitizeFilename(title);
     const filename = `${date}-${safeName}.html`;
@@ -1302,6 +1391,190 @@ function showEditError(msg) {
 // ═══════════════════════════════════════════════
 function formatDate(d) { try { return new Date(d + 'T00:00:00').toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }); } catch { return d; } }
 function escHtml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ═══════════════════════════════════════════════
+//  직접 작성 에디터
+// ═══════════════════════════════════════════════
+function onEditorInput() {
+  const editor = document.getElementById('write-editor');
+  const len = editor.innerText.replace(/\s+/g, ' ').trim().length;
+  document.getElementById('write-char-count').textContent = len + '자';
+  document.getElementById('write-ready-btn').disabled = len < 10;
+}
+
+function fmtDoc(cmd) {
+  document.getElementById('write-editor').focus();
+  document.execCommand(cmd, false, null);
+}
+
+function fmtBlock(tag) {
+  document.getElementById('write-editor').focus();
+  document.execCommand('formatBlock', false, tag);
+}
+
+function saveEditorSelection() {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0) savedEditorSelection = sel.getRangeAt(0).cloneRange();
+}
+
+function restoreEditorSelection() {
+  const editor = document.getElementById('write-editor');
+  editor.focus();
+  if (savedEditorSelection) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedEditorSelection);
+  }
+}
+
+function insertAtCursor(html) {
+  restoreEditorSelection();
+  document.execCommand('insertHTML', false, html);
+}
+
+function insertEditorLink() {
+  const editor = document.getElementById('write-editor');
+  saveEditorSelection();
+  const sel = window.getSelection();
+  const selectedText = sel && sel.toString().trim() ? sel.toString().trim() : '';
+  const url = prompt('링크 URL을 입력하세요:', 'https://');
+  if (!url) return;
+  const text = selectedText || prompt('링크 텍스트를 입력하세요:', url) || url;
+  insertAtCursor(`<a href="${escHtml(url)}" target="_blank" rel="noopener">${escHtml(text)}</a>`);
+}
+
+function insertEditorImage() {
+  saveEditorSelection();
+  const choice = confirm('이미지 파일을 업로드하려면 확인, URL로 삽입하려면 취소를 누르세요.');
+  if (choice) {
+    document.getElementById('editor-img-input').click();
+  } else {
+    const url = prompt('이미지 URL을 입력하세요:', 'https://');
+    if (!url) return;
+    const alt = prompt('이미지 설명(alt)을 입력하세요 (선택):', '') || '';
+    insertAtCursor(`<img src="${escHtml(url)}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`);
+  }
+}
+
+function handleEditorImageFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const alt = file.name.replace(/\.[^.]+$/, '');
+    insertAtCursor(`<img src="${e.target.result}" alt="${escHtml(alt)}" style="max-width:100%;border-radius:8px;margin:.6rem 0;" />`);
+    onEditorInput();
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function insertEditorYoutube() {
+  saveEditorSelection();
+  const url = prompt('YouTube URL을 입력하세요:', 'https://www.youtube.com/watch?v=');
+  if (!url) return;
+  const vid = extractYoutubeId(url);
+  if (!vid) { alert('유효한 YouTube URL이 아닙니다.'); return; }
+  insertAtCursor(`<div class="embed-wrap"><iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen title="YouTube 영상"></iframe></div>`);
+  onEditorInput();
+}
+
+function extractYoutubeId(url) {
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_\-]{11})/);
+  return m ? m[1] : null;
+}
+
+function insertEditorSlide() {
+  saveEditorSelection();
+  const url = prompt('슬라이드 또는 NotebookLM URL을 입력하세요:', 'https://');
+  if (!url) return;
+  // Google Slides: /pub?start=false&loop=false&delayms=3000 → embed URL
+  let embedUrl = url;
+  if (url.includes('docs.google.com/presentation') && !url.includes('/embed')) {
+    embedUrl = url.replace(/\/pub(\?.*)?$/, '/embed').replace(/\/edit(\?.*)?$/, '/embed');
+    if (!embedUrl.includes('/embed')) embedUrl = url.split('?')[0].replace(/\/$/, '') + '/embed';
+  }
+  const title = url.includes('notebooklm') ? 'NotebookLM 슬라이드' : '슬라이드';
+  insertAtCursor(`<div class="embed-wrap"><iframe src="${escHtml(embedUrl)}" allowfullscreen title="${title}"></iframe></div>`);
+  onEditorInput();
+}
+
+function clearEditorContent() {
+  if (!confirm('에디터 내용을 모두 지우시겠습니까?')) return;
+  document.getElementById('write-editor').innerHTML = '';
+  onEditorInput();
+}
+
+function handleWriteReady() {
+  const editor = document.getElementById('write-editor');
+  const len = editor.innerText.replace(/\s+/g, ' ').trim().length;
+  if (len < 10) { alert('글 내용을 좀 더 작성해주세요.'); return; }
+  writeEditorReady = true;
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-link').value = '';
+  document.getElementById('selected-file-name').textContent = '직접 작성한 글 (' + len + '자)';
+  formTags = [];
+  renderFormTags();
+  updatePublishPreview();
+  checkPublishReady();
+  document.getElementById('publish-form').style.display = 'block';
+  document.getElementById('publish-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function buildPostHtml(title, date, tags, desc) {
+  const editor = document.getElementById('write-editor');
+  const bodyContent = editor.innerHTML;
+  const tagStr = (tags || []).join(', ');
+  const formattedDate = formatDate(date);
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escHtml(title)}</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <style>
+    body { background: #0d0d0f; color: #e5e7eb; font-family: 'Pretendard', sans-serif; line-height: 1.8; padding: 2rem 1rem 4rem; }
+    .post-wrap { max-width: 760px; margin: 0 auto; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; color: #6b7280; text-decoration: none; font-size: .82rem; margin-bottom: 2rem; border: 1px solid #252529; padding: .35rem .85rem; border-radius: 9999px; transition: all .15s; }
+    .back-link:hover { color: #e5e7eb; border-color: #3f3f46; }
+    .post-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #252529; }
+    .post-date { font-size: .8rem; color: #6b7280; font-family: monospace; margin-bottom: .6rem; }
+    .post-title { font-size: 1.85rem; font-weight: 800; color: #f3f4f6; line-height: 1.35; margin-bottom: .75rem; }
+    .post-desc { font-size: .9rem; color: #9ca3af; line-height: 1.65; margin-bottom: .85rem; }
+    .post-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .post-tag { font-size: .72rem; padding: .2rem .6rem; border-radius: 9999px; background: rgba(99,102,241,.14); color: #a5b4fc; border: 1px solid rgba(99,102,241,.28); }
+    .post-body { font-size: .95rem; line-height: 1.85; }
+    .post-body h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 .6rem; color: #f3f4f6; border-bottom: 1px solid #252529; padding-bottom: .4rem; }
+    .post-body h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 .5rem; color: #e5e7eb; }
+    .post-body p { margin: .65rem 0; }
+    .post-body ul, .post-body ol { margin: .65rem 0; padding-left: 1.5rem; }
+    .post-body li { margin: .3rem 0; }
+    .post-body a { color: #818cf8; text-decoration: underline; }
+    .post-body a:hover { color: #a5b4fc; }
+    .post-body blockquote { border-left: 3px solid #6366f1; padding-left: 1rem; color: #9ca3af; margin: 1rem 0; font-style: italic; }
+    .post-body img { max-width: 100%; border-radius: 10px; margin: 1rem 0; display: block; }
+    .post-body .embed-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin: 1.25rem 0; background: #000; }
+    .post-body .embed-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <div class="post-wrap">
+    <a href="../Index.html" class="back-link">← 블로그로 돌아가기</a>
+    <div class="post-header">
+      <div class="post-date">${escHtml(formattedDate)}</div>
+      <h1 class="post-title">${escHtml(title)}</h1>
+      ${desc ? `<p class="post-desc">${escHtml(desc)}</p>` : ''}
+      ${tags && tags.length ? `<div class="post-tags">${tags.map(t => `<span class="post-tag">${escHtml(t)}</span>`).join('')}</div>` : ''}
+    </div>
+    <div class="post-body">${bodyContent}</div>
+  </div>
+</body>
+</html>`;
+}
 </script>
 </body>
 </html>
