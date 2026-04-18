@@ -164,7 +164,6 @@
         if (!res.ok) throw new Error('posts.json 로드 실패');
         allPosts = await res.json();
         allPosts = allPosts.filter(p => p.visible !== false);
-        allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderStats();
         buildTagFilters();
         renderPosts(allPosts);
@@ -184,7 +183,7 @@
       const items = [
         { label: '포스트', value: allPosts.length },
         { label: '카테고리', value: tags.size },
-        { label: '최신', value: allPosts[0] ? allPosts[0].date.slice(0,7) : '-' },
+        { label: '최신', value: allPosts.length ? allPosts.reduce((m,p) => p.date > m ? p.date : m, '').slice(0,7) : '-' },
       ];
       bar.innerHTML = items.map(i => `
         <div class="stat-item">
