@@ -17,7 +17,6 @@
     }
     body { background: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-    /* ── 헤더 ── */
     header {
       position: sticky; top: 0; z-index: 50;
       background: rgba(13,13,15,.93); backdrop-filter: blur(12px);
@@ -32,117 +31,126 @@
     .btn-back { font-size: .8rem; color: var(--muted); text-decoration: none; border: 1px solid var(--border); border-radius: 9999px; padding: .3rem .8rem; transition: all .15s; }
     .btn-back:hover { color: var(--text); border-color: var(--border2); }
 
-    /* ── 탭 ── */
-    .tabs { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem 0; display: flex; gap: .5rem; }
-    .tab-btn {
-      padding: .55rem 1.2rem; border-radius: 10px; font-size: .85rem; font-weight: 600;
-      border: 1px solid var(--border); background: var(--surface); color: var(--muted);
-      cursor: pointer; transition: all .15s; font-family: inherit;
+    /* 상태바 */
+    .status-bar {
+      max-width: 1200px; margin: 0 auto;
+      padding: .6rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
     }
-    .tab-btn.active { background: rgba(99,102,241,.18); color: var(--accent-light); border-color: rgba(99,102,241,.4); }
-    .tab-btn:hover:not(.active) { color: var(--text); border-color: var(--border2); }
-
-    /* ── 레이아웃 ── */
-    .layout {
-      max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem 5rem;
-      display: grid; grid-template-columns: 1fr 380px; gap: 2rem;
+    .status-pill {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .75rem; font-weight: 600; padding: .3rem .75rem;
+      border-radius: 9999px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); cursor: default;
     }
-    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
-    .tab-pane { display: none; }
-    .tab-pane.active { display: contents; }
+    .status-pill.ok { color: var(--success); border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.08); }
+    .status-pill.warn { color: var(--warning); border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.08); cursor: pointer; }
+    .status-pill.err { color: var(--error); border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.08); cursor: pointer; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-    /* ── 공통 ── */
-    .section-title { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin-bottom: 1rem; }
-    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
-    .form-group { margin-bottom: 1.25rem; }
-    label { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: .45rem; letter-spacing: .03em; }
-    input[type="text"], input[type="date"], textarea, select {
+    /* GitHub 배너 */
+    .gh-banner {
+      max-width: 1200px; margin: 0 auto .5rem;
+      padding: .65rem 1.5rem;
+      background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.25); border-radius: 10px;
+      font-size: .8rem; color: #fcd34d; display: flex; align-items: center; justify-content: space-between; gap:.75rem;
+    }
+    .gh-banner.hidden { display: none; }
+    .btn-setup-inline { padding: .3rem .75rem; border-radius: 7px; font-size: .75rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: all .15s; background: rgba(245,158,11,.2); color: #fcd34d; border: 1px solid rgba(245,158,11,.4); white-space: nowrap; }
+    .btn-setup-inline:hover { background: rgba(245,158,11,.3); }
+
+    /* 레이아웃 */
+    .main-wrap { max-width: 1200px; margin: 0 auto; padding: .75rem 1.5rem 5rem; display: grid; grid-template-columns: 1fr 420px; gap: 1.75rem; }
+    @media (max-width: 900px) { .main-wrap { grid-template-columns: 1fr; } }
+
+    /* 공통 */
+    .section-title { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin-bottom: .85rem; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; margin-bottom: 1.25rem; }
+    .panel:last-child { margin-bottom: 0; }
+    .form-group { margin-bottom: 1.15rem; }
+    label { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: .4rem; letter-spacing: .03em; }
+    input[type="text"], input[type="date"], input[type="password"], textarea, select {
       width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: .65rem .9rem; font-size: .875rem;
+      border-radius: 10px; padding: .6rem .85rem; font-size: .875rem;
       color: var(--text); font-family: inherit; transition: border-color .15s; outline: none;
     }
     input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+    textarea { resize: vertical; min-height: 72px; line-height: 1.6; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .4; }
 
-    /* ── 태그 입력 ── */
-    .tags-container {
-      display: flex; flex-wrap: wrap; gap: .4rem;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: .5rem .75rem; min-height: 44px;
-      cursor: text; transition: border-color .15s;
-    }
+    /* 태그 */
+    .tags-container { display: flex; flex-wrap: wrap; gap: .4rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .5rem .75rem; min-height: 44px; cursor: text; transition: border-color .15s; }
     .tags-container:focus-within { border-color: var(--accent); }
-    .tag-chip {
-      display: inline-flex; align-items: center; gap: .3rem;
-      background: rgba(99,102,241,.18); color: var(--accent-light);
-      border: 1px solid rgba(99,102,241,.3); border-radius: 9999px;
-      padding: .2rem .65rem; font-size: .75rem; font-weight: 500;
-    }
+    .tag-chip { display: inline-flex; align-items: center; gap: .3rem; background: rgba(99,102,241,.18); color: var(--accent-light); border: 1px solid rgba(99,102,241,.3); border-radius: 9999px; padding: .2rem .65rem; font-size: .75rem; font-weight: 500; }
     .tag-chip button { background: none; border: none; cursor: pointer; color: var(--accent-light); font-size: .85rem; line-height: 1; padding: 0; opacity: .7; transition: opacity .15s; }
     .tag-chip button:hover { opacity: 1; }
     .tag-input-inner { border: none; background: none; outline: none; font-size: .8rem; color: var(--text); font-family: inherit; min-width: 80px; flex: 1; padding: .15rem 0; }
     .tag-hint { font-size: .72rem; color: var(--muted); margin-top: .35rem; }
 
-    /* ── 드롭 존 ── */
-    .drop-zone {
-      border: 2px dashed var(--border2); border-radius: 14px;
-      padding: 2rem 1.5rem; text-align: center; cursor: pointer;
-      transition: all .2s; background: var(--surface);
-    }
+    /* 소스 토글 */
+    .source-toggle { display: flex; gap: .35rem; margin-bottom: 1rem; }
+    .src-btn { flex: 1; padding: .55rem; border-radius: 9px; font-size: .8rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
+    .src-btn.active { background: rgba(99,102,241,.18); color: var(--accent-light); border-color: rgba(99,102,241,.4); }
+    .src-btn:hover:not(.active) { color: var(--text); }
+
+    /* 드롭 존 */
+    .drop-zone { border: 2px dashed var(--border2); border-radius: 14px; padding: 1.75rem 1.25rem; text-align: center; cursor: pointer; transition: all .2s; background: var(--surface); }
     .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(99,102,241,.06); }
     .drop-zone.has-file { border-color: var(--success); background: rgba(16,185,129,.05); }
 
-    /* ── 버튼 ── */
-    .btn-primary {
-      width: 100%; padding: .8rem; background: linear-gradient(135deg,#6366f1,#7c3aed);
-      color: #fff; border: none; border-radius: 12px; font-size: .9rem; font-weight: 700;
-      font-family: inherit; cursor: pointer; transition: opacity .15s, transform .1s;
-    }
+    /* 버튼 */
+    .btn-primary { width: 100%; padding: .8rem; background: linear-gradient(135deg,#6366f1,#7c3aed); color: #fff; border: none; border-radius: 12px; font-size: .9rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: opacity .15s, transform .1s; }
     .btn-primary:hover { opacity: .9; }
     .btn-primary:active { transform: scale(.98); }
     .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-secondary {
-      width: 100%; padding: .7rem; background: var(--surface); color: var(--muted);
-      border: 1px solid var(--border); border-radius: 12px; font-size: .85rem; font-weight: 600;
-      font-family: inherit; cursor: pointer; transition: all .15s; margin-top: .6rem;
-    }
+    .btn-secondary { width: 100%; padding: .65rem; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 12px; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; margin-top: .5rem; }
     .btn-secondary:hover { color: var(--text); border-color: var(--border2); }
 
-    /* ── 알림 ── */
-    .alert { border-radius: 10px; padding: .8rem 1rem; font-size: .82rem; margin-bottom: 1rem; display: none; }
+    /* 알림 */
+    .alert { border-radius: 10px; padding: .75rem 1rem; font-size: .82rem; margin-bottom: .85rem; display: none; }
     .alert.show { display: flex; align-items: flex-start; gap: .5rem; }
     .alert-success { background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.3); color: #6ee7b7; }
     .alert-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
     .alert-info { background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.25); color: var(--accent-light); }
 
-    /* ── 폴더 상태 ── */
-    .folder-status { display: flex; align-items: center; gap: .6rem; font-size: .8rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .65rem 1rem; margin-bottom: 1rem; }
-    .folder-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
-    .folder-dot.ok { background: var(--success); }
-    .folder-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .btn-folder { width: 100%; padding: .65rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 10px; font-size: .82rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; margin-bottom: .6rem; }
-    .btn-folder:hover { border-color: var(--accent); color: var(--accent-light); }
+    /* Drive 파일 목록 */
+    .gd-file-item { padding: .75rem .9rem; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); margin-bottom: .4rem; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: .65rem; }
+    .gd-file-item:hover { border-color: rgba(99,102,241,.4); }
+    .gd-file-item.gd-selected { border-color: var(--accent); background: rgba(99,102,241,.08); }
+    .gd-file-item.gd-unsupported { opacity: .45; cursor: default; }
+    .gd-file-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .gd-file-info { flex: 1; min-width: 0; }
+    .gd-file-name { font-size: .82rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gd-file-meta { font-size: .7rem; color: var(--muted); margin-top: .15rem; }
 
-    /* ── 글 목록 (공유) ── */
-    .post-item {
-      padding: .9rem 1rem; border-radius: 12px;
-      background: var(--surface); border: 1px solid var(--border);
-      margin-bottom: .5rem; transition: border-color .15s;
-    }
+    /* Drive 연결 상태 */
+    .gd-auth-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .85rem; }
+    .btn-google { padding: .6rem 1rem; background: #fff; color: #1f1f1f; border: 1px solid #dadce0; border-radius: 10px; font-size: .82rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; gap: .45rem; }
+    .btn-google:hover { background: #f8f9fa; }
+    .btn-google-small { padding: .35rem .75rem; border-radius: 8px; font-size: .75rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+    .btn-google-small:hover { color: var(--text); }
+
+    /* 게시 폼 */
+    .publish-form { background: var(--surface); border: 1px solid rgba(99,102,241,.3); border-radius: 14px; padding: 1.25rem; margin-top: 1rem; }
+    .selected-file-info { background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.25); border-radius: 8px; padding: .6rem .85rem; font-size: .8rem; color: var(--accent-light); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+
+    /* 미리보기 */
+    .preview-card { background: var(--surface); border: 1px solid rgba(99,102,241,.35); border-radius: 12px; padding: 1rem; margin-bottom: 1.15rem; display: none; }
+    .preview-card.show { display: block; }
+    .preview-label { font-size: .65rem; font-weight: 700; letter-spacing: .08em; color: var(--accent-light); text-transform: uppercase; margin-bottom: .65rem; }
+
+    /* 글 목록 */
+    .post-item { padding: .9rem 1rem; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); margin-bottom: .5rem; transition: border-color .15s; }
     .post-item:hover { border-color: var(--border2); }
-    .post-item-top { display: flex; align-items: flex-start; gap: .75rem; }
+    .post-item.post-hidden { opacity: .55; }
+    .post-item-top { display: flex; align-items: flex-start; gap: .65rem; }
     .post-num { width: 22px; height: 22px; flex-shrink: 0; border-radius: 6px; background: var(--card); font-size: .7rem; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; }
     .post-info { flex: 1; min-width: 0; }
     .post-title-sm { font-size: .83rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: .3rem; }
     .post-meta-sm { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
     .post-date-sm { font-size: .7rem; color: var(--muted); font-family: monospace; }
     .post-tag-sm { font-size: .65rem; padding: .1rem .45rem; border-radius: 9999px; background: rgba(99,102,241,.12); color: var(--accent-light); border: 1px solid rgba(99,102,241,.22); }
-    .post-actions { display: flex; gap: .4rem; flex-shrink: 0; }
-    .btn-edit, .btn-delete, .btn-toggle {
-      padding: .3rem .65rem; border-radius: 7px; font-size: .72rem; font-weight: 600;
-      border: 1px solid; cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap;
-    }
+    .post-actions { display: flex; gap: .35rem; flex-shrink: 0; flex-wrap: wrap; }
+    .btn-edit, .btn-delete, .btn-toggle { padding: .28rem .6rem; border-radius: 7px; font-size: .72rem; font-weight: 600; border: 1px solid; cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap; }
     .btn-edit { background: rgba(99,102,241,.12); color: var(--accent-light); border-color: rgba(99,102,241,.3); }
     .btn-edit:hover { background: rgba(99,102,241,.22); }
     .btn-delete { background: rgba(239,68,68,.1); color: #fca5a5; border-color: rgba(239,68,68,.25); }
@@ -151,28 +159,28 @@
     .btn-toggle-show:hover { background: rgba(16,185,129,.2); }
     .btn-toggle-hide { background: rgba(245,158,11,.1); color: #fcd34d; border-color: rgba(245,158,11,.3); }
     .btn-toggle-hide:hover { background: rgba(245,158,11,.2); }
-    .post-item.post-hidden { opacity: .5; }
     .hidden-badge { display:inline-flex; align-items:center; font-size:.62rem; font-weight:700; padding:.1rem .45rem; border-radius:9999px; background:rgba(245,158,11,.15); color:#fcd34d; border:1px solid rgba(245,158,11,.3); margin-left:.35rem; }
     .empty-state { text-align: center; padding: 2rem; color: var(--muted); font-size: .85rem; }
 
-    /* ── 미리보기 ── */
-    .preview-card { background: var(--surface); border: 1px solid rgba(99,102,241,.35); border-radius: 12px; padding: 1.1rem; display: none; margin-bottom: 1.25rem; }
-    .preview-card.show { display: block; }
-    .preview-label { font-size: .65rem; font-weight: 700; letter-spacing: .08em; color: var(--accent-light); text-transform: uppercase; margin-bottom: .75rem; }
+    /* 순서 버튼 */
+    .btn-move { padding:.28rem .42rem; border-radius:6px; font-size:.72rem; font-weight:700; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; transition:all .15s; line-height:1; }
+    .btn-move:hover:not(:disabled) { color:var(--text); border-color:var(--border2); }
+    .btn-move:disabled { opacity:.28; cursor:not-allowed; }
+    .move-col { display:flex; flex-direction:column; gap:.2rem; flex-shrink:0; margin-right:.1rem; }
 
-    /* ── 성공 오버레이 ── */
+    /* 성공 오버레이 */
     .overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(13,13,15,.93); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1rem; }
     .overlay.show { display: flex; }
-    .overlay-box { background: var(--card); border-radius: 20px; padding: 2rem; text-align: center; max-width: 420px; width: 100%; }
+    .overlay-box { background: var(--card); border-radius: 20px; padding: 2rem; text-align: center; max-width: 440px; width: 100%; }
     .overlay-icon { font-size: 2.5rem; margin-bottom: .75rem; }
     .overlay-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: .5rem; }
     .overlay-sub { font-size: .85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.5rem; }
-    .success-step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .65rem 1rem; font-size: .78rem; color: var(--muted); text-align: left; margin-bottom: .4rem; display: flex; align-items: center; gap: .6rem; }
+    .success-step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .6rem 1rem; font-size: .78rem; color: var(--muted); text-align: left; margin-bottom: .4rem; display: flex; align-items: center; gap: .6rem; }
     .step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: #fff; font-size: .7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* ── 삭제 확인 다이얼로그 ── */
-    #delete-overlay .overlay-box { border: 1px solid rgba(239,68,68,.3); }
-    .delete-title-preview { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: .6rem .9rem; font-size: .85rem; color: var(--text); margin: .75rem 0 1.25rem; text-align: left; font-weight: 600; }
+    /* 삭제 다이얼로그 */
+    #delete-overlay .overlay-box { border: 1px solid rgba(239,68,68,.3); text-align: left; }
+    .delete-title-preview { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: .6rem .9rem; font-size: .85rem; color: var(--text); margin: .75rem 0 1.25rem; font-weight: 600; }
     .delete-options { margin-bottom: 1.25rem; }
     .delete-option-label { display: flex; align-items: center; gap: .6rem; padding: .6rem; border-radius: 8px; cursor: pointer; font-size: .82rem; color: var(--muted); transition: background .15s; }
     .delete-option-label:hover { background: var(--surface); }
@@ -182,12 +190,15 @@
     .btn-cancel { width: 100%; padding: .65rem; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 12px; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; margin-top: .5rem; }
     .btn-cancel:hover { color: var(--text); }
 
-    /* ── 편집 모달 ── */
+    /* 편집 모달 */
     #edit-overlay .overlay-box { max-width: 580px; text-align: left; max-height: 90vh; overflow-y: auto; }
     #edit-overlay .overlay-box::-webkit-scrollbar { width: 4px; }
     #edit-overlay .overlay-box::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
     .edit-html-toggle { font-size: .75rem; color: var(--accent-light); cursor: pointer; text-decoration: underline; margin-left: auto; display: block; text-align: right; margin-bottom: .4rem; }
     #edit-html-area { font-size: .78rem; font-family: 'Fira Code', monospace; min-height: 200px; }
+
+    /* GitHub 설정 모달 */
+    #github-overlay .overlay-box { max-width: 480px; text-align: left; }
 
     code { background: var(--bg); border: 1px solid var(--border); border-radius: 5px; padding: .1em .4em; font-size: .8em; color: var(--accent-light); font-family: monospace; }
     ::-webkit-scrollbar { width: 5px; }
@@ -195,40 +206,15 @@
     ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-    /* ── 순서 버튼 ── */
-    .btn-move { padding:.28rem .45rem; border-radius:6px; font-size:.72rem; font-weight:700; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; transition:all .15s; line-height:1; }
-    .btn-move:hover:not(:disabled) { color:var(--text); border-color:var(--border2); }
-    .btn-move:disabled { opacity:.28; cursor:not-allowed; }
-    .move-col { display:flex; flex-direction:column; gap:.2rem; flex-shrink:0; margin-right:.15rem; }
-    /* ── Drive 백업 ── */
-    .btn-backup { width:100%; padding:.65rem; border-radius:10px; font-size:.82rem; font-weight:600; font-family:inherit; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:.4rem; }
-    .btn-backup-primary { background:rgba(16,185,129,.12); color:#6ee7b7; border:1px solid rgba(16,185,129,.3); }
-    .btn-backup-primary:hover:not(:disabled) { background:rgba(16,185,129,.22); }
-    .btn-backup-secondary { background:var(--surface); color:var(--muted); border:1px solid var(--border); margin-top:.5rem; }
-    .btn-backup-secondary:hover:not(:disabled) { color:var(--text); border-color:var(--border2); }
-    .btn-backup:disabled { opacity:.4; cursor:not-allowed; }
+    /* 로딩 스피너 */
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Google Drive 탭 ── */
-    .gd-file-item {
-      padding: .8rem 1rem; border-radius: 10px;
-      background: var(--surface); border: 1px solid var(--border);
-      margin-bottom: .4rem; cursor: pointer; transition: all .15s;
-      display: flex; align-items: center; gap: .75rem;
-    }
-    .gd-file-item:hover { border-color: rgba(99,102,241,.4); }
-    .gd-file-item.gd-selected { border-color: var(--accent); background: rgba(99,102,241,.08); }
-    .gd-file-item.gd-unsupported { opacity: .45; cursor: default; }
-    .gd-file-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .gd-file-info { flex: 1; min-width: 0; }
-    .gd-file-name { font-size: .83rem; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .gd-file-meta { font-size: .7rem; color: var(--muted); margin-top: .2rem; }
-    .gd-auth-bar { display: flex; align-items: center; gap: .6rem; font-size: .8rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: .65rem 1rem; margin-bottom: .75rem; }
-    .btn-google { width: 100%; padding: .7rem; background: #fff; color: #1f1f1f; border: 1px solid #dadce0; border-radius: 10px; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; gap: .5rem; margin-bottom: .6rem; }
-    .btn-google:hover { background: #f8f9fa; }
-    .btn-google-out { width: 100%; padding: .55rem; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 10px; font-size: .8rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; margin-bottom: .75rem; display: none; }
-    .btn-google-out:hover { color: var(--text); }
-    .gd-import-form { background: var(--surface); border: 1px solid rgba(99,102,241,.3); border-radius: 12px; padding: 1.25rem; margin-top: 1rem; display: none; }
-    .gd-selected-info { background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.25); border-radius: 8px; padding: .65rem .9rem; font-size: .8rem; color: var(--accent-light); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+    /* 섹션 헤더 */
+    .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .85rem; }
+    .panel-title { font-size: .7rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+    .panel-action { font-size: .72rem; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: .28rem .65rem; cursor: pointer; font-family: inherit; transition: all .15s; }
+    .panel-action:hover { color: var(--text); border-color: var(--border2); }
   </style>
 </head>
 <body>
@@ -239,312 +225,133 @@
     <div class="logo-icon">M</div>
     <span class="logo-text">My Insight Blog</span>
   </a>
-  <div style="display:flex;align-items:center;gap:.75rem;">
+  <div style="display:flex;align-items:center;gap:.6rem;">
     <span class="badge">Admin</span>
+    <button onclick="openGithubSetup()" id="gh-header-btn" class="btn-google-small" title="GitHub 설정">⚡ GitHub</button>
     <a href="Index.html" class="btn-back">← 블로그</a>
   </div>
 </header>
 
-<!-- ── 탭 ── -->
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('upload')">새 글 등록</button>
-  <button class="tab-btn" onclick="switchTab('manage')">글 관리 · 수정 · 삭제</button>
-  <button class="tab-btn" onclick="switchTab('gdrive')">☁️ Google Drive</button>
+<!-- ── 상태바 ── -->
+<div class="status-bar" style="padding-top:.85rem;">
+  <span class="status-pill" id="drive-pill" onclick="handleDrivePillClick()">
+    <span class="status-dot"></span><span id="drive-pill-text">Drive 연결 중...</span>
+  </span>
+  <span class="status-pill warn" id="gh-pill" onclick="openGithubSetup()">
+    <span class="status-dot"></span><span id="gh-pill-text">GitHub 토큰 설정 필요</span>
+  </span>
+  <span id="posts-count-pill" class="status-pill" style="cursor:default;">
+    <span class="status-dot"></span><span id="posts-count-text">글 0편</span>
+  </span>
 </div>
 
-<!-- ══════════════════════════════════════
-     탭 1: 새 글 등록
-══════════════════════════════════════ -->
-<div id="tab-upload" class="tab-pane active">
-  <div class="layout">
-
-    <!-- 왼쪽: 업로드 폼 -->
-    <div>
-      <p class="section-title">새 글 등록</p>
-      <div class="panel">
-
-        <!-- 폴더 연결 -->
-        <div style="margin-bottom:1.5rem;">
-          <label>블로그 폴더 연결 <span style="color:var(--error)">*</span></label>
-          <div class="folder-status">
-            <span class="folder-dot" id="u-folder-dot"></span>
-            <span class="folder-name" id="u-folder-name">폴더가 선택되지 않았습니다</span>
-          </div>
-          <button class="btn-folder" onclick="selectFolder('upload')">📂 블로그 폴더 열기</button>
-          <div id="u-alert-folder" class="alert alert-info show">
-            <span>ℹ️</span>
-            <span><strong>처음 사용 시:</strong> "블로그 폴더 열기"를 눌러 <code>blog/</code> 폴더를 선택해 주세요. Chrome/Edge에서만 지원됩니다.</span>
-          </div>
-        </div>
-
-        <!-- 파일 드롭 -->
-        <div class="form-group">
-          <label>보고서 HTML 파일</label>
-          <div class="drop-zone" id="u-drop-zone" onclick="document.getElementById('u-file-input').click()">
-            <div style="font-size:2rem;margin-bottom:.6rem;" id="u-drop-icon">📄</div>
-            <div style="font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.35rem;" id="u-drop-title">HTML 파일을 드래그하거나 클릭해서 선택</div>
-            <div style="font-size:.78rem;color:var(--muted);" id="u-drop-sub">파일명 권장: YYYY-MM-DD-제목.html · .html / .htm 지원</div>
-          </div>
-          <input type="file" id="u-file-input" accept=".html,.htm" style="display:none;" onchange="handleUploadFile(this.files[0])" />
-        </div>
-
-        <div class="form-group">
-          <label>날짜 <span style="color:var(--error)">*</span></label>
-          <input type="date" id="u-date" oninput="updateUploadPreview();checkUploadReady()" />
-        </div>
-        <div class="form-group">
-          <label>제목 <span style="color:var(--error)">*</span></label>
-          <input type="text" id="u-title" placeholder="예: 삼성전자 2025 Q2 실적 분석" oninput="updateUploadPreview();checkUploadReady()" />
-        </div>
-        <div class="form-group">
-          <label>설명</label>
-          <textarea id="u-desc" placeholder="글 목록에 표시될 한 줄 요약" oninput="updateUploadPreview()"></textarea>
-        </div>
-        <div class="form-group">
-          <label>태그</label>
-          <div class="tags-container" id="u-tags-container" onclick="document.getElementById('u-tag-input').focus()">
-            <input type="text" id="u-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
-          </div>
-          <p class="tag-hint">Enter 또는 쉼표로 추가 · 예: 주식분석, 시장리포트, 투자전략</p>
-        </div>
-
-        <!-- 미리보기 -->
-        <div class="preview-card" id="u-preview">
-          <div class="preview-label">카드 미리보기</div>
-          <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.35rem;">
-              <span id="u-pv-date" style="font-size:.72rem;color:var(--muted);font-family:monospace;"></span>
-              <span id="u-pv-tags" style="display:flex;gap:.3rem;flex-wrap:wrap;"></span>
-            </div>
-            <div id="u-pv-title" style="font-size:.95rem;font-weight:700;color:#f3f4f6;margin-bottom:.4rem;"></div>
-            <div id="u-pv-desc" style="font-size:.8rem;color:var(--muted);line-height:1.6;"></div>
-          </div>
-        </div>
-
-        <div id="u-alert-error" class="alert alert-error"><span>⚠️</span><span id="u-alert-error-msg"></span></div>
-
-        <button class="btn-primary" id="u-submit-btn" onclick="submitUpload()" disabled>글 등록하기</button>
-        <button class="btn-secondary" onclick="resetUpload()">초기화</button>
-      </div>
-    </div>
-
-    <!-- 오른쪽: 등록 현황 + 안내 -->
-    <div style="display:flex;flex-direction:column;gap:1.5rem;">
-      <div>
-        <p class="section-title">등록된 글 현황</p>
-        <div class="panel" style="max-height:340px;overflow-y:auto;">
-          <div id="u-posts-list"><div class="empty-state">폴더를 연결하면 목록이 표시됩니다.</div></div>
-        </div>
-      </div>
-      <div>
-        <p class="section-title">사용 방법</p>
-        <div class="panel" style="font-size:.8rem;line-height:1.85;color:var(--muted);">
-          <div style="display:flex;flex-direction:column;gap:.7rem;">
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">①</span><span><strong style="color:var(--text);">폴더 열기</strong> — <code>blog/</code> 폴더 선택</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">②</span><span><strong style="color:var(--text);">HTML 파일 드롭</strong> — 작성한 보고서 업로드</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">③</span><span><strong style="color:var(--text);">메타데이터 입력</strong> — 제목·날짜·설명·태그</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">④</span><span><strong style="color:var(--text);">등록</strong> — <code>posts/</code>에 저장 + <code>posts.json</code> 자동 업데이트</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">⑤</span><span><strong style="color:var(--text);">Git push</strong> — Vercel 자동 배포</span></div>
-          </div>
-          <div style="margin-top:1rem;padding:.7rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:.75rem;">
-            💡 파일명을 <code>YYYY-MM-DD-제목.html</code> 형식으로 하면 날짜가 자동 추출됩니다.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- ── GitHub 배너 ── -->
+<div class="gh-banner" id="gh-banner" style="max-width:1200px;margin:.4rem auto .2rem;border-radius:10px;">
+  <span>⚡ GitHub 토큰을 설정하면 변경사항이 자동으로 블로그에 반영됩니다 (Vercel 자동 배포)</span>
+  <button class="btn-setup-inline" onclick="openGithubSetup()">지금 설정</button>
 </div>
 
-<!-- ══════════════════════════════════════
-     탭 2: 글 관리 (수정 / 삭제)
-══════════════════════════════════════ -->
-<div id="tab-manage" class="tab-pane">
-  <div class="layout">
+<!-- ── 메인 레이아웃 ── -->
+<div class="main-wrap">
 
-    <!-- 왼쪽: 전체 글 목록 -->
-    <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-        <p class="section-title" style="margin-bottom:0;">글 목록 — 수정 · 삭제 · 순서</p>
-        <button onclick="sortByDate()" style="font-size:.72rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:.3rem .65rem;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">📅 날짜순 정렬</button>
-      </div>
-      <div class="panel">
-        <!-- 폴더 연결 -->
-        <div style="margin-bottom:1.25rem;">
-          <div class="folder-status">
-            <span class="folder-dot" id="m-folder-dot"></span>
-            <span class="folder-name" id="m-folder-name">폴더가 선택되지 않았습니다</span>
-          </div>
-          <button class="btn-folder" style="margin-bottom:0;" onclick="selectFolder('manage')">📂 블로그 폴더 열기</button>
-        </div>
-        <div id="m-posts-list"><div class="empty-state">폴더를 연결하면 목록이 표시됩니다.</div></div>
-      </div>
+  <!-- ════════════ 왼쪽: 파일 소스 + 게시 폼 ════════════ -->
+  <div>
+
+    <!-- 소스 선택 토글 -->
+    <div class="source-toggle">
+      <button class="src-btn active" id="src-drive-btn" onclick="switchSource('drive')">☁️ Google Drive</button>
+      <button class="src-btn" id="src-local-btn" onclick="switchSource('local')">📄 PC 파일 업로드</button>
     </div>
 
-    <!-- 오른쪽: 수정 안내 -->
-    <div>
-      <p class="section-title">수정 가능한 항목</p>
-      <div class="panel" style="font-size:.83rem;line-height:1.9;color:var(--muted);">
-        <div style="display:flex;flex-direction:column;gap:.9rem;">
-          <div>
-            <div style="font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:.3rem;">📋 메타데이터 수정</div>
-            <div>글 목록 카드에 표시되는 <strong style="color:var(--text);">날짜 · 제목 · 설명 · 태그</strong>를 변경합니다. <code>posts.json</code>이 업데이트됩니다.</div>
-          </div>
-          <div>
-            <div style="font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:.3rem;">📝 HTML 본문 수정</div>
-            <div>보고서 HTML 파일의 <strong style="color:var(--text);">전체 내용</strong>을 직접 편집합니다. 저장 시 파일에 덮어씁니다.</div>
-          </div>
-          <div>
-            <div style="font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:.3rem;">🗑️ 글 삭제</div>
-            <div><strong style="color:var(--text);">posts.json 항목 제거</strong> 또는 <strong style="color:var(--error);">HTML 파일까지 삭제</strong> 중 선택할 수 있습니다.</div>
-          </div>
-        </div>
-        <div style="margin-top:1.25rem;padding:.75rem;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:.75rem;color:#fca5a5;">
-          ⚠️ 수정·삭제 후 <code>git push</code>를 실행해야 Vercel에 반영됩니다.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     탭 3: Google Drive 가져오기
-══════════════════════════════════════ -->
-<div id="tab-gdrive" class="tab-pane">
-  <div class="layout">
-
-    <!-- 왼쪽: Drive 파일 브라우저 -->
-    <div>
-      <p class="section-title">Google Drive — MY-Insight Blog 폴더</p>
-      <div class="panel">
-
-        <!-- 폴더 연결 (로컬 저장용) -->
-        <div style="margin-bottom:1.25rem;">
-          <label>블로그 폴더 연결 <span style="color:var(--error)">*</span></label>
-          <div class="folder-status">
-            <span class="folder-dot" id="gd-folder-dot"></span>
-            <span class="folder-name" id="gd-folder-name">폴더가 선택되지 않았습니다</span>
-          </div>
-          <button class="btn-folder" onclick="selectFolder('gdrive')">📂 블로그 폴더 열기</button>
-        </div>
-
-        <!-- Google 인증 -->
-        <label>Google 계정 연결</label>
-        <div class="gd-auth-bar">
-          <span class="folder-dot" id="gd-auth-dot"></span>
-          <span id="gd-auth-status" style="flex:1;">연결 안 됨</span>
-          <span id="gd-user-email" style="font-size:.72rem;color:var(--muted);"></span>
-        </div>
-        <button class="btn-google" id="gd-signin-btn" onclick="gdSignIn()">
-          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.2 33.3 29.7 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l6-6C34.5 6.5 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-7.7 19.7-20 0-1.3-.1-2.7-.2-4z"/></svg>
-          Google 계정으로 로그인
+    <!-- ── Drive 소스 패널 ── -->
+    <div id="src-drive-panel" class="panel">
+      <div class="gd-auth-row">
+        <div id="gd-auth-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;"></div>
+        <span id="gd-auth-text" style="font-size:.8rem;color:var(--muted);flex:1;">연결 안 됨</span>
+        <button class="btn-google" id="gd-signin-btn" onclick="gdSignIn()" style="font-size:.78rem;padding:.45rem .85rem;">
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.2 33.3 29.7 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l6-6C34.5 6.5 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-7.7 19.7-20 0-1.3-.1-2.7-.2-4z"/></svg>
+          Google 로그인
         </button>
-        <button class="btn-google-out" id="gd-signout-btn" onclick="gdSignOut()">로그아웃</button>
+        <button class="btn-google-small" id="gd-signout-btn" onclick="gdSignOut()" style="display:none;">로그아웃</button>
+        <button class="btn-google-small" id="gd-refresh-btn" onclick="loadGDFiles()" style="display:none;">🔄</button>
+      </div>
 
-        <!-- 새로고침 버튼 -->
-        <button id="gd-refresh-btn" onclick="loadGDFiles()" style="display:none;width:100%;padding:.55rem;background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:10px;font-size:.8rem;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:.75rem;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">🔄 목록 새로고침</button>
-
-        <!-- 파일 목록 -->
-        <div id="gd-files-list">
-          <div class="empty-state">Google 계정에 로그인하면 MY-Insight Blog 폴더의 파일 목록이 표시됩니다.</div>
-        </div>
-
-        <!-- 선택된 파일 등록 폼 -->
-        <div class="gd-import-form" id="gd-import-form">
-          <div class="gd-selected-info">
-            <span>📎</span>
-            <span id="gd-selected-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;"></span>
-          </div>
-
-          <div class="form-group">
-            <label>날짜 <span style="color:var(--error)">*</span></label>
-            <input type="date" id="gd-date" oninput="updateGDPreview();checkGDReady()" />
-          </div>
-          <div class="form-group">
-            <label>제목 <span style="color:var(--error)">*</span></label>
-            <input type="text" id="gd-title" placeholder="예: 삼성전자 2025 Q2 실적 분석" oninput="updateGDPreview();checkGDReady()" />
-          </div>
-          <div class="form-group">
-            <label>설명</label>
-            <textarea id="gd-desc" placeholder="글 목록에 표시될 한 줄 요약" oninput="updateGDPreview()"></textarea>
-          </div>
-          <div class="form-group">
-            <label>태그</label>
-            <div class="tags-container" id="gd-tags-container" onclick="document.getElementById('gd-tag-input').focus()">
-              <input type="text" id="gd-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
-            </div>
-            <p class="tag-hint">Enter 또는 쉼표로 추가</p>
-          </div>
-
-          <!-- 미리보기 -->
-          <div class="preview-card" id="gd-preview" style="display:none;margin-bottom:1rem;">
-            <div class="preview-label">카드 미리보기</div>
-            <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.35rem;">
-                <span id="gd-pv-date" style="font-size:.72rem;color:var(--muted);font-family:monospace;"></span>
-                <span id="gd-pv-tags" style="display:flex;gap:.3rem;flex-wrap:wrap;"></span>
-              </div>
-              <div id="gd-pv-title" style="font-size:.95rem;font-weight:700;color:#f3f4f6;margin-bottom:.4rem;"></div>
-              <div id="gd-pv-desc" style="font-size:.8rem;color:var(--muted);line-height:1.6;"></div>
-            </div>
-          </div>
-
-          <div id="gd-alert-error" class="alert alert-error"><span>⚠️</span><span id="gd-alert-error-msg"></span></div>
-
-          <button class="btn-primary" id="gd-import-btn" onclick="importFromDrive()" disabled>☁️ 블로그에 등록하기</button>
-          <button class="btn-secondary" onclick="resetGDForm()">선택 취소</button>
-        </div>
+      <div id="gd-files-list">
+        <div class="empty-state">Google 계정에 로그인하면<br/>MY-Insight Blog 폴더의 파일 목록이 표시됩니다.</div>
       </div>
     </div>
 
-    <!-- 오른쪽: 백업 + 안내 -->
-    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+    <!-- ── Local 소스 패널 ── -->
+    <div id="src-local-panel" class="panel" style="display:none;">
+      <p class="section-title">PC에서 HTML 파일 업로드</p>
+      <div class="drop-zone" id="u-drop-zone" onclick="document.getElementById('u-file-input').click()">
+        <div style="font-size:2rem;margin-bottom:.5rem;" id="u-drop-icon">📄</div>
+        <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.3rem;" id="u-drop-title">HTML 파일을 드래그하거나 클릭해서 선택</div>
+        <div style="font-size:.75rem;color:var(--muted);" id="u-drop-sub">파일명 권장: YYYY-MM-DD-제목.html</div>
+      </div>
+      <input type="file" id="u-file-input" accept=".html,.htm" style="display:none;" onchange="handleLocalFile(this.files[0])" />
+    </div>
 
-      <!-- 백업 패널 -->
-      <div>
-        <p class="section-title">Drive 백업</p>
-        <div class="panel" id="backup-panel">
-          <div id="backup-not-logged" style="font-size:.82rem;color:var(--muted);text-align:center;padding:.75rem 0;line-height:1.7;">
-            Google 계정에 로그인하면<br/>Drive 백업 기능을 사용할 수 있습니다.
+    <!-- ── 게시 폼 (파일 선택 시 나타남) ── -->
+    <div class="publish-form" id="publish-form" style="display:none;">
+      <div class="selected-file-info" id="selected-file-info">
+        <span>📎</span>
+        <span id="selected-file-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;"></span>
+        <button onclick="clearSelection()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.8rem;flex-shrink:0;">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label>날짜 <span style="color:var(--error)">*</span></label>
+        <input type="date" id="f-date" oninput="updatePublishPreview();checkPublishReady()" />
+      </div>
+      <div class="form-group">
+        <label>제목 <span style="color:var(--error)">*</span></label>
+        <input type="text" id="f-title" placeholder="예: 삼성전자 2025 Q2 실적 분석" oninput="updatePublishPreview();checkPublishReady()" />
+      </div>
+      <div class="form-group">
+        <label>설명</label>
+        <textarea id="f-desc" placeholder="글 목록에 표시될 한 줄 요약" oninput="updatePublishPreview()"></textarea>
+      </div>
+      <div class="form-group">
+        <label>태그</label>
+        <div class="tags-container" id="f-tags-container" onclick="document.getElementById('f-tag-input').focus()">
+          <input type="text" id="f-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
+        </div>
+        <p class="tag-hint">Enter 또는 쉼표로 추가 · 예: 주식분석, 시장리포트</p>
+      </div>
+
+      <div class="preview-card" id="f-preview">
+        <div class="preview-label">카드 미리보기</div>
+        <div style="border:1px solid var(--border);border-radius:10px;padding:.9rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.35rem;">
+            <span id="f-pv-date" style="font-size:.72rem;color:var(--muted);font-family:monospace;"></span>
+            <span id="f-pv-tags" style="display:flex;gap:.3rem;flex-wrap:wrap;"></span>
           </div>
-          <div id="backup-controls" style="display:none;">
-            <div style="font-size:.75rem;color:var(--muted);margin-bottom:.85rem;line-height:1.65;">
-              게시물을 <strong style="color:var(--text);">MY-Insight Blog</strong> Drive 폴더에 백업합니다. 같은 이름 파일이 있으면 덮어씁니다.
-            </div>
-            <button id="backup-json-btn" class="btn-backup btn-backup-primary" onclick="backupPostsJson()">
-              📋 posts.json 백업
-            </button>
-            <button id="backup-all-btn" class="btn-backup btn-backup-secondary" onclick="backupAllToDrive()">
-              ☁️ 전체 글 + posts.json 백업
-            </button>
-            <div style="margin-top:.75rem;font-size:.72rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;line-height:1.65;">
-              💡 전체 백업은 블로그 폴더도 연결되어 있어야 합니다.
-            </div>
-          </div>
+          <div id="f-pv-title" style="font-size:.95rem;font-weight:700;color:#f3f4f6;margin-bottom:.4rem;"></div>
+          <div id="f-pv-desc" style="font-size:.8rem;color:var(--muted);line-height:1.6;"></div>
         </div>
       </div>
 
-      <!-- 안내 패널 -->
-      <div>
-        <p class="section-title">Drive 가져오기 방법</p>
-        <div class="panel" style="font-size:.8rem;line-height:1.85;color:var(--muted);">
-          <div style="display:flex;flex-direction:column;gap:.7rem;">
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">①</span><span><strong style="color:var(--text);">블로그 폴더 열기</strong> — 로컬 <code>blog/</code> 폴더 선택</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">②</span><span><strong style="color:var(--text);">Google 로그인</strong> — MY-Insight Blog 폴더에 접근</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">③</span><span><strong style="color:var(--text);">파일 선택</strong> — 가져올 HTML 또는 Google Docs 선택</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">④</span><span><strong style="color:var(--text);">메타데이터 입력</strong> — 제목·날짜·설명·태그</span></div>
-            <div style="display:flex;gap:.6rem;"><span style="color:var(--accent);font-weight:700;flex-shrink:0;">⑤</span><span><strong style="color:var(--text);">등록 또는 백업</strong> — 파일 저장 + posts.json 업데이트</span></div>
-          </div>
-          <div style="margin-top:1rem;padding:.75rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:.75rem;">
-            💡 Google Docs 파일은 자동으로 HTML로 변환되어 저장됩니다.
-          </div>
-          <div style="margin-top:.6rem;padding:.75rem;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-size:.75rem;color:var(--accent-light);">
-            ☁️ 연동 폴더: <strong>MY-Insight Blog</strong>
-          </div>
-        </div>
-      </div>
+      <div id="f-alert-error" class="alert alert-error"><span>⚠️</span><span id="f-alert-error-msg"></span></div>
+      <div id="f-alert-success" class="alert alert-success"><span>✅</span><span id="f-alert-success-msg"></span></div>
+
+      <button class="btn-primary" id="f-publish-btn" onclick="publishPost()" disabled>🚀 블로그에 게시하기</button>
+      <button class="btn-secondary" onclick="clearSelection()">취소</button>
     </div>
   </div>
-</div>
+
+  <!-- ════════════ 오른쪽: 게시된 글 관리 ════════════ -->
+  <div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">게시된 글 관리</span>
+        <button onclick="sortByDate()" class="panel-action">📅 날짜순 정렬</button>
+      </div>
+      <div id="m-posts-list"><div class="empty-state">로딩 중...</div></div>
+    </div>
+  </div>
+
+</div><!-- /.main-wrap -->
 
 <!-- ══════════════════════════════════════
      성공 오버레이
@@ -563,7 +370,7 @@
      삭제 확인 다이얼로그
 ══════════════════════════════════════ -->
 <div class="overlay" id="delete-overlay">
-  <div class="overlay-box" style="border:1px solid rgba(239,68,68,.3);text-align:left;">
+  <div class="overlay-box">
     <div class="overlay-icon" style="text-align:center;">🗑️</div>
     <div class="overlay-title" style="text-align:center;color:#fca5a5;">글 삭제</div>
     <div class="delete-title-preview" id="delete-post-title"></div>
@@ -579,7 +386,7 @@
         <input type="radio" name="delete-mode" value="full" />
         <div>
           <div style="font-weight:600;color:#fca5a5;font-size:.83rem;">완전 삭제</div>
-          <div style="font-size:.75rem;margin-top:.15rem;">posts.json 제거 + HTML 파일도 삭제 (복구 불가)</div>
+          <div style="font-size:.75rem;margin-top:.15rem;">posts.json 제거 + GitHub HTML 파일도 삭제 (복구 불가)</div>
         </div>
       </label>
     </div>
@@ -593,54 +400,37 @@
 ══════════════════════════════════════ -->
 <div class="overlay" id="edit-overlay">
   <div class="overlay-box" style="text-align:left;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
       <div>
         <div style="font-size:1rem;font-weight:700;color:#fff;">글 수정</div>
         <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;" id="edit-file-path"></div>
       </div>
-      <button onclick="closeOverlay('edit-overlay')" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-family:inherit;font-size:.8rem;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">✕ 닫기</button>
+      <button onclick="closeOverlay('edit-overlay')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.3rem;line-height:1;">✕</button>
     </div>
 
-    <!-- 메타데이터 -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-      <div style="font-size:.72rem;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;">메타데이터</div>
-
-      <div class="form-group">
-        <label>날짜 <span style="color:var(--error)">*</span></label>
-        <input type="date" id="e-date" oninput="updateEditPreview()" />
-      </div>
-      <div class="form-group">
-        <label>제목 <span style="color:var(--error)">*</span></label>
-        <input type="text" id="e-title" oninput="updateEditPreview()" />
-      </div>
-      <div class="form-group">
-        <label>설명</label>
-        <textarea id="e-desc" oninput="updateEditPreview()"></textarea>
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>태그</label>
-        <div class="tags-container" id="e-tags-container" onclick="document.getElementById('e-tag-input').focus()">
-          <input type="text" id="e-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
-        </div>
-      </div>
+    <div class="form-group">
+      <label>날짜 <span style="color:var(--error)">*</span></label>
+      <input type="date" id="e-date" oninput="updateEditPreview()" />
     </div>
-
-    <!-- HTML 본문 편집 -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
-        <div style="font-size:.72rem;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;">HTML 본문 편집</div>
-        <button onclick="toggleHtmlEditor()" id="html-toggle-btn" style="font-size:.72rem;color:var(--accent-light);background:none;border:1px solid rgba(99,102,241,.3);padding:.25rem .6rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .15s;">펼치기</button>
-      </div>
-      <div id="html-editor-area" style="display:none;">
-        <div style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">HTML 소스를 직접 편집합니다. 저장 시 파일을 덮어씁니다.</div>
-        <textarea id="e-html" style="font-family:'Fira Code',monospace;font-size:.78rem;min-height:220px;line-height:1.55;" placeholder="HTML 로딩 중..."></textarea>
+    <div class="form-group">
+      <label>제목 <span style="color:var(--error)">*</span></label>
+      <input type="text" id="e-title" oninput="updateEditPreview()" />
+    </div>
+    <div class="form-group">
+      <label>설명</label>
+      <textarea id="e-desc" oninput="updateEditPreview()"></textarea>
+    </div>
+    <div class="form-group">
+      <label>태그</label>
+      <div class="tags-container" id="e-tags-container" onclick="document.getElementById('e-tag-input').focus()">
+        <input type="text" id="e-tag-input" class="tag-input-inner" placeholder="태그 입력 후 Enter" />
       </div>
     </div>
 
     <!-- 미리보기 -->
     <div class="preview-card show" id="e-preview" style="margin-bottom:1rem;">
-      <div class="preview-label">변경 후 카드 미리보기</div>
-      <div style="border:1px solid var(--border);border-radius:10px;padding:1rem;">
+      <div class="preview-label">카드 미리보기</div>
+      <div style="border:1px solid var(--border);border-radius:10px;padding:.9rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.35rem;">
           <span id="e-pv-date" style="font-size:.72rem;color:var(--muted);font-family:monospace;"></span>
           <span id="e-pv-tags" style="display:flex;gap:.3rem;flex-wrap:wrap;"></span>
@@ -650,133 +440,581 @@
       </div>
     </div>
 
+    <!-- HTML 편집 -->
+    <div style="margin-bottom:1rem;">
+      <a class="edit-html-toggle" id="html-toggle-btn" onclick="toggleHtmlEditor()">▶ HTML 본문 편집 (펼치기)</a>
+      <div id="html-editor-area" style="display:none;">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem;">⚠️ GitHub 토큰이 설정된 경우에만 저장됩니다.</div>
+        <textarea id="e-html" style="font-size:.78rem;font-family:monospace;min-height:200px;"></textarea>
+      </div>
+    </div>
+
     <div id="e-alert-error" class="alert alert-error"><span>⚠️</span><span id="e-alert-error-msg"></span></div>
 
-    <div style="display:flex;gap:.6rem;">
-      <button class="btn-primary" onclick="saveEdit()" style="flex:1;">저장하기</button>
-      <button onclick="closeOverlay('edit-overlay')" style="flex:.4;padding:.75rem;background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:12px;font-size:.85rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">취소</button>
+    <button class="btn-primary" onclick="saveEdit()">저장하기</button>
+    <button class="btn-cancel" onclick="closeOverlay('edit-overlay')">취소</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     GitHub 토큰 설정 모달
+══════════════════════════════════════ -->
+<div class="overlay" id="github-overlay">
+  <div class="overlay-box" id="github-overlay-box" style="text-align:left;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+      <div>
+        <div style="font-size:1rem;font-weight:700;color:#fff;">⚡ GitHub 연동 설정</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;">변경사항이 자동으로 GitHub에 커밋 → Vercel 자동 배포</div>
+      </div>
+      <button onclick="closeOverlay('github-overlay')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.3rem;line-height:1;">✕</button>
     </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.85rem;font-size:.78rem;color:var(--muted);line-height:1.75;margin-bottom:1rem;">
+      <strong style="color:var(--text);">Personal Access Token 발급 방법:</strong><br/>
+      GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)<br/>
+      → Generate new token → <code>repo</code> 권한 체크 → 복사
+    </div>
+
+    <div class="form-group">
+      <label>Repository (Owner/Repo)</label>
+      <input type="text" id="gh-repo-input" placeholder="예: nomin7916/blog" />
+    </div>
+    <div class="form-group">
+      <label>Personal Access Token</label>
+      <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+    </div>
+
+    <div id="gh-test-result" style="display:none;" class="alert alert-info">
+      <span id="gh-test-icon"></span><span id="gh-test-msg"></span>
+    </div>
+
+    <button class="btn-primary" onclick="saveGithubToken()">저장 및 연결 테스트</button>
+    <button class="btn-cancel" onclick="closeOverlay('github-overlay')">취소</button>
+    <button id="gh-clear-btn" onclick="clearGithubToken()" style="display:none;margin-top:.4rem;width:100%;padding:.55rem;background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.25);border-radius:10px;font-size:.8rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(239,68,68,.2)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">토큰 삭제</button>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════
-//  상태
+//  상태 변수
 // ═══════════════════════════════════════════════
-let dirHandle = null;
 let currentPosts = [];
-let selectedUploadFile = null;
-let uploadTags = [];
+let formTags = [];
 let editTags = [];
 let editingPostIndex = -1;
 let deletingPostIndex = -1;
 let editHtmlVisible = false;
+let gdFiles = [];
+let gdSelectedFile = null;
+let selectedLocalFile = null;
+let currentSource = 'drive'; // 'drive' | 'local'
+let gdTokenClient = null;
 
-// ── 관리자 인증 체크
+// ── 인증 체크
 const ADMIN_TOKEN = sessionStorage.getItem('gd_admin_token');
 if (!ADMIN_TOKEN) { location.href = 'Index.html'; }
 
-// ── 초기 posts.json 로드 (폴더 없어도 fetch로 읽기)
+// ── Google Drive 설정
+const GD_CLIENT_ID = '1094703739324-gp9ln7ghnh61lak10or45koh01tu121r.apps.googleusercontent.com';
+const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
+const GD_SCOPE = 'https://www.googleapis.com/auth/drive';
+let gdAccessToken = ADMIN_TOKEN;
+
+// ── GitHub 설정
+let githubToken = localStorage.getItem('gh_token') || '';
+let githubRepo = localStorage.getItem('gh_repo') || 'nomin7916/blog';
+
+// ═══════════════════════════════════════════════
+//  초기화
+// ═══════════════════════════════════════════════
 (async () => {
-  try {
-    const res = await fetch('posts.json?' + Date.now());
-    currentPosts = await res.json();
-    renderUploadList();
-  } catch {}
+  await loadPostsJson();
+  renderManageList();
+  updateGHStatus();
+  if (gdAccessToken) {
+    updateGDAuthUI(true);
+    await loadGDFiles();
+  }
+  // 태그 입력 이벤트
+  document.getElementById('f-tag-input').addEventListener('keydown', e => {
+    if (e.key==='Enter'||e.key===',') { e.preventDefault(); addFormTag(e.target.value.trim().replace(',','')); e.target.value=''; }
+    else if (e.key==='Backspace'&&!e.target.value&&formTags.length) { removeFormTag(formTags.length-1); }
+  });
+  document.getElementById('e-tag-input').addEventListener('keydown', e => {
+    if (e.key==='Enter'||e.key===',') { e.preventDefault(); addEditTag(e.target.value.trim().replace(',','')); e.target.value=''; }
+    else if (e.key==='Backspace'&&!e.target.value&&editTags.length) { removeEditTag(editTags.length-1); }
+  });
 })();
 
 // ═══════════════════════════════════════════════
-//  탭 전환
+//  GitHub API 헬퍼
 // ═══════════════════════════════════════════════
-function switchTab(name) {
-  const tabs = ['upload', 'manage', 'gdrive'];
-  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === name));
-  tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === name));
-  if (name === 'manage') renderManageList();
-  if (name === 'gdrive') { syncGDFolderStatus(); if (gdAccessToken && !gdFiles.length) loadGDFiles(); }
+function ghPath(path) {
+  return path.split('/').map(part => encodeURIComponent(part)).join('/');
+}
+
+function textToBase64(text) {
+  const bytes = new TextEncoder().encode(text);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function base64ToText(base64) {
+  const binary = atob(base64.replace(/\n/g, ''));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
+async function ghGetFileMeta(path) {
+  if (!githubToken || !githubRepo) return null;
+  const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${ghPath(path)}`, {
+    headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json' }
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('GitHub 오류: ' + res.status);
+  return res.json();
+}
+
+async function ghPutFile(path, content, commitMsg) {
+  if (!githubToken || !githubRepo) throw new Error('GitHub 토큰을 먼저 설정해주세요.');
+  const meta = await ghGetFileMeta(path);
+  const body = {
+    message: commitMsg,
+    content: textToBase64(content),
+    ...(meta && { sha: meta.sha })
+  };
+  const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${ghPath(path)}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${githubToken}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || 'GitHub 저장 실패: ' + res.status);
+  }
+  return res.json();
+}
+
+async function ghDeleteFile(path, commitMsg) {
+  if (!githubToken || !githubRepo) throw new Error('GitHub 토큰을 먼저 설정해주세요.');
+  const meta = await ghGetFileMeta(path);
+  if (!meta) return;
+  const body = { message: commitMsg, sha: meta.sha };
+  const res = await fetch(`https://api.github.com/repos/${githubRepo}/contents/${ghPath(path)}`, {
+    method: 'DELETE',
+    headers: { Authorization: `token ${githubToken}`, 'Content-Type': 'application/json', Accept: 'application/vnd.github.v3+json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('GitHub 삭제 실패: ' + res.status);
+}
+
+async function ghGetFileContent(path) {
+  const meta = await ghGetFileMeta(path);
+  if (!meta) return null;
+  return base64ToText(meta.content);
 }
 
 // ═══════════════════════════════════════════════
-//  폴더 선택
+//  posts.json 로드 / 저장
 // ═══════════════════════════════════════════════
-async function selectFolder(mode) {
-  if (!('showDirectoryPicker' in window)) {
-    alert('이 기능은 Chrome 또는 Edge에서만 지원됩니다.');
-    return;
-  }
+async function loadPostsJson() {
   try {
-    dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
-    // 모든 탭 폴더 상태 업데이트
-    ['u','m','gd'].forEach(prefix => {
-      const dot = document.getElementById(prefix + '-folder-dot');
-      const name = document.getElementById(prefix + '-folder-name');
-      if (dot) dot.classList.add('ok');
-      if (name) name.textContent = dirHandle.name;
-    });
-    const alertEl = document.getElementById('u-alert-folder');
-    if (alertEl) alertEl.classList.remove('show');
-    await loadPosts();
-    renderUploadList();
-    renderManageList();
-    updateBackupAllBtn();
-  } catch (e) {
-    if (e.name !== 'AbortError') showEditError('폴더 선택 실패: ' + e.message);
-  }
+    const res = await fetch('posts.json?' + Date.now());
+    currentPosts = await res.json();
+    updatePostsCountPill();
+  } catch { currentPosts = []; }
+}
+
+async function savePostsJson(commitMsg) {
+  const msg = commitMsg || '관리자: posts.json 업데이트';
+  await ghPutFile('posts.json', JSON.stringify(currentPosts, null, 2), msg);
+  updatePostsCountPill();
+}
+
+function updatePostsCountPill() {
+  const visible = currentPosts.filter(p => p.visible !== false).length;
+  document.getElementById('posts-count-text').textContent = `글 ${currentPosts.length}편 (게시 ${visible})`;
 }
 
 // ═══════════════════════════════════════════════
-//  posts.json 로드/저장
+//  GitHub 상태 UI
 // ═══════════════════════════════════════════════
-async function loadPosts() {
-  if (dirHandle) {
-    try {
-      const fh = await dirHandle.getFileHandle('posts.json', { create: false });
-      currentPosts = JSON.parse(await (await fh.getFile()).text());
-    } catch { currentPosts = []; }
+function updateGHStatus() {
+  const pill = document.getElementById('gh-pill');
+  const pillText = document.getElementById('gh-pill-text');
+  const banner = document.getElementById('gh-banner');
+  if (githubToken && githubRepo) {
+    pill.className = 'status-pill ok';
+    pillText.textContent = `GitHub: ${githubRepo}`;
+    banner.classList.add('hidden');
   } else {
-    try {
-      const res = await fetch('posts.json?' + Date.now());
-      currentPosts = await res.json();
-    } catch { currentPosts = []; }
+    pill.className = 'status-pill warn';
+    pillText.textContent = 'GitHub 토큰 설정 필요';
+    banner.classList.remove('hidden');
   }
 }
 
-async function savePosts() {
-  const fh = await dirHandle.getFileHandle('posts.json', { create: true });
-  const w = await fh.createWritable();
-  await w.write(JSON.stringify(currentPosts, null, 2));
-  await w.close();
+function openGithubSetup() {
+  document.getElementById('gh-repo-input').value = githubRepo || 'nomin7916/blog';
+  document.getElementById('gh-token-input').value = githubToken || '';
+  document.getElementById('gh-test-result').style.display = 'none';
+  document.getElementById('gh-clear-btn').style.display = githubToken ? 'block' : 'none';
+  document.getElementById('github-overlay').classList.add('show');
+}
+
+async function saveGithubToken() {
+  const repo = document.getElementById('gh-repo-input').value.trim();
+  const token = document.getElementById('gh-token-input').value.trim();
+  if (!repo || !token) { showGHTestResult('error', '⚠️', 'Repo와 토큰을 모두 입력해주세요.'); return; }
+
+  showGHTestResult('info', '<span class="spinner"></span>', '연결 테스트 중...');
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/posts.json`, {
+      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (res.status === 401) { showGHTestResult('error', '⚠️', '토큰이 유효하지 않습니다.'); return; }
+    if (res.status === 404) { showGHTestResult('error', '⚠️', `저장소 '${repo}'를 찾을 수 없습니다.`); return; }
+    githubToken = token;
+    githubRepo = repo;
+    localStorage.setItem('gh_token', token);
+    localStorage.setItem('gh_repo', repo);
+    updateGHStatus();
+    showGHTestResult('success', '✅', `'${repo}' 연결 성공! 이제 모든 변경사항이 자동 저장됩니다.`);
+    document.getElementById('gh-clear-btn').style.display = 'block';
+    setTimeout(() => closeOverlay('github-overlay'), 1800);
+  } catch(e) {
+    showGHTestResult('error', '⚠️', '연결 실패: ' + e.message);
+  }
+}
+
+function showGHTestResult(type, icon, msg) {
+  const el = document.getElementById('gh-test-result');
+  el.style.display = 'flex';
+  el.className = `alert alert-${type === 'error' ? 'error' : type === 'success' ? 'success' : 'info'} show`;
+  document.getElementById('gh-test-icon').innerHTML = icon;
+  document.getElementById('gh-test-msg').textContent = msg;
+}
+
+function clearGithubToken() {
+  if (!confirm('GitHub 토큰을 삭제하시겠습니까?')) return;
+  githubToken = '';
+  githubRepo = 'nomin7916/blog';
+  localStorage.removeItem('gh_token');
+  localStorage.removeItem('gh_repo');
+  updateGHStatus();
+  closeOverlay('github-overlay');
 }
 
 // ═══════════════════════════════════════════════
-//  글 목록 렌더링 (업로드 탭 — 읽기 전용)
+//  소스 전환 (Drive / Local)
 // ═══════════════════════════════════════════════
-function renderUploadList() {
-  const el = document.getElementById('u-posts-list');
-  if (!currentPosts.length) { el.innerHTML = '<div class="empty-state">등록된 글이 없습니다.</div>'; return; }
-  const sorted = [...currentPosts].sort((a,b) => new Date(b.date) - new Date(a.date));
-  el.innerHTML = sorted.map((p, i) => `
-    <div class="post-item">
-      <div class="post-item-top">
-        <div class="post-num">${i+1}</div>
-        <div class="post-info">
-          <div class="post-title-sm">${escHtml(p.title)}</div>
-          <div class="post-meta-sm">
-            <span class="post-date-sm">${p.date}</span>
-            ${(p.tags||[]).map(t=>`<span class="post-tag-sm">${escHtml(t)}</span>`).join('')}
-          </div>
-        </div>
+function switchSource(src) {
+  currentSource = src;
+  document.getElementById('src-drive-btn').classList.toggle('active', src === 'drive');
+  document.getElementById('src-local-btn').classList.toggle('active', src === 'local');
+  document.getElementById('src-drive-panel').style.display = src === 'drive' ? 'block' : 'none';
+  document.getElementById('src-local-panel').style.display = src === 'local' ? 'block' : 'none';
+  clearSelection();
+}
+
+// ═══════════════════════════════════════════════
+//  Google Drive 연동
+// ═══════════════════════════════════════════════
+function handleDrivePillClick() {
+  if (!gdAccessToken) gdSignIn();
+}
+
+function gdSignIn() {
+  if (!window.google) { alert('Google 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.'); return; }
+  if (!gdTokenClient) {
+    gdTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GD_CLIENT_ID,
+      scope: GD_SCOPE,
+      callback: (response) => {
+        if (response.error) { alert('Google 로그인 실패: ' + response.error); return; }
+        gdAccessToken = response.access_token;
+        updateGDAuthUI(true);
+        loadGDFiles();
+      },
+    });
+  }
+  gdTokenClient.requestAccessToken({ prompt: '' });
+}
+
+function gdSignOut() {
+  if (gdAccessToken) google.accounts.oauth2.revoke(gdAccessToken);
+  gdAccessToken = null;
+  gdFiles = [];
+  gdSelectedFile = null;
+  updateGDAuthUI(false);
+  document.getElementById('gd-files-list').innerHTML = '<div class="empty-state">Google 계정에 로그인하면<br/>MY-Insight Blog 폴더의 파일 목록이 표시됩니다.</div>';
+  clearSelection();
+}
+
+function updateGDAuthUI(isSignedIn) {
+  const dot = document.getElementById('gd-auth-dot');
+  const text = document.getElementById('gd-auth-text');
+  const signinBtn = document.getElementById('gd-signin-btn');
+  const signoutBtn = document.getElementById('gd-signout-btn');
+  const refreshBtn = document.getElementById('gd-refresh-btn');
+  const drivePill = document.getElementById('drive-pill');
+  const drivePillText = document.getElementById('drive-pill-text');
+
+  dot.style.background = isSignedIn ? 'var(--success)' : 'var(--border2)';
+  text.textContent = isSignedIn ? 'Google Drive 연결됨' : '연결 안 됨';
+  signinBtn.style.display = isSignedIn ? 'none' : 'inline-flex';
+  signoutBtn.style.display = isSignedIn ? 'inline-block' : 'none';
+  refreshBtn.style.display = isSignedIn ? 'inline-block' : 'none';
+
+  drivePill.className = isSignedIn ? 'status-pill ok' : 'status-pill warn';
+  drivePillText.textContent = isSignedIn ? 'Drive 연결됨' : 'Drive 로그인 필요';
+}
+
+async function loadGDFiles() {
+  const el = document.getElementById('gd-files-list');
+  el.innerHTML = '<div class="empty-state">📂 파일 목록 불러오는 중...</div>';
+  try {
+    const q = encodeURIComponent(`'${GD_FOLDER_ID}' in parents and trashed=false`);
+    const fields = encodeURIComponent('files(id,name,mimeType,modifiedTime,size)');
+    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=modifiedTime+desc`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${gdAccessToken}` } });
+    if (res.status === 401) {
+      gdSignOut();
+      gdSignIn();
+      return;
+    }
+    if (!res.ok) throw new Error('Drive API 오류: ' + res.status);
+    const data = await res.json();
+    gdFiles = (data.files || []).filter(f => {
+      const isHtml = f.mimeType === 'text/html' || f.name.toLowerCase().endsWith('.html') || f.name.toLowerCase().endsWith('.htm');
+      const isDoc = f.mimeType === 'application/vnd.google-apps.document';
+      return isHtml || isDoc;
+    });
+    renderGDFiles();
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state" style="color:var(--error);">오류: ${e.message}</div>`;
+  }
+}
+
+function renderGDFiles() {
+  const el = document.getElementById('gd-files-list');
+  if (!gdFiles.length) { el.innerHTML = '<div class="empty-state">폴더에 파일이 없습니다.</div>'; return; }
+  el.innerHTML = gdFiles.map((f, i) => {
+    const isDoc = f.mimeType === 'application/vnd.google-apps.document';
+    const icon = isDoc ? '📝' : '🌐';
+    const typeLabel = isDoc ? 'Google Docs' : 'HTML';
+    const date = new Date(f.modifiedTime).toLocaleDateString('ko-KR');
+    const isSelected = gdSelectedFile && gdSelectedFile.id === f.id;
+    const alreadyPosted = currentPosts.some(p => p.file && p.file.includes(sanitizeFilename(f.name.replace(/\.html?$/i, ''))));
+    return `
+    <div class="gd-file-item${isSelected ? ' gd-selected' : ''}" onclick="selectGDFile(${i})">
+      <span class="gd-file-icon">${icon}</span>
+      <div class="gd-file-info">
+        <div class="gd-file-name">${escHtml(f.name)}</div>
+        <div class="gd-file-meta">${typeLabel} · ${date}${alreadyPosted ? ' · <span style="color:var(--success)">게시됨</span>' : ''}</div>
       </div>
-    </div>
-  `).join('');
+      <button class="btn-edit" onclick="event.stopPropagation();selectGDFile(${i})" style="flex-shrink:0;font-size:.7rem;">
+        ${isSelected ? '✓ 선택됨' : '선택'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function selectGDFile(idx) {
+  gdSelectedFile = gdFiles[idx];
+  selectedLocalFile = null;
+  renderGDFiles();
+  const nameNoExt = gdSelectedFile.name.replace(/\.html?$/i, '');
+  const dateMatch = nameNoExt.match(/^(\d{4}-\d{2}-\d{2})/);
+  document.getElementById('f-date').value = dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0];
+  document.getElementById('f-title').value = nameNoExt.replace(/^\d{4}-\d{2}-\d{2}[-_\s]*/,'').replace(/-/g,' ').trim();
+  document.getElementById('f-desc').value = '';
+  document.getElementById('selected-file-name').textContent = gdSelectedFile.name;
+  formTags = [];
+  renderFormTags();
+  updatePublishPreview();
+  checkPublishReady();
+  document.getElementById('publish-form').style.display = 'block';
+  document.getElementById('publish-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ═══════════════════════════════════════════════
-//  글 목록 렌더링 (관리 탭 — 수정/삭제 버튼 포함)
+//  로컬 파일 업로드
+// ═══════════════════════════════════════════════
+function handleLocalFile(file) {
+  if (!file || !/\.html?$/i.test(file.name)) { alert('HTML 파일만 업로드할 수 있습니다.'); return; }
+  selectedLocalFile = file;
+  gdSelectedFile = null;
+  const dz = document.getElementById('u-drop-zone');
+  dz.classList.add('has-file');
+  document.getElementById('u-drop-icon').textContent = '✅';
+  document.getElementById('u-drop-title').textContent = file.name;
+  document.getElementById('u-drop-sub').textContent = `${(file.size/1024).toFixed(1)} KB`;
+
+  const dateMatch = file.name.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (dateMatch) document.getElementById('f-date').value = dateMatch[1];
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const html = e.target.result;
+    const m = html.match(/<title[^>]*>([^<]+)/i);
+    if (m && !document.getElementById('f-title').value) {
+      document.getElementById('f-title').value = m[1].trim().replace(/\s*[|—–-]\s*.*$/,'').trim();
+    }
+    updatePublishPreview();
+  };
+  reader.readAsText(file, 'utf-8');
+
+  document.getElementById('selected-file-name').textContent = file.name;
+  formTags = [];
+  renderFormTags();
+  checkPublishReady();
+  document.getElementById('publish-form').style.display = 'block';
+}
+
+// 드래그 앤 드롭
+const udz = document.getElementById('u-drop-zone');
+udz.addEventListener('dragover', e => { e.preventDefault(); udz.classList.add('dragover'); });
+udz.addEventListener('dragleave', () => udz.classList.remove('dragover'));
+udz.addEventListener('drop', e => {
+  e.preventDefault(); udz.classList.remove('dragover');
+  switchSource('local');
+  handleLocalFile(e.dataTransfer.files[0]);
+});
+
+// ═══════════════════════════════════════════════
+//  선택 초기화
+// ═══════════════════════════════════════════════
+function clearSelection() {
+  gdSelectedFile = null;
+  selectedLocalFile = null;
+  formTags = [];
+  renderFormTags();
+  document.getElementById('publish-form').style.display = 'none';
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-date').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-preview').classList.remove('show');
+  document.getElementById('f-alert-error').classList.remove('show');
+  document.getElementById('f-alert-success').classList.remove('show');
+  // 로컬 drop zone 리셋
+  const dz = document.getElementById('u-drop-zone');
+  dz.classList.remove('has-file');
+  document.getElementById('u-drop-icon').textContent = '📄';
+  document.getElementById('u-drop-title').textContent = 'HTML 파일을 드래그하거나 클릭해서 선택';
+  document.getElementById('u-drop-sub').textContent = '파일명 권장: YYYY-MM-DD-제목.html';
+  document.getElementById('u-file-input').value = '';
+  renderGDFiles();
+}
+
+// ═══════════════════════════════════════════════
+//  게시 폼 태그 관리
+// ═══════════════════════════════════════════════
+function addFormTag(v) { if(!v||formTags.includes(v)) return; formTags.push(v); renderFormTags(); updatePublishPreview(); }
+function removeFormTag(i) { formTags.splice(i,1); renderFormTags(); updatePublishPreview(); }
+function renderFormTags() {
+  const inp = document.getElementById('f-tag-input');
+  const c = document.getElementById('f-tags-container');
+  c.innerHTML = formTags.map((t,i)=>`<span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeFormTag(${i})">×</button></span>`).join('');
+  c.appendChild(inp);
+}
+
+function updatePublishPreview() {
+  const title = document.getElementById('f-title').value;
+  const date = document.getElementById('f-date').value;
+  const desc = document.getElementById('f-desc').value;
+  const card = document.getElementById('f-preview');
+  if (!title && !date) { card.classList.remove('show'); return; }
+  card.classList.add('show');
+  document.getElementById('f-pv-title').textContent = title || '제목 없음';
+  document.getElementById('f-pv-date').textContent = date ? formatDate(date) : '';
+  document.getElementById('f-pv-desc').textContent = desc || '';
+  document.getElementById('f-pv-tags').innerHTML = formTags.map(t=>`<span style="padding:.15rem .55rem;border-radius:9999px;font-size:.68rem;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28);">${escHtml(t)}</span>`).join('');
+}
+
+function checkPublishReady() {
+  const ok = (gdSelectedFile || selectedLocalFile)
+    && document.getElementById('f-title').value.trim()
+    && document.getElementById('f-date').value;
+  document.getElementById('f-publish-btn').disabled = !ok;
+}
+
+// ═══════════════════════════════════════════════
+//  게시하기
+// ═══════════════════════════════════════════════
+function sanitizeFilename(name) {
+  return name.replace(/\s+/g, '-').replace(/[^\w가-힣\-]/g, '').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+async function publishPost() {
+  if (!githubToken) { showFormError('GitHub 토큰을 먼저 설정해주세요. 상단 ⚡ GitHub 버튼을 클릭하세요.'); return; }
+  const title = document.getElementById('f-title').value.trim();
+  const date = document.getElementById('f-date').value;
+  const desc = document.getElementById('f-desc').value.trim();
+  if (!title || !date) { showFormError('날짜와 제목을 입력해주세요.'); return; }
+
+  const btn = document.getElementById('f-publish-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 게시 중...';
+
+  try {
+    let content;
+    if (gdSelectedFile) {
+      const isDoc = gdSelectedFile.mimeType === 'application/vnd.google-apps.document';
+      const url = isDoc
+        ? `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}/export?mimeType=text%2Fhtml`
+        : `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}?alt=media`;
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${gdAccessToken}` } });
+      if (res.status === 401) { gdSignIn(); throw new Error('Drive 세션이 만료되었습니다. 다시 로그인 후 시도해주세요.'); }
+      if (!res.ok) throw new Error('Drive 파일 다운로드 실패: ' + res.status);
+      content = await res.text();
+    } else if (selectedLocalFile) {
+      content = await selectedLocalFile.text();
+    } else {
+      throw new Error('파일이 선택되지 않았습니다.');
+    }
+
+    const rawName = gdSelectedFile
+      ? gdSelectedFile.name.replace(/\.html?$/i, '')
+      : selectedLocalFile.name.replace(/\.html?$/i, '');
+    const baseNameNoDate = rawName.replace(/^\d{4}-\d{2}-\d{2}[-_\s]*/, '');
+    const safeName = sanitizeFilename(baseNameNoDate) || sanitizeFilename(title);
+    const filename = `${date}-${safeName}.html`;
+    const filePath = `posts/${filename}`;
+
+    // GitHub에 HTML 파일 업로드
+    btn.innerHTML = '<span class="spinner"></span> HTML 업로드 중...';
+    await ghPutFile(filePath, content, `글 추가: ${title}`);
+
+    // posts.json 업데이트
+    btn.innerHTML = '<span class="spinner"></span> 목록 업데이트 중...';
+    const existing = currentPosts.findIndex(p => p.file === filePath);
+    const entry = { date, title, description: desc, file: filePath, tags: [...formTags], visible: true };
+    if (existing >= 0) currentPosts[existing] = entry; else currentPosts.unshift(entry);
+    await savePostsJson(`글 추가: ${title}`);
+
+    renderManageList();
+    clearSelection();
+    if (currentSource === 'drive') await loadGDFiles();
+
+    showSuccess('🚀', '게시 완료!', `"${title}" 글이 블로그에 게시되었습니다.`, [
+      { n:1, text: `<code>${filePath}</code> GitHub 업로드 완료` },
+      { n:2, text: '<code>posts.json</code> 업데이트 완료' },
+      { n:3, text: 'Vercel이 자동으로 재배포됩니다 (약 30초~1분)' },
+    ]);
+  } catch(e) {
+    showFormError('게시 실패: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = '🚀 블로그에 게시하기';
+  checkPublishReady();
+}
+
+// ═══════════════════════════════════════════════
+//  글 목록 렌더링 (관리)
 // ═══════════════════════════════════════════════
 function renderManageList() {
   const el = document.getElementById('m-posts-list');
-  if (!dirHandle) { el.innerHTML = '<div class="empty-state">폴더를 연결하면 목록이 표시됩니다.</div>'; return; }
   if (!currentPosts.length) { el.innerHTML = '<div class="empty-state">등록된 글이 없습니다.</div>'; return; }
   const total = currentPosts.length;
   el.innerHTML = currentPosts.map((p, idx) => {
@@ -794,14 +1032,14 @@ function renderManageList() {
             ${escHtml(p.title)}
             ${isHidden ? '<span class="hidden-badge">숨김</span>' : ''}
           </div>
-          <div class="post-meta-sm" style="margin-bottom:.55rem;">
+          <div class="post-meta-sm" style="margin-bottom:.3rem;">
             <span class="post-date-sm">${p.date}</span>
             ${(p.tags||[]).map(t=>`<span class="post-tag-sm">${escHtml(t)}</span>`).join('')}
           </div>
-          <div style="font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(p.file)}</div>
+          <div style="font-size:.68rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(p.file||'')}</div>
         </div>
         <div class="post-actions">
-          <button class="btn-toggle ${isHidden ? 'btn-toggle-show' : 'btn-toggle-hide'}" onclick="toggleVisibility(${idx})">${isHidden ? '👁️ 표시' : '🙈 숨기기'}</button>
+          <button class="btn-toggle ${isHidden ? 'btn-toggle-show' : 'btn-toggle-hide'}" onclick="toggleVisibility(${idx})">${isHidden ? '👁 표시' : '🙈 숨김'}</button>
           <button class="btn-edit" onclick="openEditModal(${idx})">✏️ 수정</button>
           <button class="btn-delete" onclick="openDeleteDialog(${idx})">🗑️ 삭제</button>
         </div>
@@ -811,146 +1049,53 @@ function renderManageList() {
 }
 
 // ═══════════════════════════════════════════════
-//  파일 업로드 처리
+//  표시/숨기기 토글
 // ═══════════════════════════════════════════════
-function handleUploadFile(file) {
-  if (!file || !/\.html?$/i.test(file.name)) { showUploadError('HTML 파일만 업로드할 수 있습니다.'); return; }
-  selectedUploadFile = file;
-  const dz = document.getElementById('u-drop-zone');
-  dz.classList.add('has-file');
-  document.getElementById('u-drop-icon').textContent = '✅';
-  document.getElementById('u-drop-title').textContent = file.name;
-  document.getElementById('u-drop-sub').textContent = `${(file.size/1024).toFixed(1)} KB`;
-
-  const dateMatch = file.name.match(/^(\d{4}-\d{2}-\d{2})/);
-  if (dateMatch) document.getElementById('u-date').value = dateMatch[1];
-
-  const reader = new FileReader();
-  reader.onload = e => {
-    const html = e.target.result;
-    const m = html.match(/<title[^>]*>([^<|]+)/i);
-    if (m && !document.getElementById('u-title').value) {
-      document.getElementById('u-title').value = m[1].trim().replace(/\s*[|—–-]\s*.*$/,'').trim();
-    }
-    updateUploadPreview();
-  };
-  reader.readAsText(file);
-  checkUploadReady();
-}
-
-// ── 드래그 앤 드롭
-const udz = document.getElementById('u-drop-zone');
-udz.addEventListener('dragover', e => { e.preventDefault(); udz.classList.add('dragover'); });
-udz.addEventListener('dragleave', () => udz.classList.remove('dragover'));
-udz.addEventListener('drop', e => { e.preventDefault(); udz.classList.remove('dragover'); handleUploadFile(e.dataTransfer.files[0]); });
-
-// ── 태그 (업로드)
-document.getElementById('u-tag-input').addEventListener('keydown', e => {
-  if (e.key==='Enter'||e.key===',') { e.preventDefault(); addUploadTag(e.target.value.trim().replace(',','')); e.target.value=''; }
-  else if (e.key==='Backspace'&&!e.target.value&&uploadTags.length) { removeUploadTag(uploadTags.length-1); }
-});
-function addUploadTag(v) { if(!v||uploadTags.includes(v)) return; uploadTags.push(v); renderUploadTags(); updateUploadPreview(); }
-function removeUploadTag(i) { uploadTags.splice(i,1); renderUploadTags(); updateUploadPreview(); }
-function renderUploadTags() {
-  const inp = document.getElementById('u-tag-input');
-  const c = document.getElementById('u-tags-container');
-  c.innerHTML = uploadTags.map((t,i)=>`<span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeUploadTag(${i})">×</button></span>`).join('');
-  c.appendChild(inp);
-}
-
-function updateUploadPreview() {
-  const title = document.getElementById('u-title').value;
-  const date = document.getElementById('u-date').value;
-  const desc = document.getElementById('u-desc').value;
-  const card = document.getElementById('u-preview');
-  if (!title && !date) { card.classList.remove('show'); return; }
-  card.classList.add('show');
-  document.getElementById('u-pv-title').textContent = title || '제목 없음';
-  document.getElementById('u-pv-date').textContent = date ? formatDate(date) : '';
-  document.getElementById('u-pv-desc').textContent = desc || '';
-  document.getElementById('u-pv-tags').innerHTML = uploadTags.map(t=>`<span style="padding:.15rem .55rem;border-radius:9999px;font-size:.68rem;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28);">${escHtml(t)}</span>`).join('');
-}
-
-function checkUploadReady() {
-  const ok = selectedUploadFile
-    && document.getElementById('u-title').value.trim()
-    && document.getElementById('u-date').value;
-  document.getElementById('u-submit-btn').disabled = !ok;
-}
-
-// ═══════════════════════════════════════════════
-//  새 글 등록 제출
-// ═══════════════════════════════════════════════
-async function submitUpload() {
-  const title = document.getElementById('u-title').value.trim();
-  const date = document.getElementById('u-date').value;
-  const desc = document.getElementById('u-desc').value.trim();
-  if (!selectedUploadFile||!title||!date) { showUploadError('필수 항목을 모두 입력해 주세요.'); return; }
-
-  const btn = document.getElementById('u-submit-btn');
-  btn.disabled = true; btn.textContent = '등록 중...';
-
-  const safeName = selectedUploadFile.name;
-  const filePath = `posts/${safeName}`;
-  const idx = currentPosts.findIndex(p => p.file === filePath);
-  const entry = { date, title, description: desc, file: filePath, tags: [...uploadTags], visible: true };
-  if (idx >= 0) currentPosts[idx] = entry; else currentPosts.unshift(entry);
-
+async function toggleVisibility(idx) {
+  if (!githubToken) { alert('GitHub 토큰을 먼저 설정해주세요.'); return; }
+  const p = currentPosts[idx];
+  currentPosts[idx].visible = p.visible === false ? true : false;
+  renderManageList();
   try {
-    if (dirHandle) {
-      // 로컬 폴더에 직접 저장
-      const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
-      const fh = await postsDH.getFileHandle(safeName, { create: true });
-      const w = await fh.createWritable();
-      await w.write(selectedUploadFile); await w.close();
-      await savePosts();
-      renderUploadList();
-      renderManageList();
-      showSuccess('✅', '등록 완료!', `"${title}" 글이 등록되었습니다.`, [
-        { n:1, text: `파일이 <code>posts/</code>에 저장되었습니다` },
-        { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
-        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
-      ]);
-    } else {
-      // 폴더 미연결 시 다운로드로 제공
-      const content = await selectedUploadFile.text();
-      downloadBlob(new Blob([content], { type: 'text/html' }), safeName);
-      setTimeout(() => downloadJson(currentPosts, 'posts.json'), 400);
-      renderUploadList();
-      showSuccess('📥', '파일 다운로드 시작!', `"${title}" 파일이 준비되었습니다.`, [
-        { n:1, text: `다운로드된 <code>${safeName}</code>을 블로그 <code>posts/</code> 폴더에 넣으세요` },
-        { n:2, text: `다운로드된 <code>posts.json</code>을 블로그 루트에 덮어씌우세요` },
-        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
-      ]);
-    }
-    resetUpload();
+    await savePostsJson(`${p.visible === false ? '표시' : '숨김'}: ${p.title}`);
   } catch(e) {
-    showUploadError('등록 실패: ' + e.message);
-    btn.disabled = false;
+    alert('저장 실패: ' + e.message);
+    currentPosts[idx].visible = p.visible;
+    renderManageList();
   }
-  btn.textContent = '글 등록하기';
-  checkUploadReady();
-}
-
-function resetUpload() {
-  selectedUploadFile = null; uploadTags = [];
-  const dz = document.getElementById('u-drop-zone');
-  dz.classList.remove('has-file');
-  document.getElementById('u-drop-icon').textContent = '📄';
-  document.getElementById('u-drop-title').textContent = 'HTML 파일을 드래그하거나 클릭해서 선택';
-  document.getElementById('u-drop-sub').textContent = '파일명 권장: YYYY-MM-DD-제목.html';
-  ['u-title','u-date','u-desc'].forEach(id => document.getElementById(id).value = '');
-  renderUploadTags();
-  document.getElementById('u-preview').classList.remove('show');
-  document.getElementById('u-alert-error').classList.remove('show');
-  checkUploadReady();
 }
 
 // ═══════════════════════════════════════════════
-//  편집 모달 열기
+//  순서 변경
+// ═══════════════════════════════════════════════
+async function movePost(idx, direction) {
+  if (!githubToken) { alert('GitHub 토큰을 먼저 설정해주세요.'); return; }
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= currentPosts.length) return;
+  [currentPosts[idx], currentPosts[newIdx]] = [currentPosts[newIdx], currentPosts[idx]];
+  renderManageList();
+  try {
+    await savePostsJson('순서 변경');
+  } catch(e) {
+    alert('저장 실패: ' + e.message);
+    [currentPosts[idx], currentPosts[newIdx]] = [currentPosts[newIdx], currentPosts[idx]];
+    renderManageList();
+  }
+}
+
+async function sortByDate() {
+  if (!githubToken) { alert('GitHub 토큰을 먼저 설정해주세요.'); return; }
+  currentPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  renderManageList();
+  try {
+    await savePostsJson('날짜순 정렬');
+  } catch(e) { alert('저장 실패: ' + e.message); }
+}
+
+// ═══════════════════════════════════════════════
+//  편집 모달
 // ═══════════════════════════════════════════════
 async function openEditModal(idx) {
-  if (!dirHandle) { alert('폴더를 먼저 연결해 주세요.'); return; }
   editingPostIndex = idx;
   const p = currentPosts[idx];
   editTags = [...(p.tags || [])];
@@ -958,46 +1103,42 @@ async function openEditModal(idx) {
   document.getElementById('e-date').value = p.date || '';
   document.getElementById('e-title').value = p.title || '';
   document.getElementById('e-desc').value = p.description || '';
-  document.getElementById('edit-file-path').textContent = p.file;
+  document.getElementById('edit-file-path').textContent = p.file || '';
   renderEditTags();
   updateEditPreview();
 
   // HTML 에디터 초기화
-  document.getElementById('e-html').value = 'HTML 로딩 중...';
+  document.getElementById('e-html').value = '클릭해서 HTML을 불러오세요...';
   editHtmlVisible = false;
   document.getElementById('html-editor-area').style.display = 'none';
-  document.getElementById('html-toggle-btn').textContent = '펼치기';
-
-  // HTML 파일 비동기 로드
-  loadHtmlForEdit(p.file);
+  document.getElementById('html-toggle-btn').textContent = '▶ HTML 본문 편집 (펼치기)';
 
   document.getElementById('edit-overlay').classList.add('show');
 }
 
 async function loadHtmlForEdit(filePath) {
+  const el = document.getElementById('e-html');
+  if (!githubToken) { el.value = '// GitHub 토큰을 설정해야 HTML을 불러올 수 있습니다.'; return; }
+  el.value = '로딩 중...';
   try {
-    const parts = filePath.split('/').filter(Boolean);
-    let handle = dirHandle;
-    for (let i = 0; i < parts.length - 1; i++) handle = await handle.getDirectoryHandle(parts[i]);
-    const fh = await handle.getFileHandle(parts[parts.length - 1]);
-    const text = await (await fh.getFile()).text();
-    document.getElementById('e-html').value = text;
-  } catch {
-    document.getElementById('e-html').value = '// 파일을 불러올 수 없습니다.\n// posts/ 폴더 안에 파일이 없거나 경로가 다릅니다.';
+    const content = await ghGetFileContent(filePath);
+    el.value = content !== null ? content : '// 파일을 찾을 수 없습니다: ' + filePath;
+  } catch(e) {
+    el.value = '// 파일 로드 실패: ' + e.message;
   }
 }
 
 function toggleHtmlEditor() {
   editHtmlVisible = !editHtmlVisible;
   document.getElementById('html-editor-area').style.display = editHtmlVisible ? 'block' : 'none';
-  document.getElementById('html-toggle-btn').textContent = editHtmlVisible ? '접기' : '펼치기';
+  document.getElementById('html-toggle-btn').textContent = editHtmlVisible ? '▼ HTML 본문 편집 (접기)' : '▶ HTML 본문 편집 (펼치기)';
+  if (editHtmlVisible) {
+    const p = currentPosts[editingPostIndex];
+    if (p && p.file) loadHtmlForEdit(p.file);
+  }
 }
 
-// ── 태그 (편집)
-document.getElementById('e-tag-input').addEventListener('keydown', e => {
-  if (e.key==='Enter'||e.key===',') { e.preventDefault(); addEditTag(e.target.value.trim().replace(',','')); e.target.value=''; }
-  else if (e.key==='Backspace'&&!e.target.value&&editTags.length) { removeEditTag(editTags.length-1); }
-});
+// 편집 태그
 function addEditTag(v) { if(!v||editTags.includes(v)) return; editTags.push(v); renderEditTags(); updateEditPreview(); }
 function removeEditTag(i) { editTags.splice(i,1); renderEditTags(); updateEditPreview(); }
 function renderEditTags() {
@@ -1006,7 +1147,6 @@ function renderEditTags() {
   c.innerHTML = editTags.map((t,i)=>`<span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeEditTag(${i})">×</button></span>`).join('');
   c.appendChild(inp);
 }
-
 function updateEditPreview() {
   document.getElementById('e-pv-title').textContent = document.getElementById('e-title').value || '제목 없음';
   document.getElementById('e-pv-date').textContent = document.getElementById('e-date').value ? formatDate(document.getElementById('e-date').value) : '';
@@ -1014,55 +1154,38 @@ function updateEditPreview() {
   document.getElementById('e-pv-tags').innerHTML = editTags.map(t=>`<span style="padding:.15rem .55rem;border-radius:9999px;font-size:.68rem;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28);">${escHtml(t)}</span>`).join('');
 }
 
-// ═══════════════════════════════════════════════
-//  편집 저장
-// ═══════════════════════════════════════════════
 async function saveEdit() {
+  if (!githubToken) { showEditError('GitHub 토큰을 먼저 설정해주세요.'); return; }
   const title = document.getElementById('e-title').value.trim();
   const date = document.getElementById('e-date').value;
   const desc = document.getElementById('e-desc').value.trim();
   if (!title || !date) { showEditError('날짜와 제목은 필수입니다.'); return; }
 
   const p = currentPosts[editingPostIndex];
+  const btn = document.querySelector('#edit-overlay .btn-primary');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 저장 중...';
 
-  // 1. 메타데이터 업데이트
-  currentPosts[editingPostIndex] = { ...p, date, title, description: desc, tags: [...editTags] };
-
-  // 2. HTML 파일 저장 (에디터가 열려있고 내용이 있을 때만)
-  const htmlContent = document.getElementById('e-html').value;
-  if (editHtmlVisible && htmlContent && !htmlContent.startsWith('//')) {
-    try {
-      const parts = p.file.split('/').filter(Boolean);
-      let handle = dirHandle;
-      for (let i = 0; i < parts.length - 1; i++) handle = await handle.getDirectoryHandle(parts[i], { create: true });
-      const fh = await handle.getFileHandle(parts[parts.length - 1], { create: true });
-      const w = await fh.createWritable();
-      await w.write(htmlContent); await w.close();
-    } catch(e) { showEditError('HTML 파일 저장 실패: ' + e.message); return; }
-  }
-
-  // 3. posts.json 저장
   try {
-    await savePosts();
-  } catch(e) { showEditError('posts.json 저장 실패: ' + e.message); return; }
+    // HTML 파일 저장 (에디터 열려있고 내용이 있을 때)
+    const htmlContent = document.getElementById('e-html').value;
+    if (editHtmlVisible && htmlContent && !htmlContent.startsWith('//') && !htmlContent.startsWith('로딩') && !htmlContent.startsWith('클릭')) {
+      await ghPutFile(p.file, htmlContent, `수정: ${title} - HTML`);
+    }
 
-  renderUploadList();
-  renderManageList();
-  closeOverlay('edit-overlay');
-  showSuccess('✏️', '수정 완료!', `"${title}" 글이 수정되었습니다.`, [
-    { n:1, text: editHtmlVisible ? 'HTML 파일과 posts.json이 업데이트되었습니다' : '<code>posts.json</code> 메타데이터가 업데이트되었습니다' },
-    { n:2, text: '<code>git add . && git commit && git push</code> 실행 후 배포' },
-  ]);
-}
+    // 메타데이터 업데이트
+    currentPosts[editingPostIndex] = { ...p, date, title, description: desc, tags: [...editTags] };
+    await savePostsJson(`수정: ${title}`);
 
-// ═══════════════════════════════════════════════
-//  표시/숨기기 토글
-// ═══════════════════════════════════════════════
-async function toggleVisibility(idx) {
-  currentPosts[idx].visible = currentPosts[idx].visible === false ? true : false;
-  await savePosts();
-  renderManageList();
-  renderUploadList();
+    renderManageList();
+    closeOverlay('edit-overlay');
+    showSuccess('✏️', '수정 완료!', `"${title}" 글이 수정되었습니다.`, [
+      { n:1, text: editHtmlVisible && htmlContent && !htmlContent.startsWith('//') ? 'HTML 파일 + posts.json 업데이트 완료' : 'posts.json 메타데이터 업데이트 완료' },
+      { n:2, text: 'Vercel이 자동으로 재배포됩니다' },
+    ]);
+  } catch(e) {
+    showEditError('저장 실패: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = '저장하기';
 }
 
 // ═══════════════════════════════════════════════
@@ -1070,55 +1193,47 @@ async function toggleVisibility(idx) {
 // ═══════════════════════════════════════════════
 function openDeleteDialog(idx) {
   deletingPostIndex = idx;
-  const p = currentPosts[idx];
-  document.getElementById('delete-post-title').textContent = p.title;
+  document.getElementById('delete-post-title').textContent = currentPosts[idx].title;
   document.querySelector('input[name="delete-mode"][value="meta"]').checked = true;
   document.getElementById('delete-overlay').classList.add('show');
 }
 
 async function confirmDelete() {
+  if (!githubToken) { alert('GitHub 토큰을 먼저 설정해주세요.'); closeOverlay('delete-overlay'); return; }
   const mode = document.querySelector('input[name="delete-mode"]:checked').value;
   const p = currentPosts[deletingPostIndex];
   const title = p.title;
+  const btn = document.querySelector('#delete-overlay .btn-danger');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 삭제 중...';
 
   try {
-    if (mode === 'full') {
-      // HTML 파일 삭제
-      try {
-        const parts = p.file.split('/').filter(Boolean);
-        let handle = dirHandle;
-        for (let i = 0; i < parts.length - 1; i++) handle = await handle.getDirectoryHandle(parts[i]);
-        await handle.removeEntry(parts[parts.length - 1]);
-      } catch { /* 파일 없어도 계속 진행 */ }
+    if (mode === 'full' && p.file) {
+      try { await ghDeleteFile(p.file, `삭제: ${title}`); } catch {}
     }
     currentPosts.splice(deletingPostIndex, 1);
-    await savePosts();
-    renderUploadList();
+    await savePostsJson(`삭제: ${title}`);
     renderManageList();
     closeOverlay('delete-overlay');
     showSuccess('🗑️', '삭제 완료', `"${title}" 글이 삭제되었습니다.`, [
-      { n:1, text: mode === 'full' ? 'HTML 파일과 posts.json에서 모두 제거되었습니다' : 'posts.json에서 항목이 제거되었습니다 (HTML 파일 유지)' },
-      { n:2, text: '<code>git add . && git commit && git push</code> 실행 후 배포' },
+      { n:1, text: mode === 'full' ? 'HTML 파일과 목록에서 모두 제거되었습니다' : '목록에서만 제거되었습니다 (파일 유지)' },
+      { n:2, text: 'Vercel이 자동으로 재배포됩니다' },
     ]);
   } catch(e) {
     alert('삭제 실패: ' + e.message);
   }
+  btn.disabled = false; btn.textContent = '삭제하기';
 }
 
 // ═══════════════════════════════════════════════
-//  오버레이 열기/닫기
+//  오버레이 관리
 // ═══════════════════════════════════════════════
 function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
-// 오버레이 바깥 클릭으로 닫기 (삭제/성공 오버레이만)
 ['delete-overlay', 'success-overlay'].forEach(id => {
   document.getElementById(id).addEventListener('click', e => {
     if (e.target === document.getElementById(id)) closeOverlay(id);
   });
 });
 
-// ═══════════════════════════════════════════════
-//  성공 오버레이
-// ═══════════════════════════════════════════════
 function showSuccess(icon, title, sub, steps) {
   document.getElementById('success-icon').textContent = icon;
   document.getElementById('success-title').textContent = title;
@@ -1132,384 +1247,24 @@ function showSuccess(icon, title, sub, steps) {
 // ═══════════════════════════════════════════════
 //  에러 표시
 // ═══════════════════════════════════════════════
-function showUploadError(msg) {
-  const el = document.getElementById('u-alert-error');
-  document.getElementById('u-alert-error-msg').textContent = msg;
+function showFormError(msg) {
+  const el = document.getElementById('f-alert-error');
+  document.getElementById('f-alert-error-msg').textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 5000);
+  setTimeout(() => el.classList.remove('show'), 6000);
 }
 function showEditError(msg) {
   const el = document.getElementById('e-alert-error');
   document.getElementById('e-alert-error-msg').textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 5000);
+  setTimeout(() => el.classList.remove('show'), 6000);
 }
 
 // ═══════════════════════════════════════════════
 //  유틸
 // ═══════════════════════════════════════════════
-function formatDate(d) { return new Date(d).toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }); }
+function formatDate(d) { try { return new Date(d + 'T00:00:00').toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }); } catch { return d; } }
 function escHtml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-function downloadBlob(blob, name) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = name;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-function downloadJson(data, name) {
-  downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), name);
-}
-
-// ═══════════════════════════════════════════════
-//  Google Drive 연동
-// ═══════════════════════════════════════════════
-const GD_CLIENT_ID = '1094703739324-gp9ln7ghnh61lak10or45koh01tu121r.apps.googleusercontent.com';
-const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
-const GD_SCOPE = 'https://www.googleapis.com/auth/drive';
-
-let gdTokenClient = null;
-let gdAccessToken = ADMIN_TOKEN;
-let gdFiles = [];
-let gdSelectedFile = null;
-let gdTags = [];
-
-function syncGDFolderStatus() {
-  if (dirHandle) {
-    const dot = document.getElementById('gd-folder-dot');
-    const name = document.getElementById('gd-folder-name');
-    if (dot) dot.classList.add('ok');
-    if (name) name.textContent = dirHandle.name;
-  }
-  if (gdAccessToken) updateGDAuthUI(true);
-}
-
-function gdSignIn() {
-  if (!window.google) { showGDError('Google 라이브러리 로딩 중입니다. 잠시 후 다시 시도해주세요.'); return; }
-  if (!gdTokenClient) {
-    gdTokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GD_CLIENT_ID,
-      scope: GD_SCOPE,
-      callback: (response) => {
-        if (response.error) { showGDError('Google 로그인 실패: ' + response.error); return; }
-        gdAccessToken = response.access_token;
-        updateGDAuthUI(true);
-        loadGDFiles();
-      },
-    });
-  }
-  gdTokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-function gdSignOut() {
-  if (gdAccessToken) google.accounts.oauth2.revoke(gdAccessToken);
-  gdAccessToken = null;
-  gdFiles = [];
-  gdSelectedFile = null;
-  gdTags = [];
-  updateGDAuthUI(false);
-  document.getElementById('gd-files-list').innerHTML = '<div class="empty-state">Google 계정에 로그인하면 MY-Insight Blog 폴더의 파일 목록이 표시됩니다.</div>';
-  document.getElementById('gd-import-form').style.display = 'none';
-  document.getElementById('gd-refresh-btn').style.display = 'none';
-}
-
-function updateGDAuthUI(isSignedIn) {
-  document.getElementById('gd-signin-btn').style.display = isSignedIn ? 'none' : 'block';
-  document.getElementById('gd-signout-btn').style.display = isSignedIn ? 'block' : 'none';
-  document.getElementById('gd-refresh-btn').style.display = isSignedIn ? 'block' : 'none';
-  document.getElementById('gd-auth-status').textContent = isSignedIn ? '연결됨' : '연결 안 됨';
-  document.getElementById('gd-auth-dot').classList.toggle('ok', isSignedIn);
-  document.getElementById('backup-not-logged').style.display = isSignedIn ? 'none' : 'block';
-  document.getElementById('backup-controls').style.display = isSignedIn ? 'block' : 'none';
-  if (isSignedIn) updateBackupAllBtn();
-}
-
-function updateBackupAllBtn() {
-  const btn = document.getElementById('backup-all-btn');
-  if (btn) btn.disabled = !dirHandle;
-}
-
-async function loadGDFiles() {
-  const el = document.getElementById('gd-files-list');
-  el.innerHTML = '<div class="empty-state">📂 파일 목록 불러오는 중...</div>';
-  try {
-    const q = encodeURIComponent(`'${GD_FOLDER_ID}' in parents and trashed=false`);
-    const fields = encodeURIComponent('files(id,name,mimeType,modifiedTime,size)');
-    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=modifiedTime+desc`;
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${gdAccessToken}` } });
-    if (res.status === 401) { gdSignOut(); showGDError('세션이 만료되었습니다. 다시 로그인해주세요.'); return; }
-    if (!res.ok) throw new Error('Drive API 오류: ' + res.status);
-    const data = await res.json();
-    gdFiles = data.files || [];
-    renderGDFiles();
-  } catch(e) {
-    el.innerHTML = `<div class="empty-state" style="color:var(--error);">${e.message}</div>`;
-  }
-}
-
-function renderGDFiles() {
-  const el = document.getElementById('gd-files-list');
-  if (!gdFiles.length) { el.innerHTML = '<div class="empty-state">폴더에 파일이 없습니다.</div>'; return; }
-  el.innerHTML = gdFiles.map((f, i) => {
-    const isHtml = f.mimeType === 'text/html' || f.name.toLowerCase().endsWith('.html');
-    const isDoc = f.mimeType === 'application/vnd.google-apps.document';
-    const canImport = isHtml || isDoc;
-    const isSelected = gdSelectedFile && gdSelectedFile.id === f.id;
-    const icon = isDoc ? '📝' : isHtml ? '🌐' : '📄';
-    const typeLabel = isDoc ? 'Google Docs' : isHtml ? 'HTML' : f.mimeType.split('/').pop();
-    const date = new Date(f.modifiedTime).toLocaleDateString('ko-KR');
-    return `
-    <div class="gd-file-item${isSelected ? ' gd-selected' : ''}${!canImport ? ' gd-unsupported' : ''}" ${canImport ? `onclick="selectGDFile(${i})"` : ''}>
-      <span class="gd-file-icon">${icon}</span>
-      <div class="gd-file-info">
-        <div class="gd-file-name">${escHtml(f.name)}</div>
-        <div class="gd-file-meta">${typeLabel} · ${date}</div>
-      </div>
-      ${canImport
-        ? `<button class="btn-edit" onclick="event.stopPropagation();selectGDFile(${i})" style="flex-shrink:0;">${isSelected ? '✓ 선택됨' : '선택'}</button>`
-        : '<span style="font-size:.7rem;color:var(--muted);flex-shrink:0;">미지원</span>'
-      }
-    </div>`;
-  }).join('');
-}
-
-function selectGDFile(idx) {
-  gdSelectedFile = gdFiles[idx];
-  renderGDFiles();
-  const nameNoExt = gdSelectedFile.name.replace(/\.html?$/i, '');
-  const dateMatch = nameNoExt.match(/^(\d{4}-\d{2}-\d{2})/);
-  document.getElementById('gd-date').value = dateMatch ? dateMatch[1] : new Date().toISOString().split('T')[0];
-  document.getElementById('gd-title').value = nameNoExt.replace(/^\d{4}-\d{2}-\d{2}[-_\s]*/,'');
-  document.getElementById('gd-desc').value = '';
-  document.getElementById('gd-selected-name').textContent = gdSelectedFile.name;
-  gdTags = [];
-  renderGDTags();
-  updateGDPreview();
-  checkGDReady();
-  const form = document.getElementById('gd-import-form');
-  form.style.display = 'block';
-  form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// ── 태그 (GDrive)
-document.getElementById('gd-tag-input').addEventListener('keydown', e => {
-  if (e.key==='Enter'||e.key===',') { e.preventDefault(); addGDTag(e.target.value.trim().replace(',','')); e.target.value=''; }
-  else if (e.key==='Backspace'&&!e.target.value&&gdTags.length) { removeGDTag(gdTags.length-1); }
-});
-function addGDTag(v) { if(!v||gdTags.includes(v)) return; gdTags.push(v); renderGDTags(); updateGDPreview(); }
-function removeGDTag(i) { gdTags.splice(i,1); renderGDTags(); updateGDPreview(); }
-function renderGDTags() {
-  const inp = document.getElementById('gd-tag-input');
-  const c = document.getElementById('gd-tags-container');
-  c.innerHTML = gdTags.map((t,i)=>`<span class="tag-chip">${escHtml(t)}<button type="button" onclick="removeGDTag(${i})">×</button></span>`).join('');
-  c.appendChild(inp);
-}
-
-function updateGDPreview() {
-  const title = document.getElementById('gd-title').value;
-  const date = document.getElementById('gd-date').value;
-  const desc = document.getElementById('gd-desc').value;
-  const preview = document.getElementById('gd-preview');
-  if (!title && !date) { preview.style.display = 'none'; return; }
-  preview.style.display = 'block';
-  document.getElementById('gd-pv-title').textContent = title || '제목 없음';
-  document.getElementById('gd-pv-date').textContent = date ? formatDate(date) : '';
-  document.getElementById('gd-pv-desc').textContent = desc || '';
-  document.getElementById('gd-pv-tags').innerHTML = gdTags.map(t=>`<span style="padding:.15rem .55rem;border-radius:9999px;font-size:.68rem;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28);">${escHtml(t)}</span>`).join('');
-}
-
-function checkGDReady() {
-  const ok = gdSelectedFile
-    && document.getElementById('gd-title').value.trim()
-    && document.getElementById('gd-date').value;
-  document.getElementById('gd-import-btn').disabled = !ok;
-}
-
-function resetGDForm() {
-  gdSelectedFile = null;
-  gdTags = [];
-  document.getElementById('gd-import-form').style.display = 'none';
-  renderGDFiles();
-}
-
-async function importFromDrive() {
-  const title = document.getElementById('gd-title').value.trim();
-  const date = document.getElementById('gd-date').value;
-  const desc = document.getElementById('gd-desc').value.trim();
-  if (!gdSelectedFile || !title || !date) { showGDError('필수 항목을 모두 입력해주세요.'); return; }
-
-  const btn = document.getElementById('gd-import-btn');
-  btn.disabled = true; btn.textContent = '가져오는 중...';
-
-  try {
-    let content;
-    const isDoc = gdSelectedFile.mimeType === 'application/vnd.google-apps.document';
-    if (isDoc) {
-      const res = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}/export?mimeType=text%2Fhtml`,
-        { headers: { Authorization: `Bearer ${gdAccessToken}` } }
-      );
-      if (!res.ok) throw new Error('Google Docs 변환 실패: ' + res.status);
-      content = await res.text();
-    } else {
-      const res = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${gdSelectedFile.id}?alt=media`,
-        { headers: { Authorization: `Bearer ${gdAccessToken}` } }
-      );
-      if (!res.ok) throw new Error('파일 다운로드 실패: ' + res.status);
-      content = await res.text();
-    }
-
-    const safeName = `${date}-${title.replace(/[^\w가-힣]/g, '')}.html`;
-    const filePath = `posts/${safeName}`;
-    const existing = currentPosts.findIndex(p => p.file === filePath);
-    const entry = { date, title, description: desc, file: filePath, tags: [...gdTags], visible: true };
-    if (existing >= 0) currentPosts[existing] = entry; else currentPosts.unshift(entry);
-
-    if (dirHandle) {
-      const postsDH = await dirHandle.getDirectoryHandle('posts', { create: true });
-      const fh = await postsDH.getFileHandle(safeName, { create: true });
-      const w = await fh.createWritable();
-      await w.write(content); await w.close();
-      await savePosts();
-      renderUploadList();
-      renderManageList();
-      resetGDForm();
-      showSuccess('☁️', 'Drive 가져오기 완료!', `"${title}" 글이 등록되었습니다.`, [
-        { n:1, text: `<code>posts/${safeName}</code>에 저장되었습니다` },
-        { n:2, text: `<code>posts.json</code>이 업데이트되었습니다` },
-        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
-      ]);
-    } else {
-      downloadBlob(new Blob([content], { type: 'text/html' }), safeName);
-      setTimeout(() => downloadJson(currentPosts, 'posts.json'), 400);
-      renderUploadList();
-      resetGDForm();
-      showSuccess('📥', 'Drive 파일 다운로드!', `"${title}" 파일이 준비되었습니다.`, [
-        { n:1, text: `다운로드된 <code>${safeName}</code>을 블로그 <code>posts/</code> 폴더에 넣으세요` },
-        { n:2, text: `다운로드된 <code>posts.json</code>을 블로그 루트에 덮어씌우세요` },
-        { n:3, text: `<code>git add . && git commit && git push</code> 실행 후 배포` },
-      ]);
-    }
-  } catch(e) {
-    showGDError('가져오기 실패: ' + e.message);
-  }
-  btn.disabled = false; btn.textContent = '☁️ 블로그에 등록하기';
-  checkGDReady();
-}
-
-function showGDError(msg) {
-  const el = document.getElementById('gd-alert-error');
-  document.getElementById('gd-alert-error-msg').textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 5000);
-}
-
-// ═══════════════════════════════════════════════
-//  순서 변경
-// ═══════════════════════════════════════════════
-async function movePost(idx, direction) {
-  const newIdx = idx + direction;
-  if (newIdx < 0 || newIdx >= currentPosts.length) return;
-  [currentPosts[idx], currentPosts[newIdx]] = [currentPosts[newIdx], currentPosts[idx]];
-  await savePosts();
-  renderManageList();
-  renderUploadList();
-}
-
-async function sortByDate() {
-  currentPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
-  await savePosts();
-  renderManageList();
-  renderUploadList();
-}
-
-// ═══════════════════════════════════════════════
-//  Drive 백업
-// ═══════════════════════════════════════════════
-async function upsertDriveFile(name, content, mimeType) {
-  const q = encodeURIComponent(`name='${name}' and '${GD_FOLDER_ID}' in parents and trashed=false`);
-  const searchRes = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
-    { headers: { Authorization: `Bearer ${gdAccessToken}` } }
-  );
-  if (!searchRes.ok) throw new Error('Drive 검색 실패: ' + searchRes.status);
-  const { files } = await searchRes.json();
-  const blob = new Blob([content], { type: mimeType });
-
-  if (files && files.length > 0) {
-    const updateRes = await fetch(
-      `https://www.googleapis.com/upload/drive/v3/files/${files[0].id}?uploadType=media`,
-      { method: 'PATCH', headers: { Authorization: `Bearer ${gdAccessToken}`, 'Content-Type': mimeType }, body: blob }
-    );
-    if (!updateRes.ok) throw new Error('Drive 업데이트 실패: ' + updateRes.status);
-    return updateRes.json();
-  } else {
-    const metadata = { name, parents: [GD_FOLDER_ID] };
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-    form.append('file', blob);
-    const createRes = await fetch(
-      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-      { method: 'POST', headers: { Authorization: `Bearer ${gdAccessToken}` }, body: form }
-    );
-    if (!createRes.ok) throw new Error('Drive 생성 실패: ' + createRes.status);
-    return createRes.json();
-  }
-}
-
-async function backupPostsJson() {
-  if (!gdAccessToken) { showGDError('Google 계정에 먼저 로그인해주세요.'); return; }
-  const btn = document.getElementById('backup-json-btn');
-  btn.disabled = true; btn.textContent = '백업 중...';
-  try {
-    await upsertDriveFile('posts.json', JSON.stringify(currentPosts, null, 2), 'application/json');
-    btn.textContent = '✓ 완료';
-    setTimeout(() => { btn.textContent = '📋 posts.json 백업'; btn.disabled = false; }, 2500);
-  } catch(e) {
-    showGDError('백업 실패: ' + e.message);
-    btn.textContent = '📋 posts.json 백업'; btn.disabled = false;
-  }
-}
-
-async function backupAllToDrive() {
-  if (!gdAccessToken) { showGDError('Google 계정에 먼저 로그인해주세요.'); return; }
-  if (!dirHandle) { showGDError('블로그 폴더를 먼저 연결해주세요.'); return; }
-  const btn = document.getElementById('backup-all-btn');
-  btn.disabled = true;
-  let succeeded = 0, failed = 0;
-  try {
-    btn.textContent = 'posts.json 백업 중...';
-    await upsertDriveFile('posts.json', JSON.stringify(currentPosts, null, 2), 'application/json');
-    succeeded++;
-
-    for (let i = 0; i < currentPosts.length; i++) {
-      const p = currentPosts[i];
-      btn.textContent = `HTML 백업 중... (${i+1}/${currentPosts.length})`;
-      try {
-        const parts = p.file.split('/').filter(Boolean);
-        let handle = dirHandle;
-        for (let j = 0; j < parts.length - 1; j++) handle = await handle.getDirectoryHandle(parts[j]);
-        const fh = await handle.getFileHandle(parts[parts.length - 1]);
-        const text = await (await fh.getFile()).text();
-        await upsertDriveFile(parts[parts.length - 1], text, 'text/html');
-        succeeded++;
-      } catch { failed++; }
-    }
-
-    showSuccess('☁️', '전체 백업 완료', `Drive에 ${succeeded}개 파일이 백업되었습니다.${failed ? ` (${failed}개 실패)` : ''}`, [
-      { n:1, text: '<code>posts.json</code>이 Drive에 저장되었습니다' },
-      { n:2, text: `HTML 파일 ${currentPosts.length}개 중 ${succeeded - 1}개 백업 완료` },
-    ]);
-    btn.textContent = '✓ 완료';
-    setTimeout(() => { btn.textContent = '☁️ 전체 글 + posts.json 백업'; btn.disabled = false; }, 2500);
-  } catch(e) {
-    showGDError('전체 백업 실패: ' + e.message);
-    btn.textContent = '☁️ 전체 글 + posts.json 백업'; btn.disabled = false;
-  }
-}
 </script>
 </body>
 </html>
