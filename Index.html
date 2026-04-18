@@ -6,6 +6,9 @@
   <title>My Insight Blog — 투자 리서치 & 분석</title>
   <meta name="description" content="주식 분석, 시장 리포트, 투자 전략을 담은 개인 투자 리서치 블로그" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css" />
   <script>
@@ -88,6 +91,43 @@
     ::-webkit-scrollbar-track { background: #0d0d0f; }
     ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+
+    /* ── 관리자 버튼 ── */
+    .admin-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 1rem; color: #2d2d35; padding: .3rem;
+      line-height: 1; border-radius: 6px; transition: color .2s;
+      font-family: inherit;
+    }
+    .admin-btn:hover { color: #6b7280; }
+
+    /* ── 인증 모달 ── */
+    #auth-modal {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(13,13,15,.88); backdrop-filter: blur(10px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    #auth-modal.show { display: flex; }
+    .auth-box {
+      background: #1a1a1e; border: 1px solid #252529;
+      border-radius: 20px; padding: 2rem; text-align: center;
+      max-width: 340px; width: 100%;
+    }
+
+    /* ── 별점 ── */
+    .star-row { display: flex; gap: .05rem; }
+    .star-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: .95rem; color: #2a2a35; padding: .1rem .08rem;
+      line-height: 1; transition: color .1s; font-family: inherit;
+    }
+    .star-btn.lit { color: #f59e0b; }
+    .post-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: .8rem; padding-top: .7rem; border-top: 1px solid #1e1e22;
+    }
+    .view-count { font-size: .72rem; color: #374151; }
+    .rating-label { font-size: .7rem; color: #374151; margin-left: .35rem; }
   </style>
 </head>
 <body class="text-gray-200 font-sans min-h-screen" style="background:#0d0d0f;">
@@ -101,7 +141,7 @@
       </a>
       <div class="flex items-center gap-4">
         <span style="font-size:.75rem; color:#6b7280; letter-spacing:.03em;">nomin7916</span>
-        <a href="admin.html" style="font-size:.75rem; color:#4b5563; border:1px solid #252529; padding:.3rem .75rem; border-radius:9999px; transition:color .15s, border-color .15s;" onmouseover="this.style.color='#818cf8';this.style.borderColor='rgba(99,102,241,.4)'" onmouseout="this.style.color='#4b5563';this.style.borderColor='#252529'">관리</a>
+        <button class="admin-btn" onclick="adminLogin()" title="관리자 로그인">⚙️</button>
       </div>
     </div>
   </header>
@@ -155,18 +195,55 @@
     </div>
   </footer>
 
+  <!-- 인증 모달 -->
+  <div id="auth-modal">
+    <div class="auth-box">
+      <div style="font-size:2rem; margin-bottom:.75rem;" id="auth-icon">🔒</div>
+      <div style="font-size:1rem; font-weight:700; color:#fff; margin-bottom:.5rem;">관리자 전용</div>
+      <div id="auth-modal-msg" style="font-size:.85rem; color:#6b7280; line-height:1.7; margin-bottom:1.5rem; white-space:pre-line;"></div>
+      <button onclick="closeAuthModal()" style="width:100%; padding:.75rem; background:linear-gradient(135deg,#6366f1,#7c3aed); color:#fff; border:none; border-radius:12px; font-size:.9rem; font-weight:700; font-family:inherit; cursor:pointer;">계속 열람하기</button>
+    </div>
+  </div>
+
   <script>
+    // ── Firebase 설정 ──────────────────────────────────────────────
+    // Firebase Console(console.firebase.google.com)에서 프로젝트 생성 후
+    // 웹앱 구성 값을 아래에 붙여넣으세요. apiKey가 비어있으면 조회수/별점 비활성화.
+    const FIREBASE_CONFIG = {
+      apiKey:            "",   // ← 여기 입력
+      authDomain:        "",
+      projectId:         "",
+      storageBucket:     "",
+      messagingSenderId: "",
+      appId:             ""
+    };
+    const FB_ON = !!FIREBASE_CONFIG.apiKey;
+    let db = null;
+    if (FB_ON) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.firestore();
+    }
+
+    // ── 상수 ──────────────────────────────────────────────────────
+    const GD_CLIENT_ID = '1094703739324-gp9ln7ghnh61lak10or45koh01tu121r.apps.googleusercontent.com';
+    const GD_FOLDER_ID = '1CSlRvNALl15uFVR1VA1yETVxQRWwU9Z1';
+
     let allPosts = [];
 
+    let statsCache = {};  // key → { views, totalRating, ratingCount, myRating }
+
+    function postKey(file) { return file.replace(/[^\w가-힣]/g, '_'); }
+
+    // ── 포스트 로드 ──────────────────────────────────────────
     async function loadPosts() {
       try {
         const res = await fetch('posts.json');
         if (!res.ok) throw new Error('posts.json 로드 실패');
-        allPosts = await res.json();
-        allPosts = allPosts.filter(p => p.visible !== false);
+        allPosts = (await res.json()).filter(p => p.visible !== false);
         renderStats();
         buildTagFilters();
         renderPosts(allPosts);
+        if (FB_ON) loadAllStats();
       } catch (e) {
         document.getElementById('posts-grid').innerHTML =
           `<div style="grid-column:1/-1; text-align:center; padding:5rem 0; color:#4b5563;">
@@ -179,13 +256,13 @@
     function renderStats() {
       const tags = new Set();
       allPosts.forEach(p => (p.tags || []).forEach(t => tags.add(t)));
+      const latest = allPosts.length ? allPosts.reduce((m,p) => p.date > m ? p.date : m, '').slice(0,7) : '-';
       const bar = document.getElementById('stats-bar');
-      const items = [
-        { label: '포스트', value: allPosts.length },
+      bar.innerHTML = [
+        { label: '포스트',   value: allPosts.length },
         { label: '카테고리', value: tags.size },
-        { label: '최신', value: allPosts.length ? allPosts.reduce((m,p) => p.date > m ? p.date : m, '').slice(0,7) : '-' },
-      ];
-      bar.innerHTML = items.map(i => `
+        { label: '최신',     value: latest },
+      ].map(i => `
         <div class="stat-item">
           <span style="font-size:1.1rem; font-weight:700; color:#e5e7eb;">${i.value}</span>
           <span style="font-size:.72rem; color:#6b7280; margin-left:.4rem;">${i.label}</span>
@@ -210,40 +287,169 @@
 
     function filterPosts(tag) {
       document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', b.dataset.tag === tag));
-      const filtered = tag === '전체' ? allPosts : allPosts.filter(p => (p.tags || []).includes(tag));
-      renderPosts(filtered);
+      renderPosts(tag === '전체' ? allPosts : allPosts.filter(p => (p.tags || []).includes(tag)));
     }
 
+    // ── 카드 렌더링 ──────────────────────────────────────────
     function renderPosts(posts) {
       const grid = document.getElementById('posts-grid');
       const noResults = document.getElementById('no-results');
       if (!posts.length) { grid.innerHTML = ''; noResults.classList.remove('hidden'); return; }
       noResults.classList.add('hidden');
-
       grid.innerHTML = posts.map((post, i) => {
         const isFeatured = i === 0 && posts.length > 1;
+        const key = postKey(post.file);
         return `
         <article
           class="post-card rounded-2xl p-6 cursor-pointer${isFeatured ? ' md:col-span-2' : ''}"
-          onclick="location.href='${escapeHtml(post.file)}'"
+          onclick="openPost('${escapeHtml(post.file)}','${key}')"
         >
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem;">
             <div style="flex:1; min-width:0;">
               <div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.75rem; flex-wrap:wrap;">
                 <time style="font-size:.72rem; color:#6b7280; font-family:monospace;">${formatDate(post.date)}</time>
-                ${(post.tags || []).map(tag => `<span style="padding:.2rem .65rem; border-radius:9999px; font-size:.7rem; font-weight:500; background:rgba(99,102,241,.14); color:#a5b4fc; border:1px solid rgba(99,102,241,.28);">${tag}</span>`).join('')}
+                ${(post.tags||[]).map(t=>`<span style="padding:.2rem .65rem;border-radius:9999px;font-size:.7rem;font-weight:500;background:rgba(99,102,241,.14);color:#a5b4fc;border:1px solid rgba(99,102,241,.28);">${t}</span>`).join('')}
               </div>
-              <h2 style="font-size:${isFeatured ? '1.25rem' : '1rem'}; font-weight:700; color:#f3f4f6; margin-bottom:.5rem; line-height:1.4; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${post.title}</h2>
-              <p style="font-size:.85rem; color:#6b7280; line-height:1.65;" class="line-clamp-2">${post.description}</p>
+              <h2 style="font-size:${isFeatured?'1.25rem':'1rem'};font-weight:700;color:#f3f4f6;margin-bottom:.5rem;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${post.title}</h2>
+              <p style="font-size:.85rem;color:#6b7280;line-height:1.65;" class="line-clamp-2">${post.description}</p>
+              ${FB_ON ? `
+              <div class="post-foot" onclick="event.stopPropagation()">
+                <span class="view-count" id="views-${key}"></span>
+                <div style="display:flex;align-items:center;">
+                  <div class="star-row" id="stars-${key}" onmouseleave="resetStarHover('${key}')">
+                    ${[1,2,3,4,5].map(s=>`<button class="star-btn" data-key="${key}" data-star="${s}" onclick="ratePost('${key}',${s})" onmouseover="hoverStar('${key}',${s})" title="${s}점">★</button>`).join('')}
+                  </div>
+                  <span class="rating-label" id="rating-${key}"></span>
+                </div>
+              </div>` : ''}
             </div>
-            <span class="arrow" style="font-size:1rem; color:#6366f1; flex-shrink:0; margin-top:.25rem;">→</span>
+            <span class="arrow" style="font-size:1rem;color:#6366f1;flex-shrink:0;margin-top:.25rem;">→</span>
           </div>
         </article>`;
       }).join('');
     }
 
+    // ── 포스트 클릭 (조회수 증가 후 이동) ───────────────────
+    async function openPost(file, key) {
+      if (FB_ON) {
+        try {
+          await db.collection('blog_stats').doc(key).set(
+            { views: firebase.firestore.FieldValue.increment(1) }, { merge: true }
+          );
+        } catch {}
+      }
+      location.href = file;
+    }
+
+    // ── Firebase 통계 로드 ───────────────────────────────────
+    async function loadAllStats() {
+      if (!db) return;
+      try {
+        const snap = await db.collection('blog_stats').get();
+        snap.forEach(doc => {
+          const d = doc.data(), key = doc.id;
+          const myRating = parseInt(localStorage.getItem('rating_' + key) || '0');
+          statsCache[key] = { views: d.views||0, totalRating: d.totalRating||0, ratingCount: d.ratingCount||0, myRating };
+          const viewsEl = document.getElementById('views-' + key);
+          if (viewsEl && d.views) viewsEl.textContent = '👁 ' + d.views.toLocaleString() + '회';
+          if (myRating) updateStarUI(key, myRating);
+          const avg = d.ratingCount ? (d.totalRating / d.ratingCount).toFixed(1) : null;
+          const ratingEl = document.getElementById('rating-' + key);
+          if (ratingEl && avg) ratingEl.textContent = avg + ' (' + d.ratingCount + '명)';
+        });
+      } catch(e) { console.warn('Stats load failed:', e); }
+    }
+
+    // ── 별점 ────────────────────────────────────────────────
+    function hoverStar(key, n) {
+      document.querySelectorAll(`.star-btn[data-key="${key}"]`).forEach(b =>
+        b.classList.toggle('lit', parseInt(b.dataset.star) <= n));
+    }
+    function resetStarHover(key) {
+      const my = (statsCache[key] || {}).myRating || 0;
+      updateStarUI(key, my);
+    }
+    function updateStarUI(key, myRating) {
+      document.querySelectorAll(`.star-btn[data-key="${key}"]`).forEach(b =>
+        b.classList.toggle('lit', parseInt(b.dataset.star) <= myRating));
+    }
+
+    async function ratePost(key, star) {
+      if (!FB_ON) return;
+      const prev = parseInt(localStorage.getItem('rating_' + key) || '0');
+      if (prev === star) return;
+      try {
+        const update = prev > 0
+          ? { totalRating: firebase.firestore.FieldValue.increment(star - prev) }
+          : { totalRating: firebase.firestore.FieldValue.increment(star),
+              ratingCount:  firebase.firestore.FieldValue.increment(1) };
+        await db.collection('blog_stats').doc(key).set(update, { merge: true });
+        localStorage.setItem('rating_' + key, star.toString());
+        if (!statsCache[key]) statsCache[key] = { views:0, totalRating:0, ratingCount:0, myRating:0 };
+        const s = statsCache[key];
+        s.totalRating = (s.totalRating||0) + (prev > 0 ? star - prev : star);
+        if (!prev) s.ratingCount = (s.ratingCount||0) + 1;
+        s.myRating = star;
+        updateStarUI(key, star);
+        const avg = s.ratingCount ? (s.totalRating / s.ratingCount).toFixed(1) : null;
+        const ratingEl = document.getElementById('rating-' + key);
+        if (ratingEl) ratingEl.textContent = avg ? avg + ' (' + s.ratingCount + '명)' : '';
+      } catch(e) { console.warn('Rating failed:', e); }
+    }
+
+    // ── 관리자 로그인 ────────────────────────────────────────
+    let adminTokenClient = null;
+
+    function adminLogin() {
+      if (!window.google) {
+        showAuthModal('Google 라이브러리 로딩 중입니다.\n잠시 후 다시 시도해주세요.');
+        return;
+      }
+      if (!adminTokenClient) {
+        adminTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GD_CLIENT_ID,
+          scope: 'https://www.googleapis.com/auth/drive.readonly',
+          callback: checkAdminAccess,
+        });
+      }
+      adminTokenClient.requestAccessToken({ prompt: 'select_account' });
+    }
+
+    async function checkAdminAccess(response) {
+      if (response.error) return;
+      try {
+        const q = encodeURIComponent(`'${GD_FOLDER_ID}' in parents and trashed=false`);
+        const res = await fetch(
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&pageSize=1`,
+          { headers: { Authorization: `Bearer ${response.access_token}` } }
+        );
+        if (res.ok) {
+          sessionStorage.setItem('gd_admin_token', response.access_token);
+          location.href = 'admin.html';
+        } else {
+          document.getElementById('auth-icon').textContent = '🚫';
+          showAuthModal('접근 권한이 없는 계정입니다.\n관리자에게 문의하세요.');
+        }
+      } catch {
+        showAuthModal('접근 확인 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+      }
+    }
+
+    function showAuthModal(msg) {
+      document.getElementById('auth-modal-msg').textContent = msg;
+      document.getElementById('auth-modal').classList.add('show');
+    }
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.remove('show');
+      document.getElementById('auth-icon').textContent = '🔒';
+    }
+    document.getElementById('auth-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('auth-modal')) closeAuthModal();
+    });
+
+    // ── 유틸 ────────────────────────────────────────────────
     function formatDate(d) {
-      return new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+      return new Date(d).toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
     }
     function escapeHtml(s) {
       return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
